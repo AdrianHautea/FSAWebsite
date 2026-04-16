@@ -22,14 +22,30 @@ export default function Pamilya() {
             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfi9GCyrFiCrCkhE8YY5LdZHtZ2eTNojX2aIjaQ7niVaoCVzA/viewform?embedded=true" 
               width="640" 
               height="1210" 
-              frameBorder="0"
-              marginHeight={0}
-              marginWidth={0}
+              className="rounded-xl border"
             >
               Loading…
             </iframe>
           <h2>Interested in becoming a Kuya/Ate?</h2>
             <p>Fill out the Kuya/Ate form!</p>
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSeV3taf1NR6EV4W1pAO8xN1KLupSaH354XUwoJ_WqwzQkQE9g/viewform?usp=dialog"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 inline-block"
+              >
+                Kuyate Form              
+                </a>
+          <h2>Want to be placed in a Pamilya?</h2>
+            <p>Fill out the Ading form!</p>
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSe8S7BzJqee1-Z7i3_YgSzN2ULqdpM1c45j6Py4yAwdZGmhmA/viewform?usp=dialog"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 inline-block"
+              >
+                Ading Form
+              </a>
       </main>
     </div>
   );
