@@ -11,23 +11,20 @@ type ScanResult =
 
 export default function ScanPage() {
   const [result, setResult] = useState<ScanResult>(null)
-  const [scanning, setScanning] = useState(true)
+  const processingRef = useRef(false)
   const scannerRef = useRef<Html5Qrcode | null>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!scanning) return
-
     const scanner = new Html5Qrcode('qr-reader')
     scannerRef.current = scanner
 
     scanner.start(
-      { facingMode: 'environment' }, // use back camera on phones
+      { facingMode: 'environment' },
       { fps: 10, qrbox: { width: 250, height: 250 } },
       async (decodedText) => {
-        // stop scanner — swallow errors, cleanup will retry if needed
-        try { await scanner.stop() } catch {}
-        setScanning(false)
+        // debounce: ignore while result overlay is showing
+        if (processingRef.current) return
+        processingRef.current = true
 
         let scanResult: ScanResult = { valid: false, reason: 'INVALID_TICKET', message: 'Scan failed' }
 
@@ -42,10 +39,10 @@ export default function ScanPage() {
 
         setResult(scanResult)
 
-        // auto-reset after 4 seconds for next scan
+        // clear overlay and re-arm for next scan after 4 seconds
         setTimeout(() => {
           setResult(null)
-          setScanning(true)
+          processingRef.current = false
         }, 4000)
       },
       () => {} // ignore per-frame errors
@@ -54,14 +51,14 @@ export default function ScanPage() {
     return () => {
       scanner.stop().catch(() => {})
     }
-  }, [scanning])
+  }, []) // scanner starts once and stays running — no stop/restart cycle
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
 
       {/* result overlay */}
       {result && (
-        <div className={`fixed inset-0 flex flex-col items-center justify-center z-50 
+        <div className={`fixed inset-0 flex flex-col items-center justify-center z-50
           ${result.valid ? 'bg-green-600' : 'bg-red-600'}`}
         >
           <div className="text-8xl mb-6">
@@ -92,8 +89,8 @@ export default function ScanPage() {
         </div>
       )}
 
-      {/* camera view */}
-      <div id="qr-reader" ref={containerRef} className="w-full max-w-sm" />
+      {/* camera view — scanner keeps running behind the overlay */}
+      <div id="qr-reader" className="w-full max-w-sm" />
       <p className="mt-4 text-gray-400 text-sm">Point camera at ticket QR code</p>
 
     </main>
