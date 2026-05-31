@@ -4,59 +4,75 @@ import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/member/profile'
-
-  console.log('[callback] hit, code present:', !!code)
+  const next = searchParams.get('next')
 
   if (!code) {
-    console.log('[callback] no code, redirecting to error')
     return NextResponse.redirect(`${origin}/login?error=auth_failed`)
   }
 
   const supabase = await createUserClient()
-
-  console.log('[callback] calling exchangeCodeForSession')
   const { error, data } = await supabase.auth.exchangeCodeForSession(code)
 
-  console.log('[callback] exchange error:', error?.message ?? 'none')
-  console.log('[callback] user email:', data?.user?.email ?? 'no user')
-  const allCookies = await (await import('next/headers')).cookies()
-  console.log('[callback] cookies after exchange:', allCookies.getAll().map(c => c.name))
-
   if (error || !data.user) {
-    console.log('[callback] exchange failed')
     return NextResponse.redirect(`${origin}/login?error=auth_failed`)
   }
 
-  const adminSupabase = createAdminClient()
+  const user = data.user
+  const admin = createAdminClient()
 
-  const { data: existingMember } = await adminSupabase
-  .from('members')
-  .select('id')
-  .eq('email', data.user.email!)
-  .maybeSingle()
+  // check if a member row exists already
+  const { data: existingMember } = await admin
+    .from('members')
+    .select('id, membership_status, onboarding_complete, role')
+    .eq('email', user.email!)
+    .maybeSingle()
 
-  console.log('[callback] existing member:', !!existingMember)
+  let member = existingMember
 
-  if (!existingMember) {
-    const firstName = data.user.user_metadata?.given_name
-      ?? data.user.user_metadata?.full_name?.split(' ')[0]
+  // first time signing in — create the member row
+  if (!member) {
+    const firstName = user.user_metadata?.given_name
+      ?? user.user_metadata?.full_name?.split(' ')[0]
       ?? ''
-    const lastName = data.user.user_metadata?.family_name
-      ?? data.user.user_metadata?.full_name?.split(' ').slice(1).join(' ')
+    const lastName = user.user_metadata?.family_name
+      ?? user.user_metadata?.full_name?.split(' ').slice(1).join(' ')
       ?? ''
 
-    const { error: insertError } = await adminSupabase.from('members').insert({
-      email: data.user.email!,
-      first_name: firstName,
-      last_name: lastName,
-      role: 'member',
-      membership_status: 'pending',
-      avatar_url: data.user.user_metadata?.avatar_url ?? null,
-    })
+    const { data: newMember } = await admin
+      .from('members')
+      .insert({
+        email: user.email!,
+        first_name: firstName,
+        last_name: lastName,
+        role: 'member',
+        membership_status: 'pending',
+        avatar_url: user.user_metadata?.avatar_url ?? null,
+      })
+      .select('id, membership_status, onboarding_complete, role')
+      .single()
 
-    console.log('[callback] insert error:', insertError?.message ?? 'none')
+    member = newMember
   }
 
-  return NextResponse.redirect(`${origin}${next}`)
+  // if a ?next param was passed and it's a safe internal path, honor it
+  // but only for paid members — unpaid members always go to /membership first
+  const isSafeNext = next && next.startsWith('/')
+
+  // officers skip payment entirely
+  if (member?.role === 'officer' || member?.role === 'admin') {
+    return NextResponse.redirect(`${origin}${isSafeNext ? next : '/member/profile'}`)
+  }
+
+  // unpaid — always send to membership page regardless of ?next
+  if (member?.membership_status !== 'active') {
+    return NextResponse.redirect(`${origin}/membership`)
+  }
+
+  // paid but onboarding not done — send to onboarding
+  if (!member?.onboarding_complete) {
+    return NextResponse.redirect(`${origin}/onboarding`)
+  }
+
+  // fully set up — send to intended destination or profile
+  return NextResponse.redirect(`${origin}${isSafeNext ? next : '/member/profile'}`)
 }

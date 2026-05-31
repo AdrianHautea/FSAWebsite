@@ -19,7 +19,6 @@ export interface Member {
   year: string | null
   major: string | null
   pamilya: string | null
-  confirmation_id: string | null
   payment_provider: PaymentProvider | null
   stripe_checkout_session_id: string | null
   stripe_payment_intent_id: string | null
@@ -68,6 +67,7 @@ export interface EventRegistration {
   stripe_payment_intent_id: string | null
   payment_method: string | null
   payment_metadata: Record<string, unknown> | null
+  cover_photo_url: string | null
 }
 
 export interface RegistrationTicket {
@@ -114,4 +114,20 @@ export interface Gallery {
   year: number | null
   created_by: string
   is_published: boolean
+}
+
+// represents a single row in the settings table
+export interface Setting {
+  key: string
+  value: string
+  description: string | null
+  updated_at: string
+}
+
+// typed shape of what getSettings() returns — use this in components
+export interface AppSettings {
+  membershipPriceCents: number
+  earlyBirdPriceCents: number
+  earlyBirdDeadline: Date
+  membershipYear: string
 }
