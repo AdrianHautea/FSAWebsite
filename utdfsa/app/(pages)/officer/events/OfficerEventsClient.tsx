@@ -421,6 +421,24 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
   const [events, setEvents] = useState<Event[]>(initialEvents)
   const [creating, setCreating] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  async function handleDelete(id: string, name: string) {
+    if (!confirm(`Delete "${name}"?\n\nThis permanently removes all registrations and tickets for this event.`)) return
+    setDeletingId(id)
+    try {
+      const res = await fetch(`/api/officer/events/${id}`, { method: 'DELETE' })
+      if (res.ok) {
+        setEvents(prev => prev.filter(e => e.id !== id))
+        if (editingId === id) setEditingId(null)
+      } else {
+        const data = await res.json().catch(() => ({}))
+        alert(data.error ?? 'Failed to delete event.')
+      }
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   function upsert(updated: Event) {
     setEvents(prev => {
@@ -529,11 +547,19 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
                     </p>
                   </div>
 
-                  <button
-                    onClick={() => setEditingId(isEditing ? null : event.id)}
-                    className="text-sm text-blue-600 hover:text-blue-800 font-medium shrink-0">
-                    {isEditing ? 'Close' : 'Edit'}
-                  </button>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <button
+                      onClick={() => setEditingId(isEditing ? null : event.id)}
+                      className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                      {isEditing ? 'Close' : 'Edit'}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(event.id, event.name)}
+                      disabled={deletingId === event.id}
+                      className="text-sm text-red-500 hover:text-red-700 font-medium disabled:opacity-50">
+                      {deletingId === event.id ? '…' : 'Delete'}
+                    </button>
+                  </div>
                 </div>
 
                 {/* inline edit */}

@@ -130,12 +130,13 @@ export async function POST(req: Request) {
               tickets
                 .filter(t => t.attendee_email)
                 .map(async (ticket) => {
-                  const svg = await QRCode.toString(ticket.qr_code, {
-                    type: 'svg',
+                  // PNG data URL — works in Gmail, Apple Mail, Outlook.
+                  // SVG data URLs are silently dropped by Gmail.
+                  const qrDataUrl = await QRCode.toDataURL(ticket.qr_code, {
                     width: 256,
                     margin: 2,
+                    color: { dark: '#000000', light: '#ffffff' },
                   })
-                  const qrDataUrl = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
 
                   const attendeeName =
                     [ticket.attendee_fname, ticket.attendee_lname].filter(Boolean).join(' ') ||

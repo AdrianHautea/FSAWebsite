@@ -2,6 +2,8 @@ import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 import { updateEventSchema } from '@/lib/schemas'
 import { NextResponse } from 'next/server'
 
+type RouteContext = { params: Promise<{ id: string }> }
+
 async function requireOfficer() {
   const supabase = await createUserClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -18,15 +20,42 @@ async function requireOfficer() {
   return { admin }
 }
 
+// DELETE /api/officer/events/[id] — delete event and all associated registrations/tickets
+export async function DELETE(_req: Request, { params }: RouteContext) {
+  const ctx = await requireOfficer()
+  if (!ctx) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  const { id } = await params
+
+  // Delete in FK-safe order: tickets → registrations → event
+  const { data: regs } = await ctx.admin
+    .from('event_registrations')
+    .select('id')
+    .eq('event_id', id)
+
+  const regIds = (regs ?? []).map(r => r.id)
+
+  if (regIds.length > 0) {
+    await ctx.admin.from('registration_tickets').delete().in('registration_id', regIds)
+    await ctx.admin.from('event_registrations').delete().in('id', regIds)
+  }
+
+  const { error } = await ctx.admin.from('events').delete().eq('id', id)
+
+  if (error) {
+    console.error('Event delete error:', error)
+    return NextResponse.json({ error: 'Failed to delete event.' }, { status: 500 })
+  }
+
+  return NextResponse.json({ success: true })
+}
+
 // PATCH /api/officer/events/[id] — update any event fields
 // Also handles QR attendance controls:
 //   { attend_qr_open: true }           → open QR for scanning
 //   { attend_qr_open: false }          → close QR
 //   { attend_qr_expires_at: "..." }    → set auto-expiry
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: Request, { params }: RouteContext) {
   const ctx = await requireOfficer()
   if (!ctx) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
