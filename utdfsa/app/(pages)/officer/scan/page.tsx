@@ -76,7 +76,7 @@ export default function ScanPage() {
               <h1 className="text-4xl font-black mb-2">ALREADY CHECKED IN</h1>
               <p className="text-2xl">{result.attendee_name}</p>
               <p className="text-lg opacity-75 mt-1">
-                at {new Date(result.checked_in_at).toLocaleTimeString()}
+                at {new Date(result.checked_in_at).toLocaleTimeString('en-US', { timeZone: 'America/Chicago' })}
               </p>
             </>
           ) : result.reason === 'NOT_PAID' ? (

@@ -130,9 +130,9 @@ export async function POST(req: Request) {
               tickets
                 .filter(t => t.attendee_email)
                 .map(async (ticket) => {
-                  // PNG data URL — works in Gmail, Apple Mail, Outlook.
-                  // SVG data URLs are silently dropped by Gmail.
-                  const qrDataUrl = await QRCode.toDataURL(ticket.qr_code, {
+                  // PNG buffer — embedded as a CID inline attachment so Gmail/Apple Mail/Outlook render it.
+                  // data: URLs are blocked by most email clients.
+                  const qrBuffer = await QRCode.toBuffer(ticket.qr_code, {
                     width: 256,
                     margin: 2,
                     color: { dark: '#000000', light: '#ffffff' },
@@ -151,8 +151,14 @@ export async function POST(req: Request) {
                       eventName: eventInfo!.name,
                       eventDate: eventInfo!.event_date,
                       location: eventInfo!.location,
-                      qrDataUrl,
+                      qrCid: 'ticket_qr',
                     }),
+                    attachments: [{
+                      filename: 'ticket-qr.png',
+                      content: qrBuffer,
+                      contentId: 'ticket_qr',
+                      contentType: 'image/png',
+                    }],
                   })
 
                   if (sendError) {

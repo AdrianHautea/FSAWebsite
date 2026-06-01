@@ -9,11 +9,12 @@ function fmt(cents: number) { return `$${(cents / 100).toFixed(2)}` }
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', {
     weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+    timeZone: 'America/Chicago',
   })
 }
 
 function fmtTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
 }
 
 /**

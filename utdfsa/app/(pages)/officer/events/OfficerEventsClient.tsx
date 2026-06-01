@@ -33,7 +33,7 @@ function fmt(cents: number) { return `$${(cents / 100).toFixed(2)}` }
 function toDollars(cents: number) { return (cents / 100).toFixed(2) }
 
 function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/Chicago' })
 }
 
 function toDatetimeLocal(iso: string | null | undefined) {

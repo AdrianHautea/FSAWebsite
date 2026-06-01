@@ -3,13 +3,13 @@ export function ticketEmailHtml({
   eventName,
   eventDate,
   location,
-  qrDataUrl,
+  qrCid,
 }: {
   attendeeName: string
   eventName: string
   eventDate: string | null
   location: string | null
-  qrDataUrl: string
+  qrCid: string
 }): string {
   const dateStr = eventDate
     ? new Date(eventDate).toLocaleDateString('en-US', {
@@ -17,6 +17,7 @@ export function ticketEmailHtml({
         year: 'numeric',
         month: 'long',
         day: 'numeric',
+        timeZone: 'America/Chicago',
       })
     : null
 
@@ -56,7 +57,7 @@ export function ticketEmailHtml({
             <table width="100%" cellpadding="0" cellspacing="0">
               <tr>
                 <td align="center" style="padding:16px 0;">
-                  <img src="${qrDataUrl}" width="220" height="220" alt="Ticket QR Code"
+                  <img src="cid:${qrCid}" width="220" height="220" alt="Ticket QR Code"
                     style="display:block;border:1px solid #e5e7eb;border-radius:8px;padding:12px;background:#fff;" />
                 </td>
               </tr>

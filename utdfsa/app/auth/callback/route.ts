@@ -47,6 +47,7 @@ export async function GET(request: Request) {
         role: 'member',
         membership_status: 'pending',
         avatar_url: user.user_metadata?.avatar_url ?? null,
+        contact_email: user.email!,
       })
       .select('id, membership_status, onboarding_complete, role')
       .single()
