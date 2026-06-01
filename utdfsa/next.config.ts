@@ -28,8 +28,8 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               "style-src 'self' 'unsafe-inline'",
-              // allow Google profile images in the navbar
-              "img-src 'self' data: https://lh3.googleusercontent.com",
+              // allow Google profile images in the navbar and S3 cover photos
+              "img-src 'self' data: https://lh3.googleusercontent.com https://*.amazonaws.com",
               "font-src 'self'",
               // allow Supabase and Stripe connections
               `connect-src 'self' ${process.env.NEXT_PUBLIC_SUPABASE_URL} https://api.stripe.com`,

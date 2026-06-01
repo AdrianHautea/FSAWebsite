@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation'
+
 export default function CreatePhotoGalleryPage() {
-  return <main><h1>Create Photo Gallery</h1></main>
+  redirect('/archives')
 }
