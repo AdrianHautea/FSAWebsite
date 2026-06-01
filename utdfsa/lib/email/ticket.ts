@@ -21,6 +21,14 @@ export function ticketEmailHtml({
       })
     : null
 
+  const timeStr = eventDate
+    ? new Date(eventDate).toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone: 'America/Chicago',
+      })
+    : null
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,7 +54,7 @@ export function ticketEmailHtml({
             <p style="margin:0 0 4px;color:#6b7280;font-size:14px;">Hi ${attendeeName},</p>
             <h2 style="margin:8px 0 0;color:#111827;font-size:20px;">${eventName}</h2>
 
-            ${dateStr ? `<p style="margin:16px 0 0;color:#374151;font-size:14px;">📅 ${dateStr}</p>` : ''}
+            ${dateStr ? `<p style="margin:16px 0 0;color:#374151;font-size:14px;">📅 ${dateStr}${timeStr ? ` · ${timeStr} CT` : ''}</p>` : ''}
             ${location ? `<p style="margin:8px 0 0;color:#374151;font-size:14px;">📍 ${location}</p>` : ''}
 
             <p style="margin:24px 0 12px;color:#374151;font-size:14px;">

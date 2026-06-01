@@ -22,6 +22,11 @@ function isTicketed(type: string) {
   return ['party', 'other'].includes(type.toLowerCase())
 }
 
+// Other events are paid (ticketed) but also award attendance points via QR
+function isHybrid(type: string) {
+  return type.toLowerCase() === 'other'
+}
+
 function hasAttendanceQR(type: string) {
   // Every type except Party uses the attendance QR flow
   return type.toLowerCase() !== 'party'
@@ -273,12 +278,14 @@ function EventForm({
         </>
       )}
 
-      {/* ── Free events: attendance points ──────────────────────────────────── */}
-      {!ticketed && (
+      {/* ── Attendance points (free events + Other hybrid) ─────────────────── */}
+      {(!ticketed || isHybrid(form.event_type)) && (
         <div className="border-t pt-4">
           <p className="text-sm font-semibold text-gray-800 mb-1">Attendance</p>
           <p className="text-xs text-gray-500 mb-3">
-            Members scan the attendance QR code to earn points. Open/close the QR in the edit panel after saving.
+            {isHybrid(form.event_type)
+              ? 'Members earn points by scanning the attendance QR in addition to buying a ticket.'
+              : 'Members scan the attendance QR code to earn points. Open/close the QR in the edit panel after saving.'}
           </p>
           <div className="w-40">
             <label className={labelCls}>Points Awarded</label>
@@ -539,7 +546,7 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
                             event.eb_price_members != null
                               ? ` · EB ${fmt(event.eb_price_members)}/${fmt(event.eb_price_nonmembers!)}`
                               : ''
-                          }`
+                          }${isHybrid(event.event_type) && event.points ? ` · +${event.points} pts` : ''}`
                         : event.points
                           ? `${event.points} attendance pts`
                           : 'Free attendance'

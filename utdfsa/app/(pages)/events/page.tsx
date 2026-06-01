@@ -25,6 +25,11 @@ function isTicketed(type: string) {
   return ['party', 'other'].includes(type.toLowerCase())
 }
 
+// Other events are paid + award attendance points — show both price and pts in the badge
+function isHybrid(type: string) {
+  return type.toLowerCase() === 'other'
+}
+
 // ── page ──────────────────────────────────────────────────────────────────────
 
 export default async function EventsPage({
@@ -97,6 +102,7 @@ export default async function EventsPage({
         <div className="flex flex-col gap-5">
           {events.map((event: Event) => {
             const ticketed = isTicketed(event.event_type)
+            const hybrid = isHybrid(event.event_type)
             const now = new Date()
             const isEB =
               ticketed &&
@@ -147,6 +153,9 @@ export default async function EventsPage({
                         <p className="text-xs text-amber-600 mt-0.5">
                           EB ends {fmtDate(event.eb_deadline)}
                         </p>
+                      )}
+                      {hybrid && event.points != null && event.points > 0 && (
+                        <p className="text-sm text-blue-600 font-medium mt-0.5">+{event.points} pts</p>
                       )}
                     </div>
                   ) : (

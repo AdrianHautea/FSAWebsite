@@ -5,11 +5,12 @@ import TicketQR from './TicketQR'
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', {
     weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+    timeZone: 'America/Chicago',
   })
 }
 
 function fmtTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
 }
 
 function fmtCents(cents: number | null) {
@@ -123,7 +124,7 @@ export default async function OrdersPage({
                       </p>
                     )}
                     <p className="text-xs text-gray-400 mt-1">
-                      Ordered {new Date(reg.created_at).toLocaleDateString()} ·{' '}
+                      Ordered {new Date(reg.created_at).toLocaleDateString('en-US', { timeZone: 'America/Chicago' })} ·{' '}
                       {reg.num_tickets} ticket{reg.num_tickets !== 1 ? 's' : ''}
                     </p>
                   </div>
@@ -169,7 +170,7 @@ export default async function OrdersPage({
                           {ticket.checked_in ? (
                             <p className="text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded-full px-3 py-1">
                               ✓ Checked in
-                              {ticket.checked_in_at && ` at ${new Date(ticket.checked_in_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`}
+                              {ticket.checked_in_at && ` at ${new Date(ticket.checked_in_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })}`}
                             </p>
                           ) : (
                             <p className="text-xs text-gray-400">Not yet checked in</p>

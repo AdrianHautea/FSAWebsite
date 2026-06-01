@@ -101,21 +101,25 @@ export async function POST(req: Request) {
               .eq('registration_id', registration_id),
             supabase
               .from('event_registrations')
-              .select('event_id')
+              .select('event_id, member_id')
               .eq('id', registration_id)
               .single(),
           ])
 
           let eventInfo: { name: string; event_date: string | null; location: string | null } | null = null
+          let memberContactEmail: string | null = null
 
-          if (regRow?.event_id) {
-            const { data } = await supabase
-              .from('events')
-              .select('name, event_date, location')
-              .eq('id', regRow.event_id)
-              .single()
-            eventInfo = data
-          }
+          const [eventResult, memberResult] = await Promise.all([
+            regRow?.event_id
+              ? supabase.from('events').select('name, event_date, location').eq('id', regRow.event_id).single()
+              : Promise.resolve({ data: null }),
+            regRow?.member_id
+              ? supabase.from('members').select('contact_email').eq('id', regRow.member_id).single()
+              : Promise.resolve({ data: null }),
+          ])
+
+          eventInfo = eventResult.data
+          memberContactEmail = memberResult.data?.contact_email ?? null
 
           console.log(
             `[webhook] registration ${registration_id}: tickets=${tickets?.length ?? 0}, eventInfo=${eventInfo?.name ?? 'NOT FOUND'}`
@@ -142,9 +146,12 @@ export async function POST(req: Request) {
                     [ticket.attendee_fname, ticket.attendee_lname].filter(Boolean).join(' ') ||
                     'Attendee'
 
+                  // For members, prefer their stored contact_email over the attendee email on the ticket
+                  const recipientEmail = memberContactEmail ?? ticket.attendee_email!
+
                   const { error: sendError } = await resend.emails.send({
                     from: process.env.RESEND_FROM_EMAIL!,
-                    to: ticket.attendee_email!,
+                    to: recipientEmail,
                     subject: `Your ticket for ${eventInfo!.name}`,
                     html: ticketEmailHtml({
                       attendeeName,
@@ -164,7 +171,7 @@ export async function POST(req: Request) {
                   if (sendError) {
                     console.error('[webhook] Resend error for ticket', ticket.id, sendError)
                   } else {
-                    console.log('[webhook] Email sent to', ticket.attendee_email)
+                    console.log('[webhook] Email sent to', recipientEmail)
                   }
                 })
             )

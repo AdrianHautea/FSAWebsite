@@ -39,11 +39,11 @@ export default function ScanPage() {
 
         setResult(scanResult)
 
-        // clear overlay and re-arm for next scan after 4 seconds
+        // clear overlay and re-arm for next scan after 2.5 seconds
         setTimeout(() => {
           setResult(null)
           processingRef.current = false
-        }, 4000)
+        }, 2500)
       },
       () => {} // ignore per-frame errors
     ).catch(console.error)
@@ -85,7 +85,7 @@ export default function ScanPage() {
             <h1 className="text-4xl font-black">INVALID TICKET</h1>
           )}
 
-          <p className="mt-8 opacity-50 text-sm">Resetting in 4 seconds...</p>
+          <p className="mt-8 opacity-50 text-sm">Resetting in 2.5 seconds...</p>
         </div>
       )}
 
