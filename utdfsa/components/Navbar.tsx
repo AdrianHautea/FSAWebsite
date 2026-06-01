@@ -83,10 +83,10 @@ export default function Navbar({ initialMember }: NavbarProps) {
 
           {goodphilOpen && (
             <div className="absolute top-full left-0 mt-2 w-36 bg-white shadow-lg rounded-lg py-1 z-50">
-              <Link href="/goodphil/cultural" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setGoodphilOpen(false)}>Cultural</Link>
-              <Link href="/goodphil/modern" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setGoodphilOpen(false)}>Modern</Link>
-              <Link href="/goodphil/spirit" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setGoodphilOpen(false)}>Spirit</Link>
-              <Link href="/goodphil/sports" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setGoodphilOpen(false)}>Sports</Link>
+              <Link href="/goodphil/cultural" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setGoodphilOpen(false)}>Cultural</Link>
+              <Link href="/goodphil/modern" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setGoodphilOpen(false)}>Modern</Link>
+              <Link href="/goodphil/spirit" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setGoodphilOpen(false)}>Spirit</Link>
+              <Link href="/goodphil/sports" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setGoodphilOpen(false)}>Sports</Link>
             </div>
           )}
         </li>
@@ -123,16 +123,16 @@ export default function Navbar({ initialMember }: NavbarProps) {
 
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-1 z-50">
-                <Link href="/member/profile" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Profile</Link>
-                <Link href="/member/orders" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Order History</Link>
-                <Link href="/member/attendance" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Attendance History</Link>
+                <Link href="/member/profile" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Profile</Link>
+                <Link href="/member/orders" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Order History</Link>
+                <Link href="/member/attendance" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Attendance History</Link>
 
                 {isOfficer && (
                   <>
                     <hr className="my-1" />
-                    <Link href="/officer/events" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Create Event</Link>
-                    <Link href="/officer/gallery" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Create Gallery</Link>
-                    <Link href="/officer/scan" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Scan QR Codes</Link>
+                    <Link href="/officer/events" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Manage Events</Link>
+                    <Link href="/officer/gallery" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Create Gallery</Link>
+                    <Link href="/officer/scan" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Scan QR Codes</Link>
                   </>
                 )}
 
