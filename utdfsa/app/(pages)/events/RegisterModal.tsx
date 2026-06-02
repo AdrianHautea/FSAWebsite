@@ -203,7 +203,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                 <span className="text-gray-700">
                   {tickets.length} ticket{tickets.length !== 1 ? 's' : ''}
                 </span>
-                <span className="font-bold text-base">
+                <span className="font-bold text-base text-gray-900">
                   {total === 0 ? 'Free' : fmt(total)}
                 </span>
               </div>

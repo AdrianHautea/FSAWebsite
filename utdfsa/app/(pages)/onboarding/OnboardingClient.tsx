@@ -203,7 +203,7 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
               value={profileForm.major}
               onChange={e => setProfileForm(p => ({
                 ...p,
-                major: toSentenceCase(e.target.value)
+                major: toTitleCase(e.target.value)
               }))}
               className="w-full border rounded-lg p-2 text-sm"
               placeholder="e.g. Computer Science"

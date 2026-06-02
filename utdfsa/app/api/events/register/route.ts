@@ -18,12 +18,12 @@ export async function POST(req: Request) {
   const supabase = await createUserClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  let member: { id: string; membership_status: string; first_name: string; last_name: string } | null = null
+  let member: { id: string; membership_status: string; first_name: string; last_name: string; contact_email: string | null } | null = null
 
   if (user?.email) {
     const { data } = await admin
       .from('members')
-      .select('id, membership_status, first_name, last_name')
+      .select('id, membership_status, first_name, last_name, contact_email')
       .eq('email', user.email)
       .maybeSingle()
     member = data
@@ -127,7 +127,7 @@ export async function POST(req: Request) {
   }
 
   // ── create Stripe checkout ─────────────────────────────────────────────────
-  const customerEmail = user?.email ?? tickets[0].email
+  const customerEmail = member?.contact_email ?? user?.email ?? tickets[0].email
   const successUrl = isMember
     ? `${process.env.NEXT_PUBLIC_SITE_URL}/member/orders?success=true`
     : `${process.env.NEXT_PUBLIC_SITE_URL}/events?success=true`

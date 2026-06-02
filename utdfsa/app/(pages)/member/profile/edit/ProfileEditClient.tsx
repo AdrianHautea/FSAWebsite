@@ -148,7 +148,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
           <input
             type="text"
             value={form.major ?? ''}
-            onChange={e => set('major', toSentenceCase(e.target.value))}
+            onChange={e => set('major', toTitleCase(e.target.value))}
             className="w-full border rounded-lg p-2 text-sm"
             placeholder="e.g. Computer Science"
           />

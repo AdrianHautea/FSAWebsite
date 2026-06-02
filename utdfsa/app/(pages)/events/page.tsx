@@ -56,13 +56,14 @@ export default async function EventsPage({
     first_name: string
     last_name: string
     email: string
+    contact_email: string | null
   } | null = null
   let registeredEventIds = new Set<string>()
 
   if (user?.email) {
     const { data } = await admin
       .from('members')
-      .select('id, membership_status, first_name, last_name, email')
+      .select('id, membership_status, first_name, last_name, email, contact_email')
       .eq('email', user.email)
       .maybeSingle()
     member = data
@@ -194,7 +195,7 @@ export default async function EventsPage({
                         memberInfo={isMember && member ? {
                           fname: member.first_name,
                           lname: member.last_name,
-                          email: member.email,
+                          email: member.contact_email ?? member.email,
                         } : null}
                       />
                     )
