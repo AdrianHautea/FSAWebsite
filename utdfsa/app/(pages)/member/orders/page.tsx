@@ -33,11 +33,13 @@ export default async function OrdersPage({
 
   const { data: member } = await admin
     .from('members')
-    .select('id')
+    .select('id, contact_email')
     .eq('email', user.email!)
     .maybeSingle()
 
   if (!member) redirect('/login')
+
+  const contactEmail = member.contact_email ?? user.email!
 
   // registrations newest-first, with tickets inline
   const { data: registrations } = await admin
@@ -161,9 +163,7 @@ export default async function OrdersPage({
                           <p className="font-semibold text-gray-900">
                             {[ticket.attendee_fname, ticket.attendee_lname].filter(Boolean).join(' ') || 'Attendee'}
                           </p>
-                          {ticket.attendee_email && (
-                            <p className="text-xs text-gray-500">{ticket.attendee_email}</p>
-                          )}
+                          <p className="text-xs text-gray-500">{contactEmail}</p>
 
                           <TicketQR code={ticket.qr_code} />
 

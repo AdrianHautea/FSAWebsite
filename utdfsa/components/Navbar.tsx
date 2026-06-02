@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import type { Member } from '@/types/database'
 
@@ -57,6 +58,7 @@ export default function Navbar({ initialMember }: NavbarProps) {
   }
 
   const isOfficer = member?.role === 'officer' || member?.role === 'admin'
+  const pathname = usePathname()
 
   return (
     <nav className="flex justify-between items-center px-6 py-4">
@@ -148,7 +150,10 @@ export default function Navbar({ initialMember }: NavbarProps) {
           </li>
         ) : (
           <li>
-            <Link href="/login" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700">
+            <Link
+              href={`/login?next=${encodeURIComponent(pathname)}`}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
+            >
               Sign In
             </Link>
           </li>

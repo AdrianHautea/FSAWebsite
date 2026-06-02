@@ -48,7 +48,8 @@ export async function POST(req: Request) {
           payment_verified_at: new Date().toISOString(),
           payment_provider: 'stripe',
           stripe_checkout_session_id: session.id,
-          stripe_payment_intent_id: session.payment_intent as string,
+          stripe_payment_intent_id: (session.payment_intent as string) ?? null,
+          stripe_customer_id: (session.customer as string) ?? null,
           membership_expires_at: settings.membershipExpiry.toISOString(),
           payment_method: session.payment_method_types?.[0] ?? 'card',
           payment_metadata: {

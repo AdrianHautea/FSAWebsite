@@ -11,8 +11,10 @@ type ScanResult =
 
 export default function ScanPage() {
   const [result, setResult] = useState<ScanResult>(null)
+  const [cameraError, setCameraError] = useState<string | null>(null)
   const processingRef = useRef(false)
   const scannerRef = useRef<Html5Qrcode | null>(null)
+  const startedRef = useRef(false)
 
   useEffect(() => {
     const scanner = new Html5Qrcode('qr-reader')
@@ -46,15 +48,43 @@ export default function ScanPage() {
         }, 2500)
       },
       () => {} // ignore per-frame errors
-    ).catch(console.error)
+    ).then(() => {
+      startedRef.current = true
+    }).catch((err: unknown) => {
+      const msg = err instanceof Error ? err.message : String(err)
+      if (msg.toLowerCase().includes('permission') || msg.toLowerCase().includes('denied')) {
+        setCameraError('Camera access was denied. Please allow camera access in your browser settings and reload the page.')
+      } else if (msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('no camera') || msg.toLowerCase().includes('could not start')) {
+        setCameraError('No camera was detected on this device. Connect a camera or use a mobile device to scan tickets.')
+      } else {
+        setCameraError(`Camera could not be started: ${msg}`)
+      }
+    })
 
     return () => {
-      scanner.stop().catch(() => {})
+      if (startedRef.current) scanner.stop().catch(() => {})
     }
   }, []) // scanner starts once and stays running — no stop/restart cycle
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
+
+      {/* no-camera modal */}
+      {cameraError && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6">
+          <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center">
+            <div className="text-5xl mb-4">📷</div>
+            <h2 className="text-lg font-bold text-gray-900 mb-2">Camera Not Available</h2>
+            <p className="text-sm text-gray-600 mb-6">{cameraError}</p>
+            <button
+              onClick={() => setCameraError(null)}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* result overlay */}
       {result && (
