@@ -1,14 +1,15 @@
 import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 import { stripe } from '@/lib/stripe'
 import { redirect } from 'next/navigation'
+import { getSettings } from '@/lib/settings'
 import OnboardingClient from './OnboardingClient'
 
 interface Props {
-  searchParams: Promise<{ session_id?: string }>
+  searchParams: Promise<{ session_id?: string; reapply?: string }>
 }
 
 export default async function OnboardingPage({ searchParams }: Props) {
-  const { session_id } = await searchParams
+  const { session_id, reapply } = await searchParams
 
   const supabase = await createUserClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -19,14 +20,28 @@ export default async function OnboardingPage({ searchParams }: Props) {
 
   const { data: member } = await admin
     .from('members')
-    .select('id, first_name, membership_status, onboarding_complete, role')
+    .select('id, first_name, membership_status, onboarding_complete, role, member_type')
     .eq('email', user.email!)
     .maybeSingle()
 
   if (!member) redirect('/login')
 
-  // already done — nothing to do here
-  if (member.onboarding_complete) {
+  // handle reapply before the onboarding_complete gate so not_interested members
+  // can re-enter the flow without being immediately redirected to profile
+  if (reapply === 'true') {
+    if (member.member_type === 'not_interested') {
+      // reset so they can go through onboarding again
+      await admin
+        .from('members')
+        .update({ onboarding_complete: false, member_type: null })
+        .eq('id', member.id)
+      // fall through to render onboarding normally
+    } else {
+      // already applied as ading or kuyate — do not allow reapply
+      redirect('/member/profile')
+    }
+  } else if (member.onboarding_complete) {
+    // already done — nothing to do here
     redirect('/member/profile')
   }
 
@@ -45,8 +60,7 @@ export default async function OnboardingPage({ searchParams }: Props) {
     if (stripeSession?.payment_status === 'paid') {
       // payment confirmed by stripe directly — update immediately
       // the webhook will also fire and update, but this handles the race
-      const { membershipExpiry } = await import('@/lib/settings')
-        .then(m => m.getSettings())
+      const { membershipExpiry } = await getSettings()
 
       await admin
         .from('members')
@@ -71,10 +85,13 @@ export default async function OnboardingPage({ searchParams }: Props) {
     redirect('/membership')
   }
 
+  const { kuyateApplicationsOpen } = await getSettings()
+
   return (
     <OnboardingClient
       memberId={member.id}
       firstName={member.first_name}
+      isKuyateOpen={kuyateApplicationsOpen}
     />
   )
 }

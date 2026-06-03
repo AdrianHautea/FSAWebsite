@@ -28,6 +28,7 @@ export interface Member {
   avatar_url: string | null
   onboarding_complete: boolean
   contact_email: string | null
+  member_type: 'ading' | 'kuyate' | 'not_interested' | null
 }
 
 export interface Event {
@@ -131,4 +132,18 @@ export interface AppSettings {
   earlyBirdPriceCents: number
   earlyBirdDeadline: Date
   membershipYear: string
+}
+
+export interface GoodphilEligibility {
+  id: string
+  first_name: string
+  last_name: string
+  email: string
+  pamilya: string | null
+  points: number | null
+  dues_paid: boolean
+  attended_risk_mgmt: boolean
+  total_meetings_attended: number
+  meets_points_requirement: boolean
+  automated_requirements_met: boolean
 }

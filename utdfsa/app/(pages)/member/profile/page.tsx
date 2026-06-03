@@ -1,7 +1,14 @@
 import { createUserClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import { getSettings } from '@/lib/settings'
 
 export default async function ProfilePage() {
+  // ============================================================
+  // DATA — do not modify this section
+  // authenticates the user, fetches the full member row,
+  // and reads kuyateApplicationsOpen from settings to conditionally
+  // render the re-apply section for not_interested members.
+  // ============================================================
   const supabase = await createUserClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -15,6 +22,17 @@ export default async function ProfilePage() {
 
   if (!member) redirect('/login')
 
+  const { kuyateApplicationsOpen } = await getSettings()
+
+  // ============================================================
+  // UI — safe to restyle everything below this line
+  // available data:
+  //   member (Member) — full member row
+  //   kuyateApplicationsOpen (bool) — whether kuyate applications are open;
+  //     used to show/hide the kuya/ate re-apply link
+  // change classnames, layout, colors, and typography freely
+  // do not remove or rename the variables being rendered
+  // ============================================================
   return (
     <main className="max-w-2xl mx-auto p-8">
       <h1 className="text-2xl font-bold mb-6">My Profile</h1>
@@ -59,12 +77,14 @@ export default async function ProfilePage() {
             <span className="text-gray-500">Role</span>
             <span className="capitalize">{member.role}</span>
           </div>
+          {/* only renders when pamilya is assigned — do not remove this condition */}
           {member.pamilya && (
             <div className="flex justify-between">
               <span className="text-gray-500">Pamilya</span>
               <span>{member.pamilya}</span>
             </div>
           )}
+          {/* only renders when membership has an expiry date — do not remove this condition */}
           {member.membership_expires_at && (
             <div className="flex justify-between">
               <span className="text-gray-500">Expires</span>
@@ -89,18 +109,21 @@ export default async function ProfilePage() {
       <section className="mb-6 p-4 border rounded-lg">
         <h3 className="font-semibold mb-3">Personal Info</h3>
         <div className="flex flex-col gap-2 text-sm">
+          {/* only renders when phone is set — do not remove this condition */}
           {member.phone && (
             <div className="flex justify-between">
               <span className="text-gray-500">Phone</span>
               <span>{member.phone}</span>
             </div>
           )}
+          {/* only renders when year is set — do not remove this condition */}
           {member.year && (
             <div className="flex justify-between">
               <span className="text-gray-500">Year</span>
               <span>{member.year}</span>
             </div>
           )}
+          {/* only renders when major is set — do not remove this condition */}
           {member.major && (
             <div className="flex justify-between">
               <span className="text-gray-500">Major</span>
@@ -110,12 +133,39 @@ export default async function ProfilePage() {
         </div>
       </section>
 
+      {/* Re-apply section — only renders for members who opted out of the pamilya program */}
+      {/* do not remove this condition */}
+      {member.member_type === 'not_interested' && (
+        <section className="mb-6 p-4 border border-blue-200 rounded-lg bg-blue-50">
+          <h3 className="font-semibold mb-1">Changed your mind?</h3>
+          <p className="text-sm text-gray-800 mb-3">You can still apply.</p>
+          <div className="flex gap-3 flex-wrap">
+            <a
+              href="/onboarding?reapply=true"
+              className="text-sm font-medium px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+            >
+              Apply as Ading
+            </a>
+            {/* only renders when kuyate applications are open — do not remove this condition */}
+            {kuyateApplicationsOpen && (
+              <a
+                href="/onboarding?reapply=true"
+                className="text-sm font-medium px-4 py-2 bg-white hover:bg-gray-50 text-blue-600 border border-blue-300 rounded-lg"
+              >
+                Apply as Kuya/Ate
+              </a>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* edit profile button — safe to restyle, keep the href */}
       <a href="/member/profile/edit" className="inline-block mt-4 text-sm text-blue-600 underline hover:text-blue-800">
         Edit Profile
       </a>
 
-      {/* Unpaid membership banner */}
+      {/* Unpaid membership banner — only renders when membership is not active */}
+      {/* do not remove this condition */}
       {member.membership_status !== 'active' && (
         <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
           Your membership is not yet active.{' '}

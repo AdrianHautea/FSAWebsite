@@ -6,12 +6,15 @@ import { toTitleCase, toSentenceCase, formatPhone } from '@/lib/format'
 
 /**
  * Props — passed down from OnboardingPage server component (onboarding/page.tsx)
- *   memberId  — the Supabase members.id of the signed-in user; sent to the submit API
- *   firstName — pre-filled greeting name pulled from the member row
+ *   memberId       — the Supabase members.id of the signed-in user; sent to the submit API
+ *   firstName      — pre-filled greeting name pulled from the member row
+ *   isKuyateOpen   — whether kuyate applications are currently open (from settings table);
+ *                    when false, only ading + not-interested are offered in the pick step
  */
 interface Props {
   memberId: string
   firstName: string
+  isKuyateOpen: boolean
 }
 
 // the two membership types members can pick from
@@ -23,7 +26,7 @@ type MemberType = 'ading' | 'kuyate'
 // Do not merge steps, reorder them, or replace the step state with a router-based flow.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function OnboardingClient({ memberId, firstName }: Props) {
+export default function OnboardingClient({ memberId, firstName, isKuyateOpen }: Props) {
   const router = useRouter()
   const [step, setStep] = useState<'pick' | 'ading' | 'kuyate' | 'profile'>('pick')
   const [memberType, setMemberType] = useState<MemberType | null>(null)
@@ -53,6 +56,21 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
   function handleMemberTypePick(type: MemberType) {
     setMemberType(type)
     setStep('profile') // always collect profile info first
+  }
+
+  async function handleNotInterested() {
+    setLoading(true)
+    setError(null)
+    // api: POST /api/onboarding/not-interested — marks onboarding_complete + member_type='not_interested'
+    const res = await fetch('/api/onboarding/not-interested', { method: 'POST' })
+    const data = await res.json()
+    if (!res.ok) {
+      setError(data.error ?? 'something went wrong, please try again')
+      setLoading(false)
+      return
+    }
+    // route: /onboarding/basic-info — collects name, phone, year, major, pamilya preference
+    router.push('/onboarding/basic-info')
   }
 
   async function handleProfileSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -100,6 +118,11 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
   // UI — safe to restyle everything below this line
   // available data (step === 'pick'):
   //   firstName (string) — greeting name from the member row
+  //   isKuyateOpen (bool) — whether kuyate applications are currently open;
+  //     when false: show "Apply as Ading" + full "Not Interested" button only
+  //     when true: show ading + kuyate buttons with "Not Interested" as a subtle text link
+  //   loading (bool) — true while handleNotInterested API call is in flight
+  //   error (string | null) — set if handleNotInterested returns an error
   // change classnames, layout, colors, and typography freely
   // do not remove or rename the variables being rendered
   // ============================================================
@@ -118,24 +141,58 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
         <div className="flex flex-col gap-4">
           <button
             onClick={() => handleMemberTypePick('ading')}
-            className="p-6 border-2 rounded-lg text-left hover:border-blue-500 transition-colors"
+            disabled={loading}
+            className="p-6 border-2 rounded-lg text-left hover:border-blue-500 transition-colors disabled:opacity-50"
           >
-            <h2 className="font-bold text-lg mb-1">Ading</h2>
+            {/* label differs based on whether kuyate is available — do not remove this condition */}
+            <h2 className="font-bold text-lg mb-1">{isKuyateOpen ? 'Ading' : 'Apply as Ading'}</h2>
             <p className="text-sm text-gray-500">
               I'm new and want to be placed in a pamilya as a member.
             </p>
           </button>
 
-          <button
-            onClick={() => handleMemberTypePick('kuyate')}
-            className="p-6 border-2 rounded-lg text-left hover:border-blue-500 transition-colors"
-          >
-            <h2 className="font-bold text-lg mb-1">Kuya / Ate</h2>
-            <p className="text-sm text-gray-500">
-              I want to be a pamilya leader and mentor new members.
-            </p>
-          </button>
+          {/* only renders when kuyate applications are open — do not remove this condition */}
+          {isKuyateOpen && (
+            <button
+              onClick={() => handleMemberTypePick('kuyate')}
+              disabled={loading}
+              className="p-6 border-2 rounded-lg text-left hover:border-blue-500 transition-colors disabled:opacity-50"
+            >
+              <h2 className="font-bold text-lg mb-1">Kuya / Ate</h2>
+              <p className="text-sm text-gray-500">
+                I want to be a pamilya leader and mentor new members.
+              </p>
+            </button>
+          )}
+
+          {/* not interested — full button when kuyate is closed, subtle text link when open */}
+          {/* do not remove this condition */}
+          {isKuyateOpen ? (
+            <button
+              onClick={handleNotInterested}
+              disabled={loading}
+              className="text-sm text-gray-400 hover:text-gray-600 text-center mt-2 disabled:opacity-50"
+            >
+              {loading ? 'saving...' : 'Not interested in the pamilya program'}
+            </button>
+          ) : (
+            <button
+              onClick={handleNotInterested}
+              disabled={loading}
+              className="p-6 border-2 border-gray-200 rounded-lg text-left hover:border-gray-300 transition-colors disabled:opacity-50"
+            >
+              <h2 className="font-bold text-lg mb-1 text-gray-900">Not Interested</h2>
+              <p className="text-sm text-gray-600">
+                I'll sit out the pamilya program for now. I can still apply later if I change my mind.
+              </p>
+            </button>
+          )}
         </div>
+
+        {/* only renders when handleNotInterested returns an API error — do not remove this condition */}
+        {error && (
+          <p className="text-sm text-red-500 mt-4">{error}</p>
+        )}
       </main>
     )
   }

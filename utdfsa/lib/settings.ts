@@ -29,5 +29,8 @@ export async function getSettings() {
     earlyBirdDeadline: new Date(map.membership_early_bird_deadline ?? '2025-09-15'),
     membershipYear: map.membership_year ?? '2025-2026',
     membershipExpiry,
+    // kuyate applications flag — stored as the string 'true' in the settings table
+    kuyateApplicationsOpen: map.kuyate_applications_open === 'true',
+    kuyateDeadline: map.kuyate_deadline ? new Date(map.kuyate_deadline) : null,
   }
 }

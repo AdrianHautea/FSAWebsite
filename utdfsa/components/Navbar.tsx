@@ -175,6 +175,8 @@ export default function Navbar({ initialMember }: NavbarProps) {
                     <Link href="/officer/gallery" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Create Gallery</Link>
                     {/* route: /officer/scan — officer QR code ticket scanner — do not change this path */}
                     <Link href="/officer/scan" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Scan QR Codes</Link>
+                    {/* route: /officer/goodphil — goodphil eligibility lookup — do not change this path */}
+                    <Link href="/officer/goodphil" className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Goodphil Eligibility</Link>
                   </>
                 )}
 
