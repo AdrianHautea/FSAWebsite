@@ -2,6 +2,13 @@ import { createUserClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 
 export default async function AttendancePage() {
+  // ============================================================
+  // DATA — do not modify this section
+  // authenticates the user and queries:
+  //   members — for id and current point total
+  //   attendance (joined with events) — full attendance history,
+  //     newest first; events fields: name, event_date, event_type, points
+  // ============================================================
   const supabase = await createUserClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -21,6 +28,16 @@ export default async function AttendancePage() {
     .eq('member_id', member.id)
     .order('created_at', { ascending: false })
 
+  // ============================================================
+  // UI — safe to restyle everything below this line
+  // available data:
+  //   member.points (number) — lifetime point total
+  //   records (array) — each record has:
+  //     record.id, record.created_at
+  //     event.name, event.event_date, event.event_type, event.points
+  // change classnames, layout, colors, and typography freely
+  // do not remove or rename the variables being rendered
+  // ============================================================
   return (
     <main className="max-w-2xl mx-auto p-8">
       <h1 className="text-2xl font-bold mb-2">Attendance History</h1>

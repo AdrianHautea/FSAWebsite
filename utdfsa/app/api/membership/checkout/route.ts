@@ -4,6 +4,11 @@ import { getSettings } from '@/lib/settings'
 import { NextResponse } from 'next/server'
 
 export async function POST() {
+  // ============================================================
+  // DATA — do not modify this section
+  // all database queries and auth checks live here
+  // changing these will break functionality
+  // ============================================================
   const supabase = await createUserClient()
   const { data: { user } } = await supabase.auth.getUser()
 

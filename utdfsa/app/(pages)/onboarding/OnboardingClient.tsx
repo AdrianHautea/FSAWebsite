@@ -4,6 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toTitleCase, toSentenceCase, formatPhone } from '@/lib/format'
 
+/**
+ * Props — passed down from OnboardingPage server component (onboarding/page.tsx)
+ *   memberId  — the Supabase members.id of the signed-in user; sent to the submit API
+ *   firstName — pre-filled greeting name pulled from the member row
+ */
 interface Props {
   memberId: string
   firstName: string
@@ -11,6 +16,12 @@ interface Props {
 
 // the two membership types members can pick from
 type MemberType = 'ading' | 'kuyate'
+
+// ── IMPORTANT — do not restructure the step logic below ──────────────────────
+// Rule 7: This is a multi-step form. The step flow (pick → profile → ading|kuyate)
+// must be preserved exactly. Each step is a separate conditional return.
+// Do not merge steps, reorder them, or replace the step state with a router-based flow.
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function OnboardingClient({ memberId, firstName }: Props) {
   const router = useRouter()
@@ -62,6 +73,7 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
     setLoading(true)
     setError(null)
 
+    // api: calls POST /api/onboarding/submit — saves profile + application data and marks onboarding complete — do not change this endpoint
     const res = await fetch('/api/onboarding/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -80,9 +92,17 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
       return
     }
 
-    // redirect to profile on success
+    // route: /member/profile — member profile page shown after onboarding completes — do not change this path
     router.push('/member/profile')
   }
+
+  // ============================================================
+  // UI — safe to restyle everything below this line
+  // available data (step === 'pick'):
+  //   firstName (string) — greeting name from the member row
+  // change classnames, layout, colors, and typography freely
+  // do not remove or rename the variables being rendered
+  // ============================================================
 
   // step 1 — pick member type
   if (step === 'pick') {
@@ -119,6 +139,15 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
       </main>
     )
   }
+
+  // ============================================================
+  // UI — safe to restyle everything below this line
+  // available data (step === 'profile'):
+  //   profileForm — { first_name, last_name, phone, year, major }
+  //   error (string | null) — validation error from handleProfileSubmit
+  // change classnames, layout, colors, and typography freely
+  // do not remove or rename the variables being rendered
+  // ============================================================
 
   // step 2 — basic profile info (same for both types)
   if (step === 'profile') {
@@ -210,6 +239,7 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
             />
           </div>
 
+          {/* only renders when handleProfileSubmit finds a validation error — do not remove this condition */}
           {error && (
             <p className="text-sm text-red-500">{error}</p>
           )}
@@ -233,6 +263,16 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
     )
   }
 
+  // ============================================================
+  // UI — safe to restyle everything below this line
+  // available data (step === 'ading'):
+  //   adingForm — { preferred_pamilya, additional_notes }
+  //   loading (bool) — true while the submit API call is in flight
+  //   error (string | null) — API error from handleFinalSubmit
+  // change classnames, layout, colors, and typography freely
+  // do not remove or rename the variables being rendered
+  // ============================================================
+
   // step 3a — ading-specific questions (placeholder until pam chair provides questions)
   if (step === 'ading') {
     return (
@@ -244,8 +284,8 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
         </p>
 
         <form onSubmit={handleFinalSubmit} className="flex flex-col gap-4">
-          {/* 
-            placeholder field — replace this entire section with 
+          {/*
+            placeholder field — replace this entire section with
             real questions once pam chair provides them.
             add the corresponding columns to ading_applications table first,
             then add them here and to the adingForm state above.
@@ -283,6 +323,7 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
             />
           </div>
 
+          {/* only renders when the submit API returns an error — do not remove this condition */}
           {error && (
             <p className="text-sm text-red-500">{error}</p>
           )}
@@ -292,6 +333,7 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 mt-2"
           >
+            {/* only shows "submitting..." while the API call is in flight — do not remove this condition */}
             {loading ? 'submitting...' : 'Complete Sign Up'}
           </button>
 
@@ -307,6 +349,16 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
     )
   }
 
+  // ============================================================
+  // UI — safe to restyle everything below this line
+  // available data (step === 'kuyate'):
+  //   kuyateForm — { additional_notes }
+  //   loading (bool) — true while the submit API call is in flight
+  //   error (string | null) — API error from handleFinalSubmit
+  // change classnames, layout, colors, and typography freely
+  // do not remove or rename the variables being rendered
+  // ============================================================
+
   // step 3b — kuyate-specific questions (placeholder)
   if (step === 'kuyate') {
     return (
@@ -318,7 +370,7 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
         </p>
 
         <form onSubmit={handleFinalSubmit} className="flex flex-col gap-4">
-          {/* 
+          {/*
             placeholder — replace with real kuyate questions from pam chair.
             add columns to kuyate_applications table first, then add fields here.
           */}
@@ -335,6 +387,7 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
             />
           </div>
 
+          {/* only renders when the submit API returns an error — do not remove this condition */}
           {error && (
             <p className="text-sm text-red-500">{error}</p>
           )}
@@ -344,6 +397,7 @@ export default function OnboardingClient({ memberId, firstName }: Props) {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 mt-2"
           >
+            {/* only shows "submitting..." while the API call is in flight — do not remove this condition */}
             {loading ? 'submitting...' : 'Complete Sign Up'}
           </button>
 

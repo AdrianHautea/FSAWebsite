@@ -10,6 +10,11 @@ import { NextResponse } from 'next/server'
 // Do NOT add bodyParser: false here (that's Pages Router only and is ignored in App Router).
 
 export async function POST(req: Request) {
+  // ============================================================
+  // DATA — do not modify this section
+  // all database queries and auth checks live here
+  // changing these will break functionality
+  // ============================================================
   const body = await req.text()
   const signature = req.headers.get('stripe-signature')
 

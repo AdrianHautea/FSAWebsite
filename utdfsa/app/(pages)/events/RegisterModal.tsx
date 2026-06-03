@@ -4,6 +4,12 @@ import { useState } from 'react'
 
 interface Ticket { fname: string; lname: string; email: string }
 
+/**
+ * Props — passed down from EventsPage server component (events/page.tsx)
+ *   event      — shape of the event being registered for (id, name, date, location, prices, early-bird flag)
+ *   isMember   — true when the logged-in user has an active membership; controls pricing and ticket limits
+ *   memberInfo — pre-filled name + contact_email for the first ticket slot; null for non-members / unauthenticated
+ */
 interface Props {
   event: {
     id: string
@@ -24,6 +30,22 @@ function fmt(cents: number) {
 
 const blank = (): Ticket => ({ fname: '', lname: '', email: '' })
 
+// ============================================================
+// UI — safe to restyle everything below this line
+// available data:
+//   event       — id, name, event_date, location, price_cents_members,
+//                 price_cents_nonmembers, is_early_bird
+//   isMember    — bool; true = member pricing + 1-ticket limit
+//   memberInfo  — { fname, lname, email } | null; pre-fills the first ticket row
+//   tickets     — array of { fname, lname, email } being registered
+//   pricePerTicket — computed from isMember + event prices (cents)
+//   total       — pricePerTicket * tickets.length (cents)
+//   loading     — true while the checkout API call is in flight
+//   error       — string | null; validation or API error
+//   open        — bool; controls modal visibility
+// change classnames, layout, colors, and typography freely
+// do not remove or rename the variables being rendered
+// ============================================================
 export default function RegisterModal({ event, isMember, memberInfo }: Props) {
   const [open, setOpen] = useState(false)
   const [tickets, setTickets] = useState<Ticket[]>([
@@ -55,6 +77,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
     setLoading(true)
 
     try {
+      // api: calls POST /api/events/register — creates registration + Stripe checkout session — do not change this endpoint
       const res = await fetch('/api/events/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -68,6 +91,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
         return
       }
 
+      // redirect to Stripe checkout (or success page for free events)
       window.location.href = data.url
     } catch {
       setError('Network error — please try again.')
@@ -85,6 +109,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
         Register
       </button>
 
+      {/* only renders when the user has clicked the Register button — do not remove this condition */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -111,6 +136,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
 
               {/* pricing notice */}
               <div className="bg-gray-50 rounded-lg p-3 text-sm">
+                {/* only renders the member-rate label when the user is an active member — do not remove this condition */}
                 {isMember ? (
                   <p className="text-blue-700 font-medium">
                     Member rate · {fmt(pricePerTicket)}/ticket
@@ -122,6 +148,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                     {event.is_early_bird && ' (Early Bird)'}
                   </p>
                 )}
+                {/* only renders the 1-ticket limit notice for members — do not remove this condition */}
                 {isMember && (
                   <p className="text-gray-400 text-xs mt-1">
                     Members are limited to one ticket per event.
@@ -136,6 +163,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                     <p className="text-sm font-semibold text-gray-700">
                       <span className="text-gray-800">{i === 0 ? 'Your info' : `Attendee ${i + 1}`}</span>
                     </p>
+                    {/* only renders the Remove button for non-member extra attendees (not the first slot) — do not remove this condition */}
                     {!isMember && i > 0 && (
                       <button
                         type="button"
@@ -150,6 +178,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs font-medium text-gray-600 block mb-1">First Name</label>
+                      {/* disabled for the member's own first ticket — their name comes from memberInfo — do not remove disabled */}
                       <input
                         required
                         value={ticket.fname}
@@ -161,6 +190,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                     </div>
                     <div>
                       <label className="text-xs font-medium text-gray-600 block mb-1">Last Name</label>
+                      {/* disabled for the member's own first ticket — their name comes from memberInfo — do not remove disabled */}
                       <input
                         required
                         value={ticket.lname}
@@ -174,6 +204,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
 
                   <div>
                     <label className="text-xs font-medium text-gray-600 block mb-1">Email</label>
+                    {/* disabled for the member's own first ticket — their contact_email comes from memberInfo — do not remove disabled */}
                     <input
                       required
                       type="email"
@@ -187,7 +218,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                 </div>
               ))}
 
-              {/* add ticket (non-members only) */}
+              {/* only renders the add-attendee button for non-members who haven't hit the 10-ticket cap — do not remove this condition */}
               {!isMember && tickets.length < 10 && (
                 <button
                   type="button"
@@ -208,6 +239,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                 </span>
               </div>
 
+              {/* only renders when the API or network returned an error — do not remove this condition */}
               {error && (
                 <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
                   {error}
@@ -219,6 +251,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                 disabled={loading}
                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-bold py-3 rounded-xl text-sm transition-colors"
               >
+                {/* only shows "Processing…" while the checkout API call is in flight — do not remove this condition */}
                 {loading
                   ? 'Processing…'
                   : total === 0

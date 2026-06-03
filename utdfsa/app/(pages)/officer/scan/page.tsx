@@ -9,6 +9,16 @@ type ScanResult =
   | { valid: false; reason: 'NOT_PAID' | 'INVALID_TICKET'; message: string }
   | null
 
+// ============================================================
+// UI — safe to restyle everything below this line
+// available data:
+//   result (ScanResult | null) — set after each QR scan; null between scans
+//     if valid: { attendee_name, event_name, reason: 'SUCCESS' }
+//     if invalid: { reason: 'ALREADY_CHECKED_IN' | 'NOT_PAID' | 'INVALID_TICKET', message, ... }
+//   cameraError (string | null) — set when the camera fails to start
+// change classnames, layout, colors, and typography freely
+// do not remove or rename the variables being rendered
+// ============================================================
 export default function ScanPage() {
   const [result, setResult] = useState<ScanResult>(null)
   const [cameraError, setCameraError] = useState<string | null>(null)
@@ -31,6 +41,7 @@ export default function ScanPage() {
         let scanResult: ScanResult = { valid: false, reason: 'INVALID_TICKET', message: 'Scan failed' }
 
         try {
+          // api: calls POST /api/scan-ticket — validates QR code and marks ticket as checked in — do not change this endpoint
           const res = await fetch('/api/scan-ticket', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -61,6 +72,7 @@ export default function ScanPage() {
       }
     })
 
+    // only call stop() if start() succeeded — calling stop on a never-started scanner throws
     return () => {
       if (startedRef.current) scanner.stop().catch(() => {})
     }
@@ -69,7 +81,7 @@ export default function ScanPage() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
 
-      {/* no-camera modal */}
+      {/* only renders when the camera fails to initialize (no camera, permission denied, etc.) — do not remove this condition */}
       {cameraError && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6">
           <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center">
@@ -86,7 +98,7 @@ export default function ScanPage() {
         </div>
       )}
 
-      {/* result overlay */}
+      {/* only renders for 2.5 s after each QR scan to display the pass/fail result — do not remove this condition */}
       {result && (
         <div className={`fixed inset-0 flex flex-col items-center justify-center z-50
           ${result.valid ? 'bg-green-600' : 'bg-red-600'}`}
@@ -95,6 +107,7 @@ export default function ScanPage() {
             {result.valid ? '✅' : '❌'}
           </div>
 
+          {/* only renders for a successful, first-time check-in — do not remove this condition */}
           {result.valid ? (
             <>
               <h1 className="text-4xl font-black mb-2">VALID TICKET</h1>
@@ -102,6 +115,7 @@ export default function ScanPage() {
               <p className="text-lg opacity-75 mt-1">{result.event_name}</p>
             </>
           ) : result.reason === 'ALREADY_CHECKED_IN' ? (
+            // only renders when the ticket was already scanned — do not remove this condition
             <>
               <h1 className="text-4xl font-black mb-2">ALREADY CHECKED IN</h1>
               <p className="text-2xl">{result.attendee_name}</p>
@@ -110,6 +124,7 @@ export default function ScanPage() {
               </p>
             </>
           ) : result.reason === 'NOT_PAID' ? (
+            // only renders when the ticket's payment is not confirmed — do not remove this condition
             <h1 className="text-4xl font-black">PAYMENT NOT VERIFIED</h1>
           ) : (
             <h1 className="text-4xl font-black">INVALID TICKET</h1>
@@ -119,7 +134,7 @@ export default function ScanPage() {
         </div>
       )}
 
-      {/* camera view — scanner keeps running behind the overlay */}
+      {/* camera view — Html5Qrcode mounts its video feed into this div via the 'qr-reader' id — do not rename or remove */}
       <div id="qr-reader" className="w-full max-w-sm" />
       <p className="mt-4 text-gray-400 text-sm">Point camera at ticket QR code</p>
 

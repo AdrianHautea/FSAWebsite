@@ -4,6 +4,11 @@ import { eventRegisterSchema } from '@/lib/schemas'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
+  // ============================================================
+  // DATA — do not modify this section
+  // all database queries and auth checks live here
+  // changing these will break functionality
+  // ============================================================
   const body = await req.json().catch(() => null)
   const parsed = eventRegisterSchema.safeParse(body)
 

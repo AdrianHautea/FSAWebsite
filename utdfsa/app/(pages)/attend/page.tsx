@@ -6,6 +6,14 @@ interface Props {
 }
 
 export default async function AttendPage({ searchParams }: Props) {
+  // ============================================================
+  // DATA — do not modify this section
+  // reads searchParams.token, authenticates the user, queries:
+  //   events (by attend_qr_token) — to validate the QR and get event details
+  //   attendance — to prevent duplicate check-ins
+  //   members — to get and update the member's point total
+  // all redirects and early-exit returns below guard data integrity
+  // ============================================================
   const { token } = await searchParams
 
   if (!token) redirect('/')
@@ -94,6 +102,15 @@ export default async function AttendPage({ searchParams }: Props) {
       .eq('id', member.id)
   }
 
+  // ============================================================
+  // UI — safe to restyle everything below this line
+  // available data:
+  //   event.name (string) — event the member just checked into
+  //   event.points (number | null) — points awarded for attendance
+  // the earlier returns above (invalid QR, not open, expired, already attended)
+  // are also safe to restyle — keep their conditional logic intact
+  // change classnames, layout, colors, and typography freely
+  // ============================================================
   return (
     <main className="flex flex-col items-center justify-center min-h-screen gap-4">
       <div className="text-6xl">✅</div>

@@ -13,11 +13,28 @@ interface MemberFields {
   contact_email: string | null
 }
 
+/**
+ * Props — passed down from the ProfileEditPage server component (member/profile/edit/page.tsx)
+ *   member     — current saved values for the editable profile fields
+ *   loginEmail — the Google OAuth email address; read-only, cannot be changed here
+ */
 interface Props {
   member: MemberFields
   loginEmail: string
 }
 
+// ============================================================
+// UI — safe to restyle everything below this line
+// available data:
+//   member — { first_name, last_name, phone, year, major, contact_email }
+//   loginEmail — Google sign-in email (read-only, displayed but not editable)
+//   form   — live form state mirroring member fields
+//   loading (bool) — true while the save API call is in flight
+//   error   (string | null) — API or validation error message
+//   success (bool) — true after a successful save (triggers redirect)
+// change classnames, layout, colors, and typography freely
+// do not remove or rename the variables being rendered
+// ============================================================
 export default function ProfileEditClient({ member, loginEmail }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -42,6 +59,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
     setLoading(true)
     setError(null)
 
+    // api: calls POST /api/member/update-profile — saves profile fields to the members table — do not change this endpoint
     const res = await fetch('/api/member/update-profile', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -57,6 +75,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
     }
 
     setSuccess(true)
+    // route: /member/profile — member profile view page — do not change this path
     setTimeout(() => router.push('/member/profile'), 1200)
   }
 
@@ -64,7 +83,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
     <main className="max-w-lg mx-auto p-8">
       <h1 className="text-2xl font-bold mb-2">Edit Profile</h1>
 
-      {/* show their login email as read-only — cannot be changed via oauth */}
+      {/* loginEmail is the Google OAuth address — shown read-only because it cannot be changed here */}
       <div className="mb-6 p-3 bg-gray-50 border rounded-lg text-sm text-gray-500">
         <span className="font-medium">Login email:</span> {loginEmail}
         <p className="text-xs mt-1">
@@ -154,8 +173,10 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
           />
         </div>
 
+        {/* only renders when the API returned a validation or server error — do not remove this condition */}
         {error && <p className="text-sm text-red-500">{error}</p>}
 
+        {/* only renders for ~1.2 s after a successful save, before the router redirect fires — do not remove this condition */}
         {success && (
           <p className="text-sm text-green-600 font-medium">
             Profile updated! Redirecting...
@@ -167,6 +188,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
           disabled={loading}
           className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50"
         >
+          {/* only shows "Saving..." while the API call is in flight — do not remove this condition */}
           {loading ? 'Saving...' : 'Save Changes'}
         </button>
 
@@ -180,10 +202,4 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
       </form>
     </main>
   )
-}
-
-// needed here since this file imports it
-function toSentenceCase(value: string): string {
-  if (!value) return value
-  return value.charAt(0).toUpperCase() + value.slice(1)
 }

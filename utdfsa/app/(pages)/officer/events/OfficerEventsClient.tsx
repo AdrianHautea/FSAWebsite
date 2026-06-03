@@ -4,6 +4,14 @@ import { useState, useEffect, useCallback } from 'react'
 import QRCode from 'qrcode'
 import type { Event } from '@/types/database'
 
+// ============================================================
+// LOGIC — do not modify this section
+// event type classification, form↔API data conversion,
+// and date/currency helpers all live here.
+// changing these will silently break form submissions,
+// pricing calculations, and the attendance QR flow.
+// ============================================================
+
 // ── constants ─────────────────────────────────────────────────────────────────
 
 const EVENT_TYPES = ['Party', 'Meeting', 'Workshop', 'Practice', 'Fundraising', 'Other'] as const
@@ -114,6 +122,17 @@ function formToPayload(f: EventFormData) {
     is_active: f.is_active,
   }
 }
+
+// ============================================================
+// UI — safe to restyle everything below this line
+// available data per event (Event type):
+//   id, name, description, event_type, event_date, location, points
+//   price_cents_members, price_cents_nonmembers
+//   eb_price_members, eb_price_nonmembers, eb_deadline
+//   attend_qr_token, attend_qr_open, attend_qr_expires_at, is_active
+// change classnames, layout, colors, and typography freely
+// do not remove or rename the variables being rendered
+// ============================================================
 
 // ── shared input styles ───────────────────────────────────────────────────────
 

@@ -2,6 +2,13 @@
 
 import { createClient } from '@/utils/supabase/client'
 
+// ============================================================
+// UI — safe to restyle everything below this line
+// no external data — this page only triggers Google OAuth
+// handleGoogleLogin: do not modify — initiates Supabase OAuth
+//   and redirects to /auth/callback with an optional ?next= param
+// change classnames, layout, colors, and typography freely
+// ============================================================
 export default function LoginPage() {
   const supabase = createClient()
 

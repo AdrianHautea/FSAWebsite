@@ -5,6 +5,11 @@ export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // ============================================================
+  // DATA — do not modify this section
+  // all database queries and auth checks live here
+  // changing these will break functionality
+  // ============================================================
   const { id } = await params
 
   const supabase = await createUserClient()
@@ -15,6 +20,7 @@ export async function DELETE(
 
   const admin = createAdminClient()
 
+  // only officers and admins may delete galleries — do not remove this check
   const { data: member } = await admin
     .from('members')
     .select('role')

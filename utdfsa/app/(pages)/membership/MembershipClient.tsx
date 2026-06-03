@@ -15,6 +15,19 @@ function formatPrice(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`
 }
 
+// ============================================================
+// UI — safe to restyle everything below this line
+// available data (props from MembershipPage):
+//   displayPrice (number, cents) — price to show (early bird or regular)
+//   regularPrice (number, cents) — full regular price (for strikethrough)
+//   isEarlyBird (bool) — true when early bird pricing is active
+//   earlyBirdDeadline (ISO string) — when early bird ends
+//   membershipYear (string) — e.g. "2024–2025"
+// handlePayment: do not modify — POSTs to /api/membership/checkout
+//   and redirects to the Stripe checkout URL
+// change classnames, layout, colors, and typography freely
+// do not remove or rename the variables being rendered
+// ============================================================
 export default function MembershipClient({
   displayPrice,
   regularPrice,

@@ -23,14 +23,21 @@ export default async function OrdersPage({
 }: {
   searchParams: Promise<{ success?: string }>
 }) {
+  // ============================================================
+  // DATA — do not modify this section
+  // all database queries and auth checks live here
+  // changing these will break functionality
+  // ============================================================
   const { success } = await searchParams
 
   const supabase = await createUserClient()
   const { data: { user } } = await supabase.auth.getUser()
+  // route: /login — redirects unauthenticated users to sign in — do not change this path
   if (!user) redirect('/login')
 
   const admin = createAdminClient()
 
+  // contact_email is the preferred notification address; falls back to Google login email
   const { data: member } = await admin
     .from('members')
     .select('id, contact_email')
@@ -39,6 +46,7 @@ export default async function OrdersPage({
 
   if (!member) redirect('/login')
 
+  // contactEmail is what the QR ticket email was actually sent to
   const contactEmail = member.contact_email ?? user.email!
 
   // registrations newest-first, with tickets inline
@@ -81,17 +89,31 @@ export default async function OrdersPage({
     for (const e of events ?? []) eventsMap.set(e.id, e)
   }
 
+  // ============================================================
+  // UI — safe to restyle everything below this line
+  // available data:
+  //   registrations — event_registrations rows for this member, with nested
+  //     registration_tickets (id, qr_code, attendee_fname, attendee_lname,
+  //     attendee_email, checked_in, checked_in_at)
+  //   eventsMap — Map<eventId, { name, event_date, location }>
+  //   contactEmail — member's preferred email (contact_email ?? Google email)
+  //   success — query param set by Stripe redirect after payment
+  // change classnames, layout, colors, and typography freely
+  // do not remove or rename the variables being rendered
+  // ============================================================
   return (
     <main className="max-w-3xl mx-auto px-6 py-10">
       <h1 className="text-2xl font-bold text-gray-900 mb-1">Order History</h1>
       <p className="text-sm text-gray-600 mb-8">Your event registrations and QR code tickets.</p>
 
+      {/* only renders when Stripe redirects back with ?success=true after payment — do not remove this condition */}
       {success && (
         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm font-medium">
           🎉 Registration confirmed! Your QR code ticket is shown below and was sent to your email.
         </div>
       )}
 
+      {/* only renders the empty state when the member has no registrations — do not remove this condition */}
       {!registrations || registrations.length === 0 ? (
         <p className="text-gray-500 text-sm">No orders yet.</p>
       ) : (
@@ -119,6 +141,7 @@ export default async function OrdersPage({
                     <h2 className="font-bold text-gray-900 truncate">
                       {event?.name ?? 'Unknown Event'}
                     </h2>
+                    {/* only renders event date/location when the event was found in eventsMap — do not remove this condition */}
                     {event && (
                       <p className="text-sm text-gray-600 mt-0.5">
                         {fmtDate(event.event_date)} · {fmtTime(event.event_date)}
@@ -147,7 +170,7 @@ export default async function OrdersPage({
                   </div>
                 </div>
 
-                {/* tickets — only shown once payment is confirmed */}
+                {/* only renders tickets once payment_status === 'paid' and tickets exist — do not remove this condition */}
                 {isPaid && tickets.length > 0 && (
                   <div className="p-5">
                     <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-4">
@@ -163,10 +186,12 @@ export default async function OrdersPage({
                           <p className="font-semibold text-gray-900">
                             {[ticket.attendee_fname, ticket.attendee_lname].filter(Boolean).join(' ') || 'Attendee'}
                           </p>
+                          {/* contactEmail is member.contact_email ?? Google login email — matches where the QR ticket email was sent */}
                           <p className="text-xs text-gray-500">{contactEmail}</p>
 
                           <TicketQR code={ticket.qr_code} />
 
+                          {/* only renders the check-in badge when the ticket has been scanned at the door — do not remove this condition */}
                           {ticket.checked_in ? (
                             <p className="text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded-full px-3 py-1">
                               ✓ Checked in
@@ -181,7 +206,7 @@ export default async function OrdersPage({
                   </div>
                 )}
 
-                {/* pending/failed state */}
+                {/* only renders when payment is still processing — do not remove this condition */}
                 {isPending && (
                   <div className="px-5 py-4">
                     <p className="text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
@@ -190,6 +215,7 @@ export default async function OrdersPage({
                   </div>
                 )}
 
+                {/* only renders when payment failed or was abandoned — do not remove this condition */}
                 {reg.payment_status === 'failed' && (
                   <div className="px-5 py-4">
                     <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
