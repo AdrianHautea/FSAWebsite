@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /events
+Allow: /pamilyas
+Allow: /goodphil
+Allow: /archives
+
+Disallow: /member/
+Disallow: /officer/
+Disallow: /api/
+Disallow: /onboarding/
+Disallow: /auth/
+
+Sitemap: https://www.utdfsa.org/sitemap.xml
