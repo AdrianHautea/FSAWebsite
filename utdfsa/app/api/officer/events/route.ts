@@ -25,7 +25,7 @@ export async function GET() {
 
   const { data: events, error } = await ctx.admin
     .from('events')
-    .select('id, created_at, name, description, event_type, event_date, location, points, price_cents_members, price_cents_nonmembers, eb_price_members, eb_price_nonmembers, eb_deadline, is_active, attend_qr_open, attend_qr_expires_at')
+    .select('id, created_at, name, description, event_type, event_date, location, points, price_cents_members, price_cents_nonmembers, eb_price_members, eb_price_nonmembers, eb_deadline, is_active, attend_qr_open, attend_qr_expires_at, cover_photo_url')
     .order('event_date', { ascending: false })
 
   if (error) return NextResponse.json({ error: 'Failed to load events.' }, { status: 500 })

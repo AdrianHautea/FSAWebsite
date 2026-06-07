@@ -3,6 +3,7 @@ import { getSettings } from '@/lib/settings'
 import { createAdminClient } from '@/utils/supabase/server'
 import { resend } from '@/lib/resend'
 import { ticketEmailHtml } from '@/lib/email/ticket'
+import { membershipEmailHtml } from '@/lib/email/membership'
 import QRCode from 'qrcode'
 import { NextResponse } from 'next/server'
 
@@ -64,6 +65,43 @@ export async function POST(req: Request) {
           },
         })
         .eq('id', member_id)
+
+      // send membership confirmation email — wrapped in try/catch so a send failure never fails the webhook
+      if (process.env.RESEND_FROM_EMAIL) {
+        try {
+          const { data: memberData } = await supabase
+            .from('members')
+            .select('first_name, email, contact_email')
+            .eq('id', member_id)
+            .maybeSingle()
+
+          if (memberData) {
+            const to = memberData.contact_email ?? memberData.email
+            const expiryDate = settings.membershipExpiry.toLocaleDateString('en-US', {
+              month: 'long', day: 'numeric', year: 'numeric',
+            })
+
+            const { error: sendError } = await resend.emails.send({
+              from: process.env.RESEND_FROM_EMAIL!,
+              to,
+              subject: 'Welcome to UTD FSA — Membership Confirmed',
+              html: membershipEmailHtml({
+                firstName: memberData.first_name,
+                membershipYear: settings.membershipYear,
+                expiryDate,
+              }),
+            })
+
+            if (sendError) {
+              console.error('[webhook] membership email send error for member', member_id, sendError)
+            } else {
+              console.log('[webhook] membership confirmation email sent to', to)
+            }
+          }
+        } catch (err) {
+          console.error('[webhook] unexpected error sending membership email for member', member_id, err)
+        }
+      }
     }
 
     // ── event ticket payment ───────────────────────────────────────────────────

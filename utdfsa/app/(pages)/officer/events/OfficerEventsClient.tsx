@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import QRCode from 'qrcode'
 import type { Event } from '@/types/database'
 
@@ -163,11 +163,13 @@ function EventForm({
   onSubmit,
   onCancel,
   submitLabel,
+  beforeButtons,
 }: {
   initial: EventFormData
   onSubmit: (data: EventFormData) => Promise<void>
   onCancel: () => void
   submitLabel: string
+  beforeButtons?: React.ReactNode
 }) {
   const [form, setForm] = useState<EventFormData>(initial)
   const [saving, setSaving] = useState(false)
@@ -353,6 +355,8 @@ function EventForm({
         </p>
       )}
 
+      {beforeButtons}
+
       <div className="flex gap-3 justify-end border-t pt-4">
         <button type="button" onClick={onCancel}
           className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
@@ -482,6 +486,87 @@ function AttendanceQR({ event, onUpdate }: { event: Event; onUpdate: (e: Event) 
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+// ── cover photo upload ────────────────────────────────────────────────────────
+
+function CoverPhotoUpload({ event, onUpdate }: { event: Event; onUpdate: (e: Event) => void }) {
+  const [uploading, setUploading] = useState(false)
+  // preview tracks what to show — starts as the saved URL (if any), overwritten on new upload
+  const [preview, setPreview] = useState<string | null>(event.cover_photo_url ?? null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // keep preview in sync if the parent event prop changes (e.g. after a save)
+  useEffect(() => { setPreview(event.cover_photo_url ?? null) }, [event.cover_photo_url])
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // show a data: URI preview immediately while the upload is in flight
+    // (FileReader not createObjectURL — CSP allows data: but blocks blob:)
+    const reader = new FileReader()
+    reader.onload = ev => setPreview(ev.target?.result as string)
+    reader.readAsDataURL(file)
+
+    setUploading(true)
+    const body = new FormData()
+    body.append('file', file)
+
+    const res = await fetch(`/api/officer/events/${event.id}/cover`, { method: 'POST', body })
+
+    if (res.ok) {
+      const data = await res.json()
+      onUpdate({ ...event, cover_photo_url: data.url })
+    } else {
+      setPreview(event.cover_photo_url ?? null)
+      const data = await res.json().catch(() => ({}))
+      alert(data.error ?? 'Upload failed.')
+    }
+    setUploading(false)
+    // reset the file input so the same file can be re-selected if needed
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  return (
+    <div className="border-t mt-5 pt-5">
+      <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">
+        Cover Photo
+      </p>
+
+      {preview ? (
+        <div className="relative mb-3 rounded-lg overflow-hidden">
+          <img src={preview} alt="Event cover" className="w-full h-40 object-cover" />
+          {uploading && (
+            <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
+              <span className="text-sm text-gray-700 font-medium">Uploading…</span>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="w-full h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
+          <span className="text-sm text-gray-400">No cover photo</span>
+        </div>
+      )}
+
+      <button
+        type="button"
+        disabled={uploading}
+        onClick={() => fileInputRef.current?.click()}
+        className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+      >
+        {uploading ? 'Uploading…' : preview ? 'Change Cover' : 'Upload Cover'}
+      </button>
+      {/* hidden file input — triggered by the button above */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+      />
     </div>
   )
 }
@@ -641,6 +726,7 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
                       onSubmit={handleUpdate(event.id)}
                       onCancel={() => setEditingId(null)}
                       submitLabel="Save Changes"
+                      beforeButtons={<CoverPhotoUpload event={event} onUpdate={upsert} />}
                     />
                     {showQR && <AttendanceQR event={event} onUpdate={upsert} />}
                   </div>

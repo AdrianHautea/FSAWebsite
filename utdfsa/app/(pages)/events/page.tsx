@@ -151,7 +151,19 @@ export default async function EventsPage({
             const alreadyRegistered = ticketed && registeredEventIds.has(event.id)
 
             return (
-              <div key={event.id} className="border rounded-xl p-6 bg-white shadow-sm">
+              <div key={event.id} className="border rounded-xl bg-white shadow-sm overflow-hidden">
+                {/* cover photo hero — present when the event has a cover, placeholder when not */}
+                {event.cover_photo_url ? (
+                  <img
+                    src={event.cover_photo_url}
+                    alt={event.name}
+                    className="w-full h-48 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-3 bg-blue-600" />
+                )}
+
+                <div className="p-6">
                 {/* header */}
                 <div className="flex items-start justify-between gap-4 mb-3">
                   <div className="flex-1 min-w-0">
@@ -251,6 +263,7 @@ export default async function EventsPage({
                     </p>
                   )}
                 </div>
+                </div>{/* end p-6 content wrapper */}
               </div>
             )
           })}
