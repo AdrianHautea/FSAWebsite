@@ -109,6 +109,14 @@ export default async function ProfilePage() {
       <section className="mb-6 p-4 border rounded-lg">
         <h3 className="font-semibold mb-3">Personal Info</h3>
         <div className="flex flex-col gap-2 text-sm">
+          {/* contact email — always shown */}
+          <div className="flex justify-between items-start gap-4">
+            <div>
+              <span className="text-gray-500 block">Contact Email</span>
+              <span className="text-xs text-gray-400">used for emails and other notifications from the website</span>
+            </div>
+            <span className="text-right shrink-0">{member.email}</span>
+          </div>
           {/* only renders when phone is set — do not remove this condition */}
           {member.phone && (
             <div className="flex justify-between">
