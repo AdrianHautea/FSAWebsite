@@ -12,7 +12,7 @@ import type { Member } from '@/types/database'
  *     The client-side auth listener keeps this in sync with subsequent sign-in/sign-out events.
  */
 interface NavbarProps {
-  initialMember: Member | null
+  initialMember: Pick<Member, 'id' | 'first_name' | 'last_name' | 'avatar_url' | 'role'> | null
 }
 
 // ============================================================
@@ -26,7 +26,8 @@ interface NavbarProps {
 // do not remove or rename the variables being rendered
 // ============================================================
 export default function Navbar({ initialMember }: NavbarProps) {
-  const [member, setMember] = useState<Member | null>(initialMember)
+  type NavbarMember = Pick<Member, 'id' | 'first_name' | 'last_name' | 'avatar_url' | 'role'>
+  const [member, setMember] = useState<NavbarMember | null>(initialMember)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [goodphilOpen, setGoodphilOpen] = useState(false)
   const dropdownRef = useRef<HTMLLIElement>(null)

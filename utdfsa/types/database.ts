@@ -40,7 +40,7 @@ export interface Event {
   event_date: string
   location: string | null
   points: number | null
-  attend_qr_token: string | null
+  attend_qr_token?: string | null
   attend_qr_open: boolean | null
   attend_qr_expires_at: string | null
   price_cents_members: number
