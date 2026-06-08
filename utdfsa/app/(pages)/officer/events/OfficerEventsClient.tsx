@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import QRCode from 'qrcode'
 import type { Event } from '@/types/database'
+import DeleteEventModal from './DeleteEventModal'
 
 // ============================================================
 // LOGIC — do not modify this section
@@ -163,13 +164,17 @@ function EventForm({
   onSubmit,
   onCancel,
   submitLabel,
+  coverPhotoSlot,
   beforeButtons,
+  leftButtons,
 }: {
   initial: EventFormData
   onSubmit: (data: EventFormData) => Promise<void>
   onCancel: () => void
   submitLabel: string
+  coverPhotoSlot?: React.ReactNode
   beforeButtons?: React.ReactNode
+  leftButtons?: React.ReactNode
 }) {
   const [form, setForm] = useState<EventFormData>(initial)
   const [saving, setSaving] = useState(false)
@@ -343,6 +348,8 @@ function EventForm({
         </div>
       )}
 
+      {coverPhotoSlot}
+
       <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer select-none border-t pt-4">
         <input type="checkbox" checked={form.is_active}
           onChange={e => set('is_active', e.target.checked)} className="rounded" />
@@ -357,15 +364,18 @@ function EventForm({
 
       {beforeButtons}
 
-      <div className="flex gap-3 justify-end border-t pt-4">
-        <button type="button" onClick={onCancel}
-          className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
-          Cancel
-        </button>
-        <button type="submit" disabled={saving}
-          className="px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold rounded-lg text-sm">
-          {saving ? 'Saving…' : submitLabel}
-        </button>
+      <div className="flex items-center justify-between border-t pt-4">
+        <div>{leftButtons}</div>
+        <div className="flex gap-3">
+          <button type="button" onClick={onCancel}
+            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+            Cancel
+          </button>
+          <button type="submit" disabled={saving}
+            className="px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold rounded-lg text-sm">
+            {saving ? 'Saving…' : submitLabel}
+          </button>
+        </div>
       </div>
     </form>
   )
@@ -571,30 +581,58 @@ function CoverPhotoUpload({ event, onUpdate }: { event: Event; onUpdate: (e: Eve
   )
 }
 
+// ── pending cover photo (create flow) ────────────────────────────────────────
+
+function PendingCoverPhotoUpload({ onChange }: { onChange: (file: File | null) => void }) {
+  const [preview, setPreview] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = ev => setPreview(ev.target?.result as string)
+    reader.readAsDataURL(file)
+    onChange(file)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  return (
+    <div className="border-t mt-5 pt-5">
+      <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">
+        Cover Photo
+      </p>
+
+      {preview ? (
+        <div className="mb-3 rounded-lg overflow-hidden">
+          <img src={preview} alt="Event cover" className="w-full h-40 object-cover" />
+        </div>
+      ) : (
+        <div className="w-full h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
+          <span className="text-sm text-gray-400">No cover photo</span>
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50"
+      >
+        {preview ? 'Change Cover' : 'Upload Cover'}
+      </button>
+      <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+    </div>
+  )
+}
+
 // ── main component ────────────────────────────────────────────────────────────
 
 export default function OfficerEventsClient({ initialEvents }: { initialEvents: Event[] }) {
   const [events, setEvents] = useState<Event[]>(initialEvents)
   const [creating, setCreating] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [deletingId, setDeletingId] = useState<string | null>(null)
-
-  async function handleDelete(id: string, name: string) {
-    if (!confirm(`Delete "${name}"?\n\nThis permanently removes all registrations and tickets for this event.`)) return
-    setDeletingId(id)
-    try {
-      const res = await fetch(`/api/officer/events/${id}`, { method: 'DELETE' })
-      if (res.ok) {
-        setEvents(prev => prev.filter(e => e.id !== id))
-        if (editingId === id) setEditingId(null)
-      } else {
-        const data = await res.json().catch(() => ({}))
-        alert(data.error ?? 'Failed to delete event.')
-      }
-    } finally {
-      setDeletingId(null)
-    }
-  }
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null)
+  const [pendingCoverFile, setPendingCoverFile] = useState<File | null>(null)
 
   function upsert(updated: Event) {
     setEvents(prev => {
@@ -611,7 +649,18 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.error ?? 'Failed to create event.')
-    upsert(data.event)
+    let event = data.event
+    if (pendingCoverFile) {
+      const body = new FormData()
+      body.append('file', pendingCoverFile)
+      const coverRes = await fetch(`/api/officer/events/${event.id}/cover`, { method: 'POST', body })
+      if (coverRes.ok) {
+        const coverData = await coverRes.json()
+        event = { ...event, cover_photo_url: coverData.url }
+      }
+      setPendingCoverFile(null)
+    }
+    upsert(event)
     setCreating(false)
   }
 
@@ -651,8 +700,9 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
           <EventForm
             initial={emptyForm()}
             onSubmit={handleCreate}
-            onCancel={() => setCreating(false)}
+            onCancel={() => { setCreating(false); setPendingCoverFile(null) }}
             submitLabel="Create Event"
+            coverPhotoSlot={<PendingCoverPhotoUpload onChange={setPendingCoverFile} />}
           />
         </div>
       )}
@@ -670,52 +720,47 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
             return (
               <div key={event.id} className="border rounded-xl bg-white shadow-sm overflow-hidden">
                 {/* summary row */}
-                <div className="p-5 flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-bold text-base text-gray-900">{event.name}</h3>
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                        event.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                      }`}>
-                        {event.is_active ? 'Active' : 'Hidden'}
-                      </span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 font-medium">
-                        {event.event_type}
-                      </span>
+                <div className="p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-bold text-base text-gray-900">{event.name}</h3>
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                          event.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {event.is_active ? 'Active' : 'Hidden'}
+                        </span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 font-medium">
+                          {event.event_type}
+                        </span>
+                      </div>
+
+                      <p className="text-sm text-gray-600 mt-0.5">
+                        {fmtDate(event.event_date)}
+                        {event.location && ` · ${event.location}`}
+                      </p>
+
+                      <p className="text-sm text-gray-500 mt-0.5">
+                        {ticketed
+                          ? `Members ${fmt(event.price_cents_members)} · Non-members ${fmt(event.price_cents_nonmembers)}${
+                              event.eb_price_members != null
+                                ? ` · EB ${fmt(event.eb_price_members)}/${fmt(event.eb_price_nonmembers!)}`
+                                : ''
+                            }${isHybrid(event.event_type) && event.points ? ` · +${event.points} pts` : ''}`
+                          : event.points
+                            ? `${event.points} attendance pts`
+                            : 'Free attendance'
+                        }
+                      </p>
                     </div>
 
-                    <p className="text-sm text-gray-600 mt-0.5">
-                      {fmtDate(event.event_date)}
-                      {event.location && ` · ${event.location}`}
-                    </p>
-
-                    <p className="text-sm text-gray-500 mt-0.5">
-                      {ticketed
-                        ? `Members ${fmt(event.price_cents_members)} · Non-members ${fmt(event.price_cents_nonmembers)}${
-                            event.eb_price_members != null
-                              ? ` · EB ${fmt(event.eb_price_members)}/${fmt(event.eb_price_nonmembers!)}`
-                              : ''
-                          }${isHybrid(event.event_type) && event.points ? ` · +${event.points} pts` : ''}`
-                        : event.points
-                          ? `${event.points} attendance pts`
-                          : 'Free attendance'
-                      }
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3 shrink-0">
                     <button
                       onClick={() => setEditingId(isEditing ? null : event.id)}
-                      className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                      className="text-sm text-blue-600 hover:text-blue-800 font-medium shrink-0">
                       {isEditing ? 'Close' : 'Edit'}
                     </button>
-                    <button
-                      onClick={() => handleDelete(event.id, event.name)}
-                      disabled={deletingId === event.id}
-                      className="text-sm text-red-500 hover:text-red-700 font-medium disabled:opacity-50">
-                      {deletingId === event.id ? '…' : 'Delete'}
-                    </button>
                   </div>
+
                 </div>
 
                 {/* inline edit */}
@@ -726,15 +771,40 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
                       onSubmit={handleUpdate(event.id)}
                       onCancel={() => setEditingId(null)}
                       submitLabel="Save Changes"
-                      beforeButtons={<CoverPhotoUpload event={event} onUpdate={upsert} />}
+                      beforeButtons={
+                        <>
+                          <CoverPhotoUpload event={event} onUpdate={upsert} />
+                          {showQR && <AttendanceQR event={event} onUpdate={upsert} />}
+                        </>
+                      }
+                      leftButtons={
+                        <button
+                          type="button"
+                          onClick={() => setDeleteTarget({ id: event.id, name: event.name })}
+                          className="text-xs font-medium px-3 py-1.5 rounded-lg border border-red-300 text-red-500 hover:border-red-400 hover:bg-red-50 transition-colors">
+                          Delete
+                        </button>
+                      }
                     />
-                    {showQR && <AttendanceQR event={event} onUpdate={upsert} />}
                   </div>
                 )}
               </div>
             )
           })}
         </div>
+      )}
+
+      {deleteTarget && (
+        <DeleteEventModal
+          eventName={deleteTarget.name}
+          eventId={deleteTarget.id}
+          onClose={() => setDeleteTarget(null)}
+          onDeleted={() => {
+            setEvents(prev => prev.filter(e => e.id !== deleteTarget.id))
+            if (editingId === deleteTarget.id) setEditingId(null)
+            setDeleteTarget(null)
+          }}
+        />
       )}
     </main>
   )

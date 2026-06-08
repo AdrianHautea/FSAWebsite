@@ -149,7 +149,7 @@ export default function Home() {
               </a>
 
               <a 
-              href="https://tiktok.com/@YOURACCOUNT" 
+              href="https://tiktok.com/@utdfsa" 
               target="_blank"
               aria-label="TikTok" 
               rel="noopener noreferrer"
@@ -159,7 +159,7 @@ export default function Home() {
               </a>
 
               <a 
-              href="#"
+              href="https://discord.gg/uVRmuF3BT"
               target="_blank" 
               aria-label="Discord"
               rel="noopener noreferrer" 
