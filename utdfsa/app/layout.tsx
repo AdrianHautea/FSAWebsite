@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Geist, Geist_Mono, Unbounded } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/Navbar"
 import { createUserClient } from "@/utils/supabase/server"
@@ -8,6 +8,12 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] })
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] })
+const unbounded = Unbounded({
+  variable: "--font-unbounded",
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800", "900"],
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   title: "UTD FSA",
@@ -36,7 +42,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${unbounded.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Navbar initialMember={initialMember} />
         {children}
