@@ -1,5 +1,9 @@
 'use client'
 
+// mobile-first page — designed for phone use at events
+// do not add a max-width container — full screen is intentional
+// do not add navbar padding — scan overlay must cover full viewport
+
 import { useEffect, useRef, useState } from 'react'
 import { Html5Qrcode } from 'html5-qrcode'
 
@@ -26,6 +30,7 @@ export default function ScanPage() {
   const scannerRef = useRef<Html5Qrcode | null>(null)
   const startedRef = useRef(false)
 
+  // effect: starts the camera scanner on mount, runs continuously, cleans up on unmount — do not remove or reorder
   useEffect(() => {
     const scanner = new Html5Qrcode('qr-reader')
     scannerRef.current = scanner

@@ -25,7 +25,7 @@ export async function GET() {
 
   const { data: events, error } = await ctx.admin
     .from('events')
-    .select('id, created_at, name, description, event_type, event_date, location, points, price_cents_members, price_cents_nonmembers, eb_price_members, eb_price_nonmembers, eb_deadline, is_active, attend_qr_open, attend_qr_expires_at, cover_photo_url')
+    .select('id, created_at, name, description, event_type, event_date, location, points, price_cents_members, price_cents_nonmembers, eb_price_members, eb_price_nonmembers, eb_deadline, is_active, attend_qr_open, attend_qr_expires_at, cover_photo_url, registration_closes_at')
     .order('event_date', { ascending: false })
 
   if (error) return NextResponse.json({ error: 'Failed to load events.' }, { status: 500 })
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     name, description, event_type, event_date, location, points,
     price_dollars_members, price_dollars_nonmembers,
     eb_price_dollars_members, eb_price_dollars_nonmembers,
-    eb_deadline, is_active,
+    eb_deadline, is_active, registration_closes_at,
   } = parsed.data
 
   const { data: event, error } = await ctx.admin
@@ -66,6 +66,7 @@ export async function POST(req: Request) {
       eb_price_nonmembers: eb_price_dollars_nonmembers ?? null,
       eb_deadline: eb_deadline ?? null,
       is_active,
+      registration_closes_at: registration_closes_at ?? null,
       attend_qr_token: crypto.randomUUID(),  // pre-generate so QR is ready whenever they open it
       attend_qr_open: false,
     })

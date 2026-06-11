@@ -1,6 +1,9 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
+  // images.qualities — allowed quality values for next/image optimization
+  // external image sources (google profile photos, s3 cover photos) are permitted via the img-src CSP rule in headers() below
+  // do not remove the googleusercontent.com entry from the CSP — navbar avatar uses it
   images: {
     qualities: [75, 85, 90, 95],
   },

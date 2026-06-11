@@ -30,6 +30,8 @@ export default async function GoodphilPage() {
   // ============================================================
   const admin = createAdminClient()
 
+  // requirements: 3 total meetings including risk management + 6 points
+  // these thresholds come from the goodphil_eligibility view — do not hardcode them here
   // run both independent queries in parallel
   const [{ data: eligibility }, { data: phoneRows }] = await Promise.all([
     admin

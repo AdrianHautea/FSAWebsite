@@ -88,7 +88,9 @@ export default async function AttendPage({ searchParams }: Props) {
     )
   }
 
-  // record attendance
+  // records attendance and increments points
+  // member writes their own attendance record — RLS permits this via the user client
+  // duplicate prevention is handled by the existing attendance check above
   await supabase.from('attendance').insert({
     member_id: member.id,
     event_id: event.id,
@@ -117,7 +119,7 @@ export default async function AttendPage({ searchParams }: Props) {
       <h1 className="text-3xl font-bold text-green-600">Attendance Recorded!</h1>
       <p className="text-xl">{event.name}</p>
       {event.points ? (
-        <p className="text-gray-500">+{event.points} points added to your account</p>
+        <p className="text-gray-500">+{event.points} points added to your account.</p>
       ) : null}
     </main>
   )

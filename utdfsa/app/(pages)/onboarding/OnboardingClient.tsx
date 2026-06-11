@@ -214,7 +214,8 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
   // do not remove or rename the variables being rendered
   // ============================================================
 
-  // step 1 — pick member type
+  // step: pick — member chooses ading, kuyate, or not interested
+  // do not reorder steps or change the step transition logic
   if (step === 'pick') {
     return (
       <main className="max-w-lg mx-auto p-8">
@@ -293,7 +294,8 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
   // do not remove or rename the variables being rendered
   // ============================================================
 
-  // step 2 — basic profile info (same for both types)
+  // step: profile — member fills in name, phone, year, and major (required for both ading and kuyate)
+  // do not reorder steps or change the step transition logic
   if (step === 'profile') {
     return (
       <main className="max-w-lg mx-auto p-8">
@@ -433,7 +435,8 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
   // do not remove or rename the variables being rendered
   // ============================================================
 
-  // step 3a — ading-specific questions
+  // step: ading — member completes the ading application questionnaire for pamilya placement
+  // do not reorder steps or change the step transition logic
   if (step === 'ading') {
     const birthdayAge = calcAge(adingForm.birthday)
 
@@ -842,7 +845,8 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
   // do not remove or rename the variables being rendered
   // ============================================================
 
-  // step 3b — kuyate-specific questions
+  // step: kuyate — member completes the kuyate application and acknowledges leadership responsibilities
+  // do not reorder steps or change the step transition logic
   if (step === 'kuyate') {
     return (
       <main className="max-w-lg mx-auto p-8">

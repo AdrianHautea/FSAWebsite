@@ -17,6 +17,13 @@ function fmtTime(iso: string) {
   return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
 }
 
+function fmtRegDeadline(iso: string) {
+  const date = new Date(iso)
+  const datePart = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: 'America/Chicago' })
+  const timePart = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
+  return `${datePart} at ${timePart}`
+}
+
 /**
  * Ticketed: Party, Other → show prices + register button
  * Attendance QR: General Meeting, Risk Management, GP Event, Other → members scan to check in
@@ -149,6 +156,11 @@ export default async function EventsPage({
             const memberPrice = isEB ? event.eb_price_members! : event.price_cents_members
             const nonMemberPrice = isEB ? event.eb_price_nonmembers! : event.price_cents_nonmembers
             const alreadyRegistered = ticketed && registeredEventIds.has(event.id)
+            // registration deadline check — hides register button after closes_at
+            // do not remove — prevents ticket sales after cutoff
+            const registrationClosed =
+              event.registration_closes_at != null &&
+              new Date() > new Date(event.registration_closes_at)
 
             return (
               <div key={event.id} className="border rounded-xl bg-white shadow-sm overflow-hidden">
@@ -219,6 +231,17 @@ export default async function EventsPage({
                   )}
                 </div>
 
+                {/* registration deadline notice — only when closes_at is set */}
+                {event.registration_closes_at && (
+                  registrationClosed ? (
+                    <p className="text-sm text-gray-400 mt-2">Registration closed</p>
+                  ) : (
+                    <p className="text-sm text-amber-600 mt-2">
+                      Registration closes {fmtRegDeadline(event.registration_closes_at)}
+                    </p>
+                  )
+                )}
+
                 {/* only renders when the event has a description — do not remove this condition */}
                 {event.description && (
                   <p className="text-sm text-gray-600 leading-relaxed mb-4">{event.description}</p>
@@ -233,6 +256,8 @@ export default async function EventsPage({
                       <span className="text-sm font-medium text-green-700 bg-green-50 border border-green-200 px-4 py-2 rounded-lg">
                         ✓ Already Registered
                       </span>
+                    ) : registrationClosed ? (
+                      <span className="text-sm text-gray-400">Registration closed</span>
                     ) : (
                       <RegisterModal
                         event={{

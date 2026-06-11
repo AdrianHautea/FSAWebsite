@@ -48,6 +48,7 @@ export const createEventSchema = z.object({
   eb_price_dollars_nonmembers: dollarsToCents.optional().nullable(),
   eb_deadline: z.string().optional().nullable(),
   is_active: z.boolean().default(true),
+  registration_closes_at: z.string().datetime({ offset: true }).optional().nullable(),
 })
 
 // all fields optional for PATCH

@@ -1,3 +1,7 @@
+// reads business configuration from the settings table in supabase
+// all prices, deadlines, and toggles should live here not in env vars
+// throws an error if required keys are missing — check the settings table if this throws
+
 import { createAdminClient } from '@/utils/supabase/server'
 
 export async function getSettings() {

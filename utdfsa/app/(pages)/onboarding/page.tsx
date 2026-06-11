@@ -9,6 +9,13 @@ interface Props {
 }
 
 export default async function OnboardingPage({ searchParams }: Props) {
+  // ============================================================
+  // DATA — do not modify this section
+  // authenticates the user, fetches the member row, and handles:
+  //   - reapply flow: resets onboarding state for not_interested members
+  //   - stripe race condition: verifies payment directly if webhook hasn't fired yet
+  //   - gate: redirects unpaid members to /membership
+  // ============================================================
   const { session_id, reapply, type } = await searchParams
 
   const supabase = await createUserClient()
@@ -87,6 +94,10 @@ export default async function OnboardingPage({ searchParams }: Props) {
 
   const { kuyateApplicationsOpen } = await getSettings()
 
+  // ============================================================
+  // UI — safe to restyle everything below this line
+  // all styling lives in OnboardingClient — edit that file
+  // ============================================================
   return (
     <OnboardingClient
       memberId={member.id}

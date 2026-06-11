@@ -1,3 +1,8 @@
+// route: POST /api/scan-ticket
+// purpose: validates a ticket QR code, checks payment status, and marks the ticket as checked in; returns pass/fail reason to the scan page
+// auth: officer or admin only
+// calls: supabase
+
 import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 import { scanTicketSchema } from '@/lib/schemas'
 import { NextResponse } from 'next/server'

@@ -632,6 +632,7 @@ export default function ApplicationsClient({
     const prev = adingApps
     setAdingApps(apps => apps.map(a => a.id === id ? { ...a, status: newStatus } : a))
 
+    // api: calls PATCH /api/officer/applications/ading/[id] — updates ading application status — do not change this endpoint or method
     const res = await fetch(`/api/officer/applications/ading/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -647,6 +648,7 @@ export default function ApplicationsClient({
     const prev = kuyateApps
     setKuyateApps(apps => apps.map(a => a.id === id ? { ...a, status: newStatus } : a))
 
+    // api: calls PATCH /api/officer/applications/kuyate/[id] — updates kuyate application status and triggers acceptance/rejection email — do not change this endpoint or method
     const res = await fetch(`/api/officer/applications/kuyate/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -661,6 +663,7 @@ export default function ApplicationsClient({
   async function updatePamilya(appId: string, pamilya: string | null) {
     setPamilyaSaving(prev => ({ ...prev, [appId]: 'saving' }))
 
+    // api: calls PATCH /api/officer/applications/ading/[id] — updates the assigned pamilya on the member row — do not change this endpoint or method
     const res = await fetch(`/api/officer/applications/ading/${appId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },

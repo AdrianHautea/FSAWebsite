@@ -47,7 +47,7 @@ export async function updateSession(request: NextRequest) {
   const needsMember = MEMBER_ROUTES.some(r => pathname.startsWith(r))
   const needsOfficer = OFFICER_ROUTES.some(r => pathname.startsWith(r))
 
-  // not logged in — send to login with a ?next param so they return after
+  // protects member and officer routes — redirects to /login (with ?next=) if not authenticated
   if ((needsMember || needsOfficer) && !user) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/login'
@@ -68,8 +68,7 @@ export async function updateSession(request: NextRequest) {
     memberRow = data
   }
 
-  // redirect active members and officers away from /membership —
-  // they have no reason to see the payment page again
+  // protects /membership — redirects active members and officers away since they don't need to pay again
   if (pathname === '/membership' && user) {
     const isActive = memberRow?.membership_status === 'active'
     const isOfficer = memberRow?.role === 'officer' || memberRow?.role === 'admin'
@@ -80,6 +79,7 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
+  // protects member routes — redirects unpaid members to /membership so they can complete payment
   if (needsMember && user) {
     const isPaid = memberRow?.membership_status === 'active'
 
@@ -94,7 +94,7 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  // logged in but trying officer routes — verify role in db
+  // protects officer routes — redirects non-officers to /member/profile with an error flag
   if (needsOfficer && user) {
     const isOfficer = memberRow?.role === 'officer' || memberRow?.role === 'admin'
 

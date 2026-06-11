@@ -42,6 +42,7 @@ export default function MembershipClient({
     setLoading(true)
     setError(null)
 
+    // api: calls POST /api/membership/checkout — creates a stripe checkout session and returns the redirect URL — do not change this endpoint
     const res = await fetch('/api/membership/checkout', {
       method: 'POST',
     })

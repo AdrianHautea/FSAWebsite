@@ -93,6 +93,7 @@ interface EventFormData {
   eb_price_dollars_nonmembers: string
   eb_deadline: string
   is_active: boolean
+  registration_closes_at: string
 }
 
 const emptyForm = (): EventFormData => ({
@@ -100,6 +101,7 @@ const emptyForm = (): EventFormData => ({
   location: '', points: '', price_dollars_members: '', price_dollars_nonmembers: '',
   eb_enabled: false, eb_price_dollars_members: '', eb_price_dollars_nonmembers: '',
   eb_deadline: '', is_active: true,
+  registration_closes_at: '',
 })
 
 function eventToForm(e: Event): EventFormData {
@@ -117,6 +119,7 @@ function eventToForm(e: Event): EventFormData {
     eb_price_dollars_nonmembers: e.eb_price_nonmembers != null ? toDollars(e.eb_price_nonmembers) : '',
     eb_deadline: toDatetimeLocal(e.eb_deadline),
     is_active: e.is_active,
+    registration_closes_at: toDatetimeLocal(e.registration_closes_at),
   }
 }
 
@@ -139,6 +142,8 @@ function formToPayload(f: EventFormData) {
     eb_deadline: ticketed && f.eb_enabled && f.eb_deadline
       ? new Date(f.eb_deadline).toISOString() : null,
     is_active: f.is_active,
+    registration_closes_at: f.registration_closes_at
+      ? new Date(f.registration_closes_at).toISOString() : null,
   }
 }
 
@@ -216,7 +221,15 @@ function EventForm({
 
         <div>
           <label className={labelCls}>Event Type *</label>
-          <select required value={form.event_type} onChange={e => set('event_type', e.target.value)}
+          <select required value={form.event_type}
+            onChange={e => {
+              const newType = e.target.value
+              setForm(prev => ({
+                ...prev,
+                event_type: newType,
+                ...(newType !== 'Party' && newType !== 'Other' ? { registration_closes_at: '' } : {}),
+              }))
+            }}
             className={inputCls}>
             {EVENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
@@ -227,6 +240,17 @@ function EventForm({
           <input required type="datetime-local" value={form.event_date}
             onChange={e => set('event_date', e.target.value)} className={inputCls} />
         </div>
+
+        {(form.event_type === 'Party' || form.event_type === 'Other') && (
+          <div>
+            <label className={labelCls}>Registration Closes At</label>
+            <input type="datetime-local" value={form.registration_closes_at}
+              onChange={e => set('registration_closes_at', e.target.value)} className={inputCls} />
+            <p className="text-xs text-gray-400 mt-1">
+              Optional. After this date and time, the registration button will be hidden for members. Leave blank to allow registration until the event date.
+            </p>
+          </div>
+        )}
 
         <div className="col-span-2">
           <label className={labelCls}>Location *</label>
@@ -416,6 +440,7 @@ function AttendanceQR({ event, onUpdate }: { event: Event; onUpdate: (e: Event) 
     // optimistically flip open state before the round-trip
     if ('attend_qr_open' in fields) setIsOpen(fields.attend_qr_open as boolean)
     setSaving(true)
+    // api: calls PATCH /api/officer/events/[id] — updates attend_qr_open and/or attend_qr_expires_at — do not change this endpoint or method
     const res = await fetch(`/api/officer/events/${event.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -534,6 +559,7 @@ function CoverPhotoUpload({ event, onUpdate }: { event: Event; onUpdate: (e: Eve
     const body = new FormData()
     body.append('file', file)
 
+    // api: calls POST /api/officer/events/[id]/cover — uploads and stores the event cover photo — do not change this endpoint or method
     const res = await fetch(`/api/officer/events/${event.id}/cover`, { method: 'POST', body })
 
     if (res.ok) {
@@ -680,6 +706,7 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
   }
 
   async function handleCreate(form: EventFormData) {
+    // api: calls POST /api/officer/events — creates a new event row — do not change this endpoint or method
     const res = await fetch('/api/officer/events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -703,6 +730,7 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
   }
 
   const handleUpdate = useCallback((id: string) => async (form: EventFormData) => {
+    // api: calls PATCH /api/officer/events/[id] — updates event fields — do not change this endpoint or method
     const res = await fetch(`/api/officer/events/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },

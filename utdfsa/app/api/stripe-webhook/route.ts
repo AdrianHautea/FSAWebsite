@@ -1,3 +1,9 @@
+// CRITICAL: this route handles all payment confirmations
+// stripe sends events here after payment completes
+// do not add auth middleware to this route — stripe calls it directly
+// signature verification (stripe.webhooks.constructEvent) is the security mechanism
+// do not reorder the event handlers — membership must update before email sends
+
 import { stripe } from '@/lib/stripe'
 import { getSettings } from '@/lib/settings'
 import { createAdminClient } from '@/utils/supabase/server'
@@ -46,6 +52,7 @@ export async function POST(req: Request) {
     if (type === 'membership' && member_id) {
       const settings = await getSettings()
 
+      // updates membership_status to active — this is what unlocks member access
       await supabase
         .from('members')
         .update({
@@ -66,7 +73,9 @@ export async function POST(req: Request) {
         })
         .eq('id', member_id)
 
-      // send membership confirmation email — wrapped in try/catch so a send failure never fails the webhook
+      // ── send membership confirmation email ────────────────────────────────────
+      // sends confirmation email — wrapped in try/catch so email failure
+      // never fails the webhook response — payment is already recorded at this point
       if (process.env.RESEND_FROM_EMAIL) {
         try {
           const { data: memberData } = await supabase
@@ -136,8 +145,6 @@ export async function POST(req: Request) {
       } else {
         try {
           // Use two separate queries instead of a nested join.
-          // Nested joins rely on FK constraints being defined in Supabase's schema;
-          // separate queries work regardless of how the schema is wired.
           const [{ data: tickets }, { data: regRow }] = await Promise.all([
             supabase
               .from('registration_tickets')

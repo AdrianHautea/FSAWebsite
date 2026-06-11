@@ -50,6 +50,7 @@ export interface Event {
   eb_deadline: string | null
   is_active: boolean
   cover_photo_url: string | null
+  registration_closes_at: string | null
 }
 
 export interface EventRegistration {

@@ -1,6 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
+// createUserClient — for server components and api routes acting on behalf of the signed-in user
+// reads/writes session cookies; row-level security policies apply
 export async function createUserClient() {
   const cookieStore = await cookies()
 
@@ -26,6 +28,8 @@ export async function createUserClient() {
   )
 }
 
+// createAdminClient — for server-side operations that must bypass RLS (seeding, officer management)
+// uses the service role key; never expose this client or its key to the browser
 export function createAdminClient() {
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

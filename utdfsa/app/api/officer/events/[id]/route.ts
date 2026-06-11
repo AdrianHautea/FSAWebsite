@@ -97,6 +97,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
     if (d.eb_price_dollars_nonmembers !== undefined) updates.eb_price_nonmembers = d.eb_price_dollars_nonmembers
     if (d.eb_deadline !== undefined)              updates.eb_deadline = d.eb_deadline
     if (d.is_active !== undefined)                updates.is_active = d.is_active
+    if (d.registration_closes_at !== undefined)   updates.registration_closes_at = d.registration_closes_at
   }
 
   // validate and merge QR attendance control fields
