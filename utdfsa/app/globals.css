@@ -60,10 +60,12 @@ body {
 }
 
 .week-pill {
-  transition: border-color .18s ease;
+  transition: border-color .2s ease, box-shadow .2s ease;
+  cursor: pointer;
 }
 .week-pill:hover {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(151, 113, 255, 0.38);
+  box-shadow: 0 0 0 1px rgba(151, 113, 255, 0.12), 0 8px 22px -10px rgba(151, 113, 255, 0.28);
 }
 
 /* ── FullCalendar dark theme overrides ──────────────────────────────────── */
@@ -113,6 +115,9 @@ body {
 .fc-dark .fc-next-button .fc-icon { display: none !important; }
 .fc-dark .fc-prev-button::after { content: '‹'; font-size: 1.2rem; line-height: 1; }
 .fc-dark .fc-next-button::after { content: '›'; font-size: 1.2rem; line-height: 1; }
+
+/* FIX 6 — FullCalendar uses --fc-border-color for all internal borders including the right edge */
+.fc-dark { --fc-border-color: rgba(255,255,255,0.08); }
 
 /* scrollbar for this-week strip */
 .tw-scroll::-webkit-scrollbar { height: 8px; }

@@ -326,6 +326,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                 background: '#141414',
                 border: '1px solid rgba(255,255,255,0.1)',
                 animation: 'modalIn .26s cubic-bezier(0.22,1,0.36,1)',
+                marginTop: '60px',
               }}
               onClick={e => e.stopPropagation()}
             >
