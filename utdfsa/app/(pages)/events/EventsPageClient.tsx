@@ -129,10 +129,13 @@ export default function EventsPageClient({ events, isMember, member, registeredE
             style={{ fontSize: 'clamp(42px,6vw,74px)' }}>
             Events
           </h1>
-          <p className="text-lg font-medium mt-4" style={{ color: '#8c8c8c' }}>
+          <p className="text-sm font-medium mt-4 mb-1" style={{ color: '#8c8c8c' }}>
+            Stay up to date with everything UTD FSA.
+          </p>
+          <p className="text-sm font-medium" style={{ color: '#6f6f6f' }}>
             {isMember
               ? 'Member pricing applied. Limit one ticket per paid event.'
-              : 'Stay up to date with everything UTD FSA.'}
+              : 'Sign in as a member to unlock member pricing on paid events.'}
           </p>
         </div>
 
@@ -332,7 +335,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
 
         return (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/70 p-4"
+            className="fixed inset-x-0 bottom-0 top-20 z-50 flex items-center justify-center backdrop-blur-sm bg-black/70 p-4"
             style={{ animation: 'backdropIn .2s ease' }}
             onClick={() => setSelectedEvent(null)}
           >
@@ -342,7 +345,6 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                 background: '#141414',
                 border: '1px solid rgba(255,255,255,0.1)',
                 animation: 'modalIn .26s cubic-bezier(0.22,1,0.36,1)',
-                marginTop: '60px',
               }}
               onClick={e => e.stopPropagation()}
             >
@@ -360,7 +362,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                     src={event.cover_photo_url}
                     alt={event.name}
                     fill
-                    className="object-cover"
+                    className="object-cover object-top"
                     sizes="560px"
                   />
                 ) : (

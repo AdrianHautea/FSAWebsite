@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Gallery } from '@/types/database'
+import imageCompression from 'browser-image-compression'
 
 /**
  * Props — passed down from OfficerGalleryPage server component (officer/gallery/page.tsx)
@@ -62,11 +63,22 @@ export default function OfficerGalleryClient({ galleries }: Props) {
   // allows data: but not blob: — do not switch back to createObjectURL
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null
-    setCoverFile(file)
     if (!file) {
+      setCoverFile(null)
       setCoverPreview(null)
       return
     }
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if (!allowedTypes.includes(file.type)) {
+      setError('Please upload a JPEG, PNG, WEBP, or GIF image.')
+      return
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      setError('Image must be under 20MB.')
+      return
+    }
+    setCoverFile(file)
+    setError(null)
     const reader = new FileReader()
     reader.onload = (ev) => setCoverPreview(ev.target?.result as string)
     reader.readAsDataURL(file)
@@ -81,8 +93,22 @@ export default function OfficerGalleryClient({ galleries }: Props) {
     setSubmitting(true)
     setError(null)
 
+    let fileToUpload: File = coverFile
+    if (coverFile.size > 1 * 1024 * 1024) {
+      try {
+        const compressed = await imageCompression(coverFile, {
+          maxSizeMB: 2,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        })
+        fileToUpload = new File([compressed], coverFile.name, { type: coverFile.type })
+      } catch (err) {
+        console.error('[gallery upload] compression failed, using original:', err)
+      }
+    }
+
     const body = new FormData()
-    body.append('cover', coverFile)
+    body.append('cover', fileToUpload)
     body.append('title', form.title)
     body.append('google_photos_url', form.google_photos_url)
     body.append('description', form.description)

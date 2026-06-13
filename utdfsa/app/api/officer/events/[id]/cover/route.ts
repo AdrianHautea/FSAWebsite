@@ -3,7 +3,7 @@ import { uploadToS3 } from '@/utils/s3'
 import { NextResponse } from 'next/server'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
-const MAX_SIZE_BYTES = 5 * 1024 * 1024 // 5 MB
+const MAX_SIZE_BYTES = 20 * 1024 * 1024 // 20 MB
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -49,7 +49,7 @@ export async function POST(req: Request, { params }: RouteContext) {
   }
 
   if (file.size > MAX_SIZE_BYTES) {
-    return NextResponse.json({ error: 'File too large. Maximum size is 5 MB.' }, { status: 400 })
+    return NextResponse.json({ error: 'File too large. Maximum size is 20 MB.' }, { status: 400 })
   }
 
   // derive extension from mime type for a consistent key

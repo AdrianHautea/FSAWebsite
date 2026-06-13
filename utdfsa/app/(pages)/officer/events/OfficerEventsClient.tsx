@@ -5,6 +5,7 @@ import QRCode from 'qrcode'
 import type { Event } from '@/types/database'
 import Image from 'next/image'
 import DeleteEventModal from './DeleteEventModal'
+import imageCompression from 'browser-image-compression'
 
 // ============================================================
 // LOGIC — do not modify this section
@@ -557,19 +558,33 @@ function CoverPhotoUpload({ event, onUpdate }: { event: Event; onUpdate: (e: Eve
     setUploadError(null)
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
-    const maxSizeMb = 5
     if (!allowedTypes.includes(file.type)) {
       setUploadError('Please upload a JPEG, PNG, or WEBP image.')
       return
     }
-    if (file.size > maxSizeMb * 1024 * 1024) {
-      setUploadError('Image must be under 5MB.')
+    if (file.size > 20 * 1024 * 1024) {
+      setUploadError('Image must be under 20MB.')
       return
     }
 
-    const body = new FormData()
-    body.append('file', file)
     setUploading(true)
+
+    let fileToUpload: File = file
+    if (file.size > 1 * 1024 * 1024) {
+      try {
+        const compressed = await imageCompression(file, {
+          maxSizeMB: 2,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        })
+        fileToUpload = new File([compressed], file.name, { type: file.type })
+      } catch (err) {
+        console.error('[cover upload] compression failed, using original:', err)
+      }
+    }
+
+    const body = new FormData()
+    body.append('file', fileToUpload)
     // api: calls POST /api/officer/events/[id]/cover — uploads and stores the event cover photo — do not change this endpoint or method
     const res = await fetch(`/api/officer/events/${event.id}/cover`, { method: 'POST', body })
     const data = await res.json().catch(() => ({}))
@@ -636,27 +651,42 @@ function PendingCoverPhotoUpload({ onChange }: { onChange: (file: File | null) =
   const [uploadError, setUploadError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     if (fileInputRef.current) fileInputRef.current.value = ''
     setUploadError(null)
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
-    const maxSizeMb = 5
     if (!allowedTypes.includes(file.type)) {
       setUploadError('Please upload a JPEG, PNG, or WEBP image.')
       return
     }
-    if (file.size > maxSizeMb * 1024 * 1024) {
-      setUploadError('Image must be under 5MB.')
+    if (file.size > 20 * 1024 * 1024) {
+      setUploadError('Image must be under 20MB.')
       return
     }
 
+    // show preview immediately from the original file
     const reader = new FileReader()
     reader.onload = ev => setPreview(ev.target?.result as string)
     reader.readAsDataURL(file)
-    onChange(file)
+
+    // compress in background, then pass the compressed file to parent
+    let fileToPass: File = file
+    if (file.size > 1 * 1024 * 1024) {
+      try {
+        const compressed = await imageCompression(file, {
+          maxSizeMB: 2,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        })
+        fileToPass = new File([compressed], file.name, { type: file.type })
+      } catch (err) {
+        console.error('[cover upload] compression failed, using original:', err)
+      }
+    }
+    onChange(fileToPass)
   }
 
   return (

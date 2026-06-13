@@ -18,6 +18,7 @@
     "@supabase/supabase-js": "^2.106.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
+    "browser-image-compression": "^2.0.2",
     "googleapis": "^173.0.0",
     "html5-qrcode": "^2.3.8",
     "next": "^16.2.6",

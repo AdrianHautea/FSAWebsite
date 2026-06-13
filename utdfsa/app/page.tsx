@@ -36,12 +36,12 @@ export default function Home() {
         </div>
 
         {/* Left subtitle */}
-        <p className="absolute left-4 sm:left-8 lg:left-16 top-1/2 -translate-y-1/2 font-display font-semibold text-[11px] sm:text-[15px] lg:text-[20px] text-white tracking-wide uppercase z-20">
+        <p className="hidden sm:block absolute left-4 sm:left-8 lg:left-16 top-1/2 -translate-y-1/2 font-display font-semibold text-[11px] sm:text-[15px] lg:text-[20px] text-white tracking-wide uppercase z-20">
           Filipino Student Association
         </p>
 
         {/* Right subtitle */}
-        <p className="absolute right-4 sm:right-8 lg:right-16 top-1/2 -translate-y-1/2 font-display font-semibold text-[11px] sm:text-[15px] lg:text-[20px] text-white tracking-wide uppercase text-right max-w-[110px] sm:max-w-[260px] lg:max-w-[454px] z-20">
+        <p className="hidden sm:block absolute right-4 sm:right-8 lg:right-16 top-1/2 -translate-y-1/2 font-display font-semibold text-[11px] sm:text-[15px] lg:text-[20px] text-white tracking-wide uppercase text-right max-w-[110px] sm:max-w-[260px] lg:max-w-[454px] z-20">
           University of Texas at Dallas
         </p>
       </section>

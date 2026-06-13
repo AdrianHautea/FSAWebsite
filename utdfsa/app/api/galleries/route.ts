@@ -105,6 +105,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Cover photo is required' }, { status: 400 })
   }
 
+  if (coverFile.size > 20 * 1024 * 1024) {
+    return NextResponse.json({ error: 'Image must be under 20MB.' }, { status: 400 })
+  }
+
   // validate cover file type against allowlist
   if (!ALLOWED_IMAGE_TYPES.includes(coverFile.type)) {
     return NextResponse.json(
