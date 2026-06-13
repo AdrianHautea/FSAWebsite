@@ -204,7 +204,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
             <p className="py-6" style={{ color: '#6f6f6f' }}>No upcoming events right now — check back soon!</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[22px]">
-              {events.map(event => {
+              {events.map((event, index) => {
                 const badge = getBadge(event.event_type)
                 const isPastCard = new Date(event.event_date) < now
                 return (
@@ -233,6 +233,8 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                           fill
                           className={`object-cover object-top${isPastCard ? ' brightness-75' : ''}`}
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          priority={index === 0}
+                          loading={index === 0 ? 'eager' : 'lazy'}
                         />
                       ) : (
                         <PhotoPlaceholder ratio="4:5" />

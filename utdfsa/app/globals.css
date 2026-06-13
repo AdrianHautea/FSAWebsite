@@ -119,6 +119,15 @@ body {
 /* FIX 6 — FullCalendar uses --fc-border-color for all internal borders including the right edge */
 .fc-dark { --fc-border-color: rgba(255,255,255,0.08); }
 
+/* FIX 7 — remove right-edge white strip: force full-width, collapse borders, hide overflow */
+* { box-sizing: border-box; }
+.fc-dark .fc-scrollgrid { width: 100% !important; border-right: none !important; border-collapse: collapse !important; }
+.fc-dark .fc-scrollgrid table,
+.fc-dark table { width: 100% !important; table-layout: fixed !important; border-collapse: collapse !important; }
+.fc-dark .fc { overflow: hidden !important; }
+.fc-dark .fc-scroller { overflow: hidden !important; }
+.fc-dark .fc-scroller-liquid-absolute { overflow: hidden !important; }
+
 /* scrollbar for this-week strip */
 .tw-scroll::-webkit-scrollbar { height: 8px; }
 .tw-scroll::-webkit-scrollbar-track { background: transparent; }
