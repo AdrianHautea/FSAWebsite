@@ -65,12 +65,7 @@ body {
 }
 
 .week-pill {
-  transition: border-color .2s ease, box-shadow .2s ease;
   cursor: pointer;
-}
-.week-pill:hover {
-  border-color: rgba(151, 113, 255, 0.38);
-  box-shadow: 0 0 0 1px rgba(151, 113, 255, 0.12), 0 8px 22px -10px rgba(151, 113, 255, 0.28);
 }
 
 /* ── FullCalendar dark theme overrides ──────────────────────────────────── */

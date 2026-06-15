@@ -285,7 +285,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
         </div>
 
         {/* ── event calendar ────────────────────────────────────────────────── */}
-        <div className="mt-12">
+        <div className="mt-12 hidden md:block">
           <SectionLabel label="Event Calendar" />
           <div className="fc-dark rounded-[18px] overflow-hidden p-4" style={{ background: '#131313', border: '1px solid rgba(255,255,255,0.08)' }}>
             <FullCalendar

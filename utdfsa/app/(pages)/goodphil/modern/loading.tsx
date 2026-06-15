@@ -16,9 +16,9 @@ export default function ModernLoading() {
       </div>
 
       {/* Past Performances skeleton */}
-      <div className="bg-[#3d5e3b] py-16 px-6 md:px-8">
+      <div className="bg-[#497047] py-16 px-6 md:px-8">
         <div className="max-w-3xl mx-auto flex flex-col gap-12">
-          <div className="h-14 w-80 bg-[#4a7048] rounded-lg mx-auto" />
+          <div className="h-14 w-80 bg-[#5a8458] rounded-lg mx-auto" />
           {[0, 1, 2].map(i => (
             <div key={i} className="flex flex-col gap-4">
               <div className="h-6 w-56 bg-[#4a7048] rounded mx-auto" />

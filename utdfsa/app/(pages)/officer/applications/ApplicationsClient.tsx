@@ -328,16 +328,24 @@ function ApplicationDetailModal({
               >
                 Close
               </button>
-              <div className="flex gap-2">
+              <div className="flex gap-1.5">
                 <button
                   onClick={() => onStatusChange(application.id, 'accepted')}
-                  className="text-xs font-bold px-3 py-1.5 rounded-[9px] border-none bg-[#3a9d63] hover:bg-[#44b572] text-white transition-colors"
+                  className={`text-xs font-bold px-3 py-1.5 rounded-[9px] border-none transition-colors ${
+                    application.status === 'accepted'
+                      ? 'bg-[#3a9d63] text-white'
+                      : 'bg-[rgba(58,157,99,0.14)] text-[#5fcf8f] hover:bg-[rgba(58,157,99,0.22)]'
+                  }`}
                 >
                   Accept
                 </button>
                 <button
                   onClick={() => onStatusChange(application.id, 'rejected')}
-                  className="text-xs font-bold px-3 py-1.5 rounded-[9px] border-none bg-[#cf4d4d] hover:bg-[#e05555] text-white transition-colors"
+                  className={`text-xs font-bold px-3 py-1.5 rounded-[9px] border-none transition-colors ${
+                    application.status === 'rejected'
+                      ? 'bg-[#cf4d4d] text-white'
+                      : 'bg-[rgba(207,77,77,0.14)] text-[#ef6f6f] hover:bg-[rgba(207,77,77,0.22)]'
+                  }`}
                 >
                   Reject
                 </button>
