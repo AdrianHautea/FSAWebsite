@@ -15,7 +15,10 @@ export default function ModernPage() {
       <section className="relative w-full h-[600px] overflow-hidden">
 
         {/* Background layer: modern-hero-bg.png fills entire hero */}
-        <div className="absolute inset-0 z-0">
+        <div
+          className="absolute inset-0 z-0"
+          style={{ transform: 'translateX(0px) scale(1.0)', transformOrigin: 'center center' }}
+        >
           <Image
             src="/modern-hero-bg.png"
             alt=""
