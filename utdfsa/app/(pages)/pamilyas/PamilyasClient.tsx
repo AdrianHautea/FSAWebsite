@@ -348,57 +348,53 @@ export default function PamilyasClient({
         </div>
       </div>
 
-      {/* Desktop hero — three-layer absolute layout, hidden on mobile */}
+      {/* Desktop hero — flex layout, hidden on mobile */}
       <section className="hidden md:block relative w-full overflow-hidden bg-[#1f1f1f] h-[870px]">
 
-        {/* FIX 1: pam-hero-bg.png moved to TOP-RIGHT corner */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/pam-hero-bg.png"
-          alt=""
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            right: 0,
-            top: 0,
-            height: '100%',
-            width: 'auto',
-            opacity: 1,
-            zIndex: 0,
-            pointerEvents: 'none',
-            userSelect: 'none',
-          }}
-        />
+        {/* Inner flex row: group photo on left, bg PNG on right */}
+        <div className="flex flex-row h-full w-full">
 
-        {/* FIX 1: pam-hero.png shifted 500px to the left (right: 50px → right: 550px) */}
-        <div
-          style={{
-            position: 'absolute',
-            right: '700px',
-            top: '100px',
-            width: '59%',
-            zIndex: 1,
-          }}
-        >
-          <Image
-            src="/pam-hero.png"
-            alt="Pamilyas"
-            width={892}
-            height={639}
-            className="w-full object-cover object-center block"
-            style={{ height: '639px' }}
-            priority
-            quality={85}
-          />
+          {/* Left child: pam-hero.png fills the larger left portion */}
+          <div className="relative h-full overflow-hidden flex-shrink-0" style={{ flexBasis: '55%' }}>
+            <Image
+              src="/pam-hero.png"
+              alt="Pamilyas"
+              fill
+              className="object-cover object-top"
+              priority
+              quality={85}
+              sizes="(max-width: 768px) 100vw, 55vw"
+            />
+          </div>
+
+          {/* Right child: pam-hero-bg.png, left-edge anchored within the child */}
+          <div className="flex-1 relative h-full overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/pam-hero-bg.png"
+              alt=""
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                height: '100%',
+                width: 'auto',
+                pointerEvents: 'none',
+                userSelect: 'none',
+              }}
+            />
+          </div>
+
         </div>
 
-        {/* Layer 3 — PAMILYAS title: position unchanged per spec */}
+        {/* PAMILYAS title overlay */}
         <h1
           className="absolute font-display font-black text-white leading-none text-right"
           style={{
             bottom: '100px',
             right: '80px',
-            zIndex: 2,
+            zIndex: 10,
             fontSize: 'clamp(60px, 8.5vw, 128px)',
           }}
         >

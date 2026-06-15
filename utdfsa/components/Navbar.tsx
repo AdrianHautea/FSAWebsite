@@ -109,8 +109,8 @@ export default function Navbar({ initialMember }: NavbarProps) {
           </span>
         </Link>
 
-        {/* Desktop nav links — hidden below lg breakpoint */}
-        <ul className="hidden lg:flex gap-8 items-center">
+        {/* Desktop nav links — hidden below xl breakpoint */}
+        <ul className="hidden xl:flex gap-8 items-center">
           {/* route: /about — About Us page — do not change this path */}
           <li><Link href="/about" className={navLinkClass}>About Us</Link></li>
           {/* route: /pamilyas — Pamilyas info page — do not change this path */}
@@ -228,9 +228,9 @@ export default function Navbar({ initialMember }: NavbarProps) {
           )}
         </ul>
 
-        {/* Hamburger button — mobile only, hidden on lg and above */}
+        {/* Hamburger button — hidden on xl and above */}
         <button
-          className="lg:hidden text-white p-2 text-2xl leading-none"
+          className="xl:hidden text-white p-2 text-2xl leading-none"
           onClick={() => setMobileMenuOpen(prev => !prev)}
           aria-label="Toggle navigation menu"
         >
@@ -241,14 +241,14 @@ export default function Navbar({ initialMember }: NavbarProps) {
       {/* Backdrop — closes mobile menu when tapping outside */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-30 bg-black/50 xl:hidden"
           onClick={closeMobileMenu}
         />
       )}
 
       {/* Mobile menu panel — slides in below navbar */}
       {mobileMenuOpen && (
-        <div className="fixed top-20 left-0 right-0 z-40 bg-brand-bg border-t border-white/10 overflow-y-auto max-h-[calc(100vh-5rem)] lg:hidden">
+        <div className="fixed top-20 left-0 right-0 z-40 bg-brand-bg border-t border-white/10 overflow-y-auto max-h-[calc(100vh-5rem)] xl:hidden">
           <ul>
             {/* route: /about — About Us page — do not change this path */}
             <li><Link href="/about" className={mobileLinkClass} onClick={closeMobileMenu}>About Us</Link></li>

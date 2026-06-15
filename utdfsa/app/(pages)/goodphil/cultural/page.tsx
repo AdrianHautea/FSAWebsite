@@ -23,26 +23,22 @@ export default function CulturalPage() {
           }}
         />
 
-        {/* Middle layer: cultural-hero.png centered, ~70% of hero width */}
+        {/* Middle layer: cultural-hero.png — flex-centered wrapper eliminates translate offsets */}
         <div
-          className="absolute z-10"
-          style={{
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '70%',
-          }}
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ zIndex: 1 }}
         >
-          <Image
-            src="/cultural-hero.png"
-            alt="UTD Pamana cultural dance team"
-            width={1128}
-            height={576}
-            className="w-full object-contain"
-            priority
-            quality={90}
-            sizes="70vw"
-          />
+          <div className="relative w-[90%] md:w-[65%]" style={{ height: '85%' }}>
+            <Image
+              src="/cultural-hero.png"
+              alt="UTD Pamana cultural dance team"
+              fill
+              className="object-contain"
+              priority
+              quality={90}
+              sizes="(max-width: 768px) 90vw, 65vw"
+            />
+          </div>
         </div>
 
         {/* Top layer: CULTURAL title centered over hero photo */}

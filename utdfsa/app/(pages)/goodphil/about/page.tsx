@@ -50,61 +50,60 @@ export default function GoodphilAboutPage() {
         </div>
       </div>
 
-      {/* Desktop hero — full-height absolute layout, hidden on mobile */}
+      {/* Desktop hero — flex layout, hidden on mobile */}
       <section className="hidden md:block relative w-full overflow-hidden bg-[#1f1f1f] h-[1040px]">
 
-        {/* /gp-back.png watermark — top-left anchor, 50% width, height auto, z-0 */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/gp-back.png"
-          alt=""
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            width: '50%',
-            height: 'auto',
-            objectFit: 'contain',
-            objectPosition: 'top left',
-            opacity: 1,
-            zIndex: 0,
-            pointerEvents: 'none',
-            userSelect: 'none',
-          }}
-        />
+        {/* Inner flex row: gp-back.png watermark left, stacked photos right */}
+        <div className="flex flex-row h-full w-full">
 
-        {/* Two photos stacked vertically — 50px from right edge, vertically centered in hero */}
-        <div
-          style={{
-            position: 'absolute',
-            right: '50px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: '58%',
-            zIndex: 1,
-          }}
-        >
-          <Image
-            src="/hero-1-gp.jpg"
-            alt="Goodphil"
-            width={900}
-            height={290}
-            className="w-full object-cover object-center block"
-            style={{ height: '290px', marginBottom: '30px' }}
-            priority
-            quality={85}
-          />
-          <Image
-            src="/hero-2-gp.jpg"
-            alt=""
-            width={900}
-            height={290}
-            className="w-full object-cover object-center block"
-            style={{ height: '290px' }}
-            priority
-            quality={85}
-          />
+          {/* Left child: gp-back.png — same visible width as original (50% of hero) */}
+          <div className="relative h-full overflow-hidden flex-shrink-0" style={{ flexBasis: '50%' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/gp-back.png"
+              alt=""
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                width: '100%',
+                height: 'auto',
+                pointerEvents: 'none',
+                userSelect: 'none',
+              }}
+            />
+          </div>
+
+          {/* Right child: two photos stacked — padding replicates original vertical centering */}
+          <div
+            className="flex-1 flex flex-col h-full gap-[30px]"
+            style={{ paddingTop: '215px', paddingBottom: '215px', paddingRight: '50px' }}
+          >
+            <div className="flex-1 relative overflow-hidden">
+              <Image
+                src="/hero-1-gp.jpg"
+                alt="Goodphil"
+                fill
+                className="object-cover object-center"
+                priority
+                quality={85}
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+            <div className="flex-1 relative overflow-hidden">
+              <Image
+                src="/hero-2-gp.jpg"
+                alt=""
+                fill
+                className="object-cover object-center"
+                priority
+                quality={85}
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+          </div>
+
         </div>
 
         {/* GOODPHIL title — overlaps bottom edge of second photo, 80px from right */}
@@ -114,7 +113,7 @@ export default function GoodphilAboutPage() {
             top: '82%',
             transform: 'translateY(-50%)',
             right: '80px',
-            zIndex: 2,
+            zIndex: 10,
           }}
         >
           GOODPHIL
