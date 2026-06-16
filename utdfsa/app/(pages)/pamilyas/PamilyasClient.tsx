@@ -319,7 +319,7 @@ export default function PamilyasClient({
       <div className="block lg:hidden">
         <div className="relative w-full h-[50vh] overflow-hidden bg-[#1f1f1f]">
           <Image
-            src="/pam-hero.png"
+            src="/pam-hero.jpg"
             alt="Pamilyas"
             fill
             className="object-cover object-center"
@@ -337,7 +337,7 @@ export default function PamilyasClient({
       {/* Desktop hero */}
       <section className="hidden lg:block relative w-full overflow-hidden bg-[#1f1f1f] h-[870px]">
 
-        {/* pam-hero-bg.png — background layer, right 55%, no padding */}
+        {/* pam-hero-bg.jpg — background layer, right 55%, no padding */}
         <div className="absolute right-0 top-0 h-full z-0" style={{ width: '57%' }}>
           <img
             src="/pam-hero-bg.png"
@@ -353,7 +353,7 @@ export default function PamilyasClient({
           />
         </div>
 
-        {/* pam-hero.png — floating photo card, foreground layer */}
+        {/* pam-hero.jpg — floating photo card, foreground layer */}
         {/* left-anchored with padding, overlaps bg pattern slightly on the right */}
         <div
           className="absolute z-10 overflow-hidden shadow-2xl"
@@ -365,7 +365,7 @@ export default function PamilyasClient({
           }}
         >
           <Image
-            src="/pam-hero.png"
+            src="/pam-hero.jpg"
             alt="Pamilyas"
             fill
             className="object-cover object-top"

@@ -16,54 +16,17 @@ export default function CulturalPage() {
       {/* ── SECTION 1 — HERO ──────────────────────────────────────── */}
       <section className="relative w-full h-[40vh] md:h-[600px] overflow-hidden">
 
-        {/* Background layer: cultural-hero-bg.png fills entire hero */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{ transform: 'translateX(0px) scale(1.0)', transformOrigin: 'center center' }}
-        >
+        {/* middle layer: cultural-hero.jpg — full-bleed at all sizes */}
+        <div className="absolute inset-0 z-10">
           <Image
-            src="/cultural-hero-bg.png"
-            alt=""
+            src="/cultural-hero.jpg"
+            alt="UTD Pamana cultural dance team"
             fill
             className="object-cover object-center"
             priority
             quality={90}
             sizes="100vw"
           />
-        </div>
-
-        {/* Middle layer: cultural-hero.jpg — flex-centered wrapper eliminates translate offsets */}
-        <div
-          className="absolute inset-0 flex items-center justify-center"
-          style={{ zIndex: 1 }}
-        >
-
-          {/* mobile: full-bleed cover */}
-          <div className="absolute inset-0 md:hidden">
-            <Image
-              src="/cultural-hero.jpg"
-              alt="UTD Pamana cultural dance team"
-              fill
-              className="object-cover object-center"
-              priority
-              quality={90}
-              sizes="100vw"
-            />
-          </div>
-
-          {/* desktop: centered contained image, unchanged */}
-          <div className="relative hidden md:block w-[65%]" style={{ height: '95%' }}>
-            <Image
-              src="/cultural-hero.jpg"
-              alt="UTD Pamana cultural dance team"
-              fill
-              className="object-contain"
-              priority
-              quality={90}
-              sizes="65vw"
-            />
-          </div>
-
         </div>
 
         {/* dark overlay — mobile only, keeps title readable */}

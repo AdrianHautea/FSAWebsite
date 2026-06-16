@@ -175,14 +175,10 @@ const SOCIALS = [
     ),
   },
   {
-    label: 'Google',
+    label: 'Email',
     href: 'mailto:fsautd@gmail.com',
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7">
-        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
-        <path d="M12 12h7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-        <path d="M16.5 8a5 5 0 100 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-      </svg>
+      <img src="/gmail.svg" alt="Gmail" width={28} height={28} className="w-7 h-7 opacity-60" />
     ),
   },
 ]

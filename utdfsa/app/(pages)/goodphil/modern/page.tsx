@@ -41,7 +41,7 @@ export default function ModernPage() {
           {/* mobile: full-bleed cover */}
           <div className="absolute inset-0 md:hidden">
             <Image
-              src="/modern-hero.png"
+              src="/modern-hero.jpg"
               alt="UTD Maharlika modern dance team"
               fill
               className="object-cover object-center"
@@ -54,7 +54,7 @@ export default function ModernPage() {
           {/* desktop: centered contained image, unchanged */}
           <div className="relative hidden md:block w-[65%]" style={{ height: '85%' }}>
             <Image
-              src="/modern-hero.png"
+              src="/modern-hero.jpg"
               alt="UTD Maharlika modern dance team"
               fill
               className="object-contain"

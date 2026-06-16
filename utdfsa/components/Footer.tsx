@@ -24,7 +24,7 @@ export default function Footer() {
         <div className="flex flex-col gap-2">
           <Link href="/" aria-label="UTD FSA home">
             <Image
-              src="/main-logo.svg"
+              src="/hero-logo.svg"
               alt="UTD FSA"
               width={120}
               height={40}
@@ -59,7 +59,7 @@ export default function Footer() {
               </a>
             ))}
           </div>
-          <p className="font-display font-semibold text-[13px] text-white text-right leading-relaxed">
+          <p className="font-display font-semibold text-[11.7px] text-white text-right leading-relaxed">
             &ldquo;WHO&rsquo;S GOT THAT GOOD D?&rdquo; &ldquo;WE GOT THAT GOOD D!&rdquo;<br />
             &ldquo;ONE, TWO, THREE! GIMME A U-T-D!&rdquo;
           </p>

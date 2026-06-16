@@ -34,7 +34,7 @@ export default function Home() {
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
           <div className="w-[200px] h-[200px] sm:w-[360px] sm:h-[360px] md:w-[515px] md:h-[515px]">
             <Image
-              src="/main-logo.svg"
+              src="/hero-logo.svg"
               alt="UTD FSA"
               width={515}
               height={515}

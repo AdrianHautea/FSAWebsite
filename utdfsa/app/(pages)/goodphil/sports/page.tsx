@@ -69,7 +69,7 @@ export default function SportsPage() {
       </section>
 
       {/* ── SECTION 3 — OUR SPORTS ───────────────────────────────── */}
-      <section className="bg-section-bg py-16">
+      <section className="bg-section-bg py-2">
         <div className="max-w-6xl mx-auto px-6">
 
           <h2 className="font-display font-black text-white text-center mb-8" style={{ fontSize: 'clamp(20px, 2vw, 30px)' }}>
