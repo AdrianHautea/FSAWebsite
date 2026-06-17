@@ -54,7 +54,7 @@ export default function ModernPage() {
           <h2 className="font-display font-black text-white mb-8" style={{ fontSize: 'clamp(20px, 2vw, 30px)' }}>
             WHAT IS UTD MAHARLIKA?
           </h2>
-          <p className="font-sans leading-relaxed" style={{ fontSize: 'clamp(16px, 1.9vw, 29px)', fontWeight: 500 }}>
+          <p className="font-sans leading-relaxed text-white/60" style={{ fontSize: 'clamp(16px, 1.9vw, 29px)' }}>
             <span className="font-bold text-[#75ba78]">UTD Maharlika</span>
             {' '}is UTD FSA&apos;s official modern dance team! Established in 2002, our dance team has competed at Isang Mahal and Goodphil with hip hop and other modern styles. It is a high-energy, performance-driven, and community-focused group that leaves it all out on the dance floor!
           </p>

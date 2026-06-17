@@ -61,7 +61,7 @@ export default function SportsPage() {
           <h2 className="font-display font-black text-white mb-8" style={{ fontSize: 'clamp(20px, 2vw, 30px)' }}>
             WHAT IS GOODPHIL SPORTS?
           </h2>
-          <p className="font-sans leading-relaxed" style={{ fontSize: 'clamp(16px, 1.9vw, 29px)', fontWeight: 500 }}>
+          <p className="font-sans leading-relaxed text-white/60" style={{ fontSize: 'clamp(16px, 1.9vw, 29px)' }}>
             <span className="font-bold text-[#e3ae3d]">UTD FSA Sports</span>
             {' '}is the athletic branch of Goodphil competition. Members compete across multiple sports representing UTD FSA against other Filipino Student Associations. Whether you&apos;re a seasoned athlete or just looking to have fun, Sports is where FSA spirit meets friendly competition.
           </p>

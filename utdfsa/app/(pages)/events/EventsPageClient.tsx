@@ -184,7 +184,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                   <button
                     key={event.id}
                     onClick={() => setSelectedEvent(event)}
-                    className="week-pill flex-none text-left rounded-[14px] px-4"
+                    className="week-pill flex-none text-left rounded-[14px] px-4 hover:brightness-110 transition-all duration-200"
                     style={{
                       width: '212px',
                       paddingTop: '15px',
@@ -256,21 +256,11 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                       ) : (
                         <PhotoPlaceholder ratio="4:5" />
                       )}
-                      {isPastCard && (
-                        <div className="absolute top-2.5 left-2.5 z-10">
-                          <span
-                            className="text-[10px] font-bold tracking-[0.06em] uppercase px-2.5 py-1 rounded-full"
-                            style={{ background: 'rgba(0,0,0,0.55)', color: '#9a9a9a', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(4px)' }}
-                          >
-                            Past Event
-                          </span>
-                        </div>
-                      )}
                     </div>
 
                     {/* card body */}
                     <div style={{ padding: '16px 17px 19px' }}>
-                      <div className="mb-3">
+                      <div className="flex items-center flex-wrap gap-2 mb-3">
                         <span
                           className="inline-flex items-center rounded-full text-[11px] font-bold tracking-[0.04em] uppercase whitespace-nowrap"
                           style={{
@@ -282,6 +272,14 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                         >
                           {badge.label}
                         </span>
+                        {isPastCard && (
+                          <span
+                            className="text-[10px] font-bold tracking-[0.06em] uppercase px-2.5 py-1 rounded-full"
+                            style={{ background: 'rgba(0,0,0,0.55)', color: '#9a9a9a', border: '1px solid rgba(255,255,255,0.12)' }}
+                          >
+                            Past Event
+                          </span>
+                        )}
                       </div>
                       <h3
                         className="font-bold tracking-[-0.01em] mb-1.5"
@@ -365,52 +363,24 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                 border: '1px solid rgba(255,255,255,0.1)',
                 animation: 'modalIn .26s cubic-bezier(0.22,1,0.36,1)',
               }}
-              className="rounded-2xl"
+              className="rounded-2xl relative"
             >
-              {/* cover 16:9 */}
-              <div
-                className="relative w-full overflow-hidden"
+              <button
+                onClick={() => setSelectedEvent(null)}
+                className="absolute top-3.5 right-3.5 z-10 flex items-center justify-center rounded-full transition-colors"
                 style={{
-                  aspectRatio: '16/9',
-                  background: '#171717',
-                  backgroundImage: 'repeating-linear-gradient(135deg,transparent 0 15px,rgba(255,255,255,0.025) 15px 16px)',
+                  width: '34px',
+                  height: '34px',
+                  background: 'rgba(10,10,10,0.7)',
+                  border: '1px solid rgba(255,255,255,0.16)',
+                  color: '#e0e0e0',
+                  backdropFilter: 'blur(4px)',
                 }}
               >
-                {event.cover_photo_url ? (
-                  <Image
-                    src={event.cover_photo_url}
-                    alt={event.name}
-                    fill
-                    className="object-cover object-top"
-                    sizes="560px"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5">
-                    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="1.3">
-                      <rect x="3" y="3" width="18" height="18" rx="3" />
-                      <circle cx="8.5" cy="8.5" r="1.7" />
-                      <path d="M21 15l-5-5L4 21" />
-                    </svg>
-                    <span className="font-mono text-[10px] tracking-[0.16em]" style={{ color: 'rgba(255,255,255,0.28)' }}>COVER PHOTO · 16:9</span>
-                  </div>
-                )}
-                <button
-                  onClick={() => setSelectedEvent(null)}
-                  className="absolute top-3.5 right-3.5 flex items-center justify-center rounded-full transition-colors"
-                  style={{
-                    width: '34px',
-                    height: '34px',
-                    background: 'rgba(10,10,10,0.7)',
-                    border: '1px solid rgba(255,255,255,0.16)',
-                    color: '#e0e0e0',
-                    backdropFilter: 'blur(4px)',
-                  }}
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                    <path d="M18 6L6 18M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
 
               {/* modal body */}
               <div style={{ padding: '26px 28px 30px' }}>

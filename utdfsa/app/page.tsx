@@ -73,10 +73,10 @@ export default function Home() {
 
           {/* Left: text */}
           <div className="w-full lg:w-[420px] lg:shrink-0 flex flex-col justify-start">
-            <h2 className="font-display font-black text-[44px] md:text-[64px] text-white leading-none tracking-[-3.2px] underline decoration-solid mb-6 lg:mb-8">
+            <h2 className="font-display font-black text-[44px] md:text-[64px] text-white leading-none tracking-[-3.2px] mb-6 lg:mb-8">
               WHO ARE{'\n'}WE?
             </h2>
-            <p className="font-sans font-bold text-[16px] md:text-[20px] text-white leading-relaxed">
+            <p className="font-sans text-[16px] md:text-[20px] text-white/60 leading-relaxed">
               UTD FSA is a student-led social organization at UT Dallas, created to unite students who
               are interested in promoting Filipino-American culture. Through many aspects of unity, such
               as dance, sports, and social events, UTD FSA aims to celebrate &amp; foster community
@@ -106,7 +106,7 @@ export default function Home() {
           <h2 className="font-display font-black text-[36px] sm:text-[52px] lg:text-[64px] xl:text-[96px] text-white tracking-[-2px] sm:tracking-[-3px] lg:tracking-[-4.8px] underline decoration-solid leading-none mb-10 lg:mb-16">
             MISSION STATEMENT
           </h2>
-          <div className="font-sans font-bold text-[16px] sm:text-[18px] xl:text-[24px] text-white leading-relaxed max-w-[1100px] mx-auto space-y-6">
+          <div className="font-sans text-[16px] sm:text-[18px] xl:text-[24px] text-white/60 leading-relaxed max-w-[1100px] mx-auto space-y-6">
             <p>
               The <span className="text-accent-green">Filipino Student Association</span> at the{' '}
               <span className="text-accent-gold">University of Texas at Dallas</span> was founded in

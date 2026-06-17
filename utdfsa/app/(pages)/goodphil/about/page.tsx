@@ -164,11 +164,11 @@ export default function GoodphilAboutPage() {
           {/* Vertical decorative divider — separator between photo/heading and text */}
           <div className="w-px h-12 bg-white/50 mx-auto mb-8" />
 
-          <p className="font-sans font-bold text-[clamp(16px,2vw,29px)] text-white leading-relaxed mb-6">
+          <p className="font-sans text-[clamp(16px,2vw,29px)] text-white/60 leading-relaxed mb-6">
             Goodphil, also known as the GoodPhil Games, is an intercollegiate four-day competition where Filipino Student Associations across Texas and Oklahoma compete in a variety of sports and performances. The conference celebrates school pride, unity, community, Filipino culture, and unforgettable memories for all participants and spectators!
           </p>
 
-          <p className="font-sans font-bold text-[clamp(16px,2vw,29px)] text-white leading-relaxed">
+          <p className="font-sans text-[clamp(16px,2vw,29px)] text-white/60 leading-relaxed">
             Goodphil is held annually in the Spring semester, rotating between one of five host schools every year ({' '}
             <span style={{ color: '#d46920' }}>UT</span>,{' '}
             <span style={{ color: '#dd4446' }}>TAMU</span>,{' '}
@@ -194,7 +194,7 @@ export default function GoodphilAboutPage() {
         <div className="bg-section-bg">
           <div className="max-w-[1218px] mx-auto px-8 py-16 text-center">
 
-            <p className="font-sans font-bold text-[clamp(16px,2vw,29px)] text-white leading-relaxed mb-16">
+            <p className="font-sans text-[clamp(16px,2vw,29px)] text-white/60 leading-relaxed mb-16">
               All Goodphil participants must be members in good standing with the FSA they are affiliated in. In order to assure that participants represent their respective school&rsquo;s organization, certain requirements must be met in order to participate in Goodphil.
             </p>
 
@@ -214,7 +214,7 @@ export default function GoodphilAboutPage() {
               </ul>
             </div>
 
-            <p className="font-sans font-bold text-[clamp(16px,2vw,29px)] text-white leading-relaxed">
+            <p className="font-sans text-[clamp(16px,2vw,29px)] text-white/60 leading-relaxed">
               Unless specifically specified by the host school, spectating Goodphil is free. We encourage all students to come out and support their friends and fellow peers as UTD FSA competes in a multitude of events!
             </p>
 

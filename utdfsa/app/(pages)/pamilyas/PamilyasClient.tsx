@@ -418,24 +418,24 @@ export default function PamilyasClient({
 
             <div className="w-px h-16 bg-white/30 mx-auto mb-10" />
 
-            <p className="font-sans font-bold text-[clamp(16px,2vw,29px)] text-white leading-relaxed mb-8">
+            <p className="font-sans text-[clamp(16px,2vw,29px)] text-white/60 leading-relaxed mb-8">
               Pamilyas (&lsquo;pam&rsquo; for short), which is also the Tagalog word for family, are smaller &ldquo;families&rdquo;
               within UTD FSA where members have an opportunity to foster friendships, guidance, and a place to belong.
             </p>
 
-            <p className="font-sans font-bold text-[clamp(16px,2vw,29px)] text-white leading-relaxed mb-8">
+            <p className="font-sans text-[clamp(16px,2vw,29px)] text-white/60 leading-relaxed mb-8">
               Each pam consists of Kuyas (older brother), Ates (older sisters), and Adings (younger sibling)!
               By treating others like family, regardless of blood relation, pamilyas help members turn UTD FSA
               into a second home throughout their college years.
             </p>
 
-            <p className="font-sans font-bold text-[clamp(16px,2vw,29px)] text-white leading-relaxed mb-8">
+            <p className="font-sans text-[clamp(16px,2vw,29px)] text-white/60 leading-relaxed mb-8">
               Each Pamilya is different, consisting of different hobbies, interests, and people! The Pamilya Chair
               and UTD FSA Officer Board does their best to ensure that each ading is paired with a pam that best
               suits them, providing a positive experience in UTD FSA.
             </p>
 
-            <p className="font-sans font-bold text-[clamp(16px,2vw,29px)] text-white leading-relaxed">
+            <p className="font-sans text-[clamp(16px,2vw,29px)] text-white/60 leading-relaxed">
               The Pamilya system is exclusive to UTD FSA members only &mdash; be sure to pay your dues before
               filling out the Kuya/Ate OR Ading Form!
             </p>

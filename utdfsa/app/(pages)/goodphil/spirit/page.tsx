@@ -60,7 +60,7 @@ export default function SpiritPage() {
           <h2 className="font-display font-black text-white mb-8" style={{ fontSize: 'clamp(20px, 2vw, 30px)' }}>
             WHAT IS SPIRIT?
           </h2>
-          <p className="font-sans leading-relaxed" style={{ fontSize: 'clamp(16px, 1.9vw, 29px)', fontWeight: 500 }}>
+          <p className="font-sans leading-relaxed text-white/60" style={{ fontSize: 'clamp(16px, 1.9vw, 29px)' }}>
             <span className="font-bold text-[#e3ae3d]">Spirit</span>
             {' '}is UTD FSA&apos;s performance category in Goodphil that blends school spirit, pop culture, and Filipino and FSA identity. Expect chants, skits, and energy that ignites the crowd.
           </p>
@@ -156,7 +156,7 @@ export default function SpiritPage() {
             <h2 className="font-display font-black text-[#0e0e0e] mb-4" style={{ fontSize: 'clamp(20px, 2vw, 30px)' }}>
               INTERESTED IN JOINING SPIRIT?
             </h2>
-            <p className="font-sans leading-relaxed text-gray-600" style={{ fontSize: 'clamp(16px, 1.9vw, 29px)', fontWeight: 500 }}>
+            <p className="font-sans leading-relaxed text-gray-600" style={{ fontSize: 'clamp(16px, 1.9vw, 29px)' }}>
               Stay tuned for upcoming Goodphil updates in the Spring!
             </p>
           </div>

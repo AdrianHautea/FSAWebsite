@@ -54,7 +54,7 @@ export default function CulturalPage() {
           <h2 className="font-display font-black text-white mb-8" style={{ fontSize: 'clamp(20px, 2vw, 30px)' }}>
             WHAT IS UTD PAMANA?
           </h2>
-          <p className="font-sans leading-relaxed" style={{ fontSize: 'clamp(16px, 1.9vw, 29px)', fontWeight: 500 }}>
+          <p className="font-sans leading-relaxed text-white/60" style={{ fontSize: 'clamp(16px, 1.9vw, 29px)' }}>
             <span className="font-bold text-[#e3ae3d]">UTD Pamana</span>
             {' '}is UTD FSA&apos;s official cultural dance team! This team competes at Isang Mahal and Goodphil. Pamana celebrates Filipino heritage through storytelling and powerful traditional-inspired performances.
           </p>

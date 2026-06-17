@@ -326,7 +326,7 @@ function EventForm({
         <div className="col-span-2">
           <label className={labelCls}>Description</label>
           <textarea value={form.description} onChange={e => set('description', e.target.value)}
-            rows={3} className={`${inputCls} resize-none`}
+            rows={9} className={`${inputCls} resize-none`}
             placeholder="Details about the event…" />
         </div>
       </div>
