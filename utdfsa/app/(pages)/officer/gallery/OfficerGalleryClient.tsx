@@ -180,7 +180,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
           </div>
           <button
             onClick={() => setModalOpen(true)}
-            className="sm:flex-shrink-0 flex items-center gap-2 px-5 py-3 min-h-[44px] border-none rounded-[13px] bg-[#9747FF] hover:bg-[#a85eff] text-white text-sm font-bold cursor-pointer transition-colors hover:shadow-[0_14px_34px_-12px_rgba(151,71,255,0.75)]"
+            className="sm:flex-shrink-0 flex items-center gap-2 px-5 py-3 min-h-[44px] border-none rounded-[13px] bg-[#9747FF] hover:bg-[#a85eff] text-white text-sm font-bold cursor-pointer transition-colors"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
               <path d="M12 5v14M5 12h14"/>
@@ -416,7 +416,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full sm:w-auto min-h-[44px] bg-[#9747FF] hover:bg-[#a85eff] disabled:opacity-50 text-white rounded-xl px-4 py-2.5 text-sm font-bold border-none cursor-pointer transition-colors"
+                  className="w-full sm:w-auto sm:ml-auto min-h-[44px] bg-[#9747FF] hover:bg-[#a85eff] disabled:opacity-50 text-white rounded-xl px-4 py-2.5 text-sm font-bold border-none cursor-pointer transition-colors"
                 >
                   {/* only shows "Saving…" while the upload+insert API call is in flight — do not remove this condition */}
                   {submitting ? 'Saving…' : 'Create Archive'}

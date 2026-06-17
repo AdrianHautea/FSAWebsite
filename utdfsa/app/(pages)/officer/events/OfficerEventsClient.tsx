@@ -924,7 +924,7 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
           {!creating && (
             <button
               onClick={() => { setCreating(true); setEditingId(null) }}
-              className="sm:flex-shrink-0 w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] border-none rounded-[13px] bg-[#9747FF] hover:bg-[#a85eff] text-white text-sm font-bold cursor-pointer transition-colors hover:shadow-[0_14px_34px_-12px_rgba(151,71,255,0.75)]"
+              className="sm:flex-shrink-0 w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] border-none rounded-[13px] bg-[#9747FF] hover:bg-[#a85eff] text-white text-sm font-bold cursor-pointer transition-colors"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
                 <path d="M12 5v14M5 12h14"/>

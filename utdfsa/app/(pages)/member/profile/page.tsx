@@ -34,8 +34,8 @@ export default async function ProfilePage() {
   // redirect to /login if member row doesn't exist
   if (!member) redirect('/login')
 
-  // settings table — fetch kuyateApplicationsOpen to conditionally show the re-apply section
-  const { kuyateApplicationsOpen } = await getSettings()
+  // settings table — fetch kuyateApplicationsOpen and pamilyaRevealActive
+  const { kuyateApplicationsOpen, pamilyaRevealActive } = await getSettings()
 
   // events table — get ids for general meeting and risk management types (step 1 of subquery)
   const { data: generalAndRiskEvents } = await supabase
@@ -135,8 +135,8 @@ export default async function ProfilePage() {
               <span className="font-sans text-sm text-white/50">Role</span>
               <span className="font-sans text-sm text-white capitalize">{member.role}</span>
             </div>
-            {/* only renders when pamilya is assigned — do not remove this condition */}
-            {member.pamilya && (
+            {/* only renders after pamilya reveal is active AND a value is assigned — do not remove this condition */}
+            {pamilyaRevealActive && member.pamilya && (
               <>
                 <div className="w-full h-px bg-white/10" />
                 <div className="flex justify-between items-center">

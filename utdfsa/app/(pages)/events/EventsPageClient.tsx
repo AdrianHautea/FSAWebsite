@@ -393,10 +393,17 @@ export default function EventsPageClient({ events, isMember, member, registeredE
               initialView="dayGridMonth"
               height="auto"
               headerToolbar={{ left: 'title', center: '', right: 'prev,next' }}
+              forceEventDuration={false}
+              defaultAllDay={true}
+              displayEventTime={false}
               events={events.map(event => ({
                 id: event.id,
                 title: event.name,
-                date: event.event_date,
+                // convert UTC datetime to CT date string (YYYY-MM-DD) before passing to FullCalendar;
+                // en-CA locale produces YYYY-MM-DD which FullCalendar expects as a date-only string;
+                // allDay:true eliminates duration overflow into adjacent calendar cells
+                date: new Date(event.event_date).toLocaleDateString('en-CA', { timeZone: 'America/Chicago' }),
+                allDay: true,
                 backgroundColor: getEventTypeColor(event.event_type),
                 borderColor: getEventTypeColor(event.event_type),
                 extendedProps: { event },

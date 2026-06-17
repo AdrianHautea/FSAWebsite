@@ -56,5 +56,7 @@ export async function getSettings() {
     // kuyate applications flag — false if the flag is 'false' OR the deadline has already passed
     kuyateApplicationsOpen: (map.kuyate_applications_open === 'true') &&
       (!map.kuyate_deadline || new Date() < new Date(map.kuyate_deadline)),
+    // false if key is missing — safe default hides pamilya until explicitly revealed
+    pamilyaRevealActive: (map.pamilya_reveal_active ?? 'false') === 'true',
   }
 }

@@ -179,6 +179,7 @@ export interface AppSettings {
   earlyBirdPriceCents: number
   earlyBirdDeadline: Date
   membershipYear: string
+  pamilyaRevealActive: boolean
 }
 
 // ── ading application ─────────────────────────────────────

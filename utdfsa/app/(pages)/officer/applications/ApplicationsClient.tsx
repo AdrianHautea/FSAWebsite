@@ -850,6 +850,7 @@ export default function ApplicationsClient({
               }
             } else {
               updateAdingStatus(id, s)
+              if (s === 'accepted' || s === 'rejected') setSelectedAppId(null)
             }
           }}
           onPamilyaChange={(id, pamilya) => updatePamilya(id, pamilya)}
@@ -884,6 +885,7 @@ export default function ApplicationsClient({
                   onClick={() => {
                     updateKuyateStatus(pendingStatus.applicationId, pendingStatus.status)
                     setPendingStatus(null)
+                    setSelectedAppId(null)
                   }}
                   className={`flex-1 px-4 py-2.5 text-sm font-bold text-white rounded-xl border-none transition-colors ${
                     pendingStatus.status === 'accepted'

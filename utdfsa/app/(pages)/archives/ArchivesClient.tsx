@@ -72,9 +72,9 @@ export default function ArchivesClient({ galleries }: Props) {
               onClick={() => setActiveFilter(option)}
               className="filter-pill px-[18px] py-[9px] rounded-full text-[13px] font-bold tracking-[0.02em] transition-all duration-[180ms] cursor-pointer"
               style={{
-                background: active ? '#9747FF' : 'rgba(255,255,255,0.03)',
+                background: active ? '#466a47' : 'rgba(255,255,255,0.03)',
                 color: active ? '#fff' : '#b8b8b8',
-                border: `1px solid ${active ? '#9747FF' : 'rgba(255,255,255,0.13)'}`,
+                border: `1px solid ${active ? '#466a47' : 'rgba(255,255,255,0.13)'}`,
               }}
             >
               {option}
@@ -146,7 +146,7 @@ export default function ArchivesClient({ galleries }: Props) {
                             {termLabel}
                           </span>
                         )}
-                        <span className="inline-flex items-center gap-1 text-[12px] font-bold tracking-[0.02em] text-[#b08bff] whitespace-nowrap ml-auto">
+                        <span className="inline-flex items-center gap-1 text-[12px] font-bold tracking-[0.02em] text-[#75ba78] whitespace-nowrap ml-auto">
                           View Gallery
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
                             <path d="M5 12h14M13 6l6 6-6 6" />
