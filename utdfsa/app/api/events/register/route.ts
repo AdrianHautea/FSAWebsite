@@ -78,13 +78,17 @@ export async function POST(req: Request) {
   // bypass rls — admin client; only returns the event if is_active is true
   const { data: event } = await admin
     .from('events')
-    .select('id, name, price_cents_members, price_cents_nonmembers, eb_price_members, eb_price_nonmembers, eb_deadline, is_active')
+    .select('id, name, price_cents_members, price_cents_nonmembers, eb_price_members, eb_price_nonmembers, eb_deadline, is_active, registration_closes_at')
     .eq('id', event_id)
     .eq('is_active', true)
     .maybeSingle()
 
   if (!event) {
     return NextResponse.json({ error: 'Event not found or not available.' }, { status: 404 })
+  }
+
+  if (event.registration_closes_at && new Date() > new Date(event.registration_closes_at)) {
+    return NextResponse.json({ error: 'Registration has closed for this event.' }, { status: 400 })
   }
 
   // ── pricing ─────────────────────────────────────────────────────────────────

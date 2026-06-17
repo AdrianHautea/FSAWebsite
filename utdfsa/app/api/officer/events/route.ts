@@ -87,7 +87,7 @@ export async function POST(req: Request) {
       eb_price_members: eb_price_dollars_members ?? null,
       eb_price_nonmembers: eb_price_dollars_nonmembers ?? null,
       eb_deadline: eb_deadline ?? null,
-      is_active,
+      is_active: is_active ?? true,
       is_visible: is_visible ?? true,
       registration_closes_at: registration_closes_at ?? null,
       attend_qr_token: crypto.randomUUID(),  // pre-generate so QR is ready whenever they open it

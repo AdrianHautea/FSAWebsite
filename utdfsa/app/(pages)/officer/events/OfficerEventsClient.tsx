@@ -290,7 +290,7 @@ function EventForm({
               setForm(prev => ({
                 ...prev,
                 event_type: newType,
-                ...(newType !== 'Party' && newType !== 'Other' ? { registration_closes_at: '' } : {}),
+                ...(newType !== 'Party' && newType !== 'Other' ? { registration_closes_at: '', is_active: true } : {}),
               }))
             }}
             className={selectCls}>
@@ -453,15 +453,14 @@ function EventForm({
           label="Visible to Members"
           sublabel="Show this event on the public Events page"
         />
-        <PillToggle
-          checked={form.is_active}
-          onChange={v => set('is_active', v)}
-          label="Registration &amp; Check-in Open"
-          sublabel="Allow members to register and scan in"
-        />
-        <p className="text-[12px] text-[#6e6e6e] font-medium">
-          Turn off after the event ends to close registration and disable QR attendance.
-        </p>
+        {(form.event_type === 'Party' || form.event_type === 'Other') && (
+          <PillToggle
+            checked={form.is_active}
+            onChange={v => set('is_active', v)}
+            label="Event Active"
+            sublabel="Turn off to cancel or fully close this event after it has ended."
+          />
+        )}
       </div>
 
       {error && (
@@ -599,6 +598,12 @@ function AttendanceQR({ event, onUpdate }: { event: Event; onUpdate: (e: Event) 
           )}
         </div>
       </div>
+
+      {!isHybrid(event.event_type) && (
+        <p className="text-[12px] italic text-[#6e6e6e] font-medium mt-3">
+          Use this to control when members can scan the attendance QR. Open it at the start of the event, close it when attendance ends.
+        </p>
+      )}
 
       {qrDataUrl && isOpen && (
         <div className="mt-4 pt-4 border-t border-white/7">
