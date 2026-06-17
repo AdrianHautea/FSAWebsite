@@ -181,6 +181,36 @@ export interface AppSettings {
   membershipYear: string
 }
 
+// ── ading application ─────────────────────────────────────
+
+// a submitted ading (new member) application row
+export interface AdingApplication {
+  id: string
+  member_id: string
+  submitted_at: string
+  status: 'pending' | 'accepted' | 'rejected'
+  instagram: string | null
+  phone: string | null
+  birthday: string | null
+  pronouns: string | null
+  activity_level: number | null
+  hobbies: string | null
+  fave_music_genre: string | null
+  fave_artist: string | null
+  fave_food: string | null
+  pam_vibe: string | null
+  hangout_size_preference: number | null
+  fave_tv_show_movie: string | null
+  availability: { days: string[]; times: string } | null
+  thoughts_on_drinking: string | null
+  dislikes: string | null
+  pam_dealbreakers: string | null
+  pam_incompatibilities: string | null
+  future_kuyate: string | null
+  mbti: string | null
+  additional_notes: string | null
+}
+
 // ── goodphil eligibility ──────────────────────────────────
 
 // computed eligibility view used on the officer goodphil dashboard

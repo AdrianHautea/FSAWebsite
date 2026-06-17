@@ -60,6 +60,12 @@ export function kuyateStatusEmailHtml({
               We are thrilled to welcome you as an official Kuya/Ate of UTD FSA! Your application has
               been reviewed and we are so excited to have you join the family.
             </p>
+            <p style="margin:16px 0;background-color:#1a1a2e;border-left:4px solid #1e40af;padding:12px 16px;border-radius:4px;color:#e5e7eb;font-size:15px;">
+              <strong>MANDATORY KUYATE MEETING:</strong> All accepted Kuya/Ates are required to attend
+              the mandatory Kuyate meeting on <strong>September 9th at 7:00 PM</strong>.
+              Location details will be shared closer to the date.
+              This meeting is required &mdash; please clear your schedule.
+            </p>
             ${pamilyaLine}
             <p style="margin:0 0 16px;color:#374151;font-size:15px;">
               Thank you for your commitment to our community. We cannot wait to see everything you

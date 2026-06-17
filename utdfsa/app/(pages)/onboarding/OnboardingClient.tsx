@@ -150,6 +150,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
     thoughts_on_drinking: '',
     dislikes: '',
     pam_dealbreakers: '',
+    pam_incompatibilities: '',
     future_kuyate: '',
     mbti: '',
     additional_notes: '',
@@ -200,27 +201,27 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
     router.push('/onboarding/basic-info')
   }
 
+  function validateProfileForm(): string | null {
+    if (!profileForm.first_name.trim())
+      return 'First Name is required'
+    if (!profileForm.last_name.trim())
+      return 'Last Name is required'
+    if (profileForm.phone && profileForm.phone.replace(/\D/g, '').length !== 10)
+      return 'Phone Number must be 10 digits — e.g. (214) 333-4444'
+    if (!profileForm.year)
+      return 'Year is required — please select an option'
+    if (!profileForm.major.trim())
+      return 'Major is required'
+    return null
+  }
+
   async function handleProfileSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
 
-    if (!profileForm.first_name || !profileForm.last_name) {
-      setError('first and last name are required')
-      return
-    }
-
-    if (!profileForm.phone || profileForm.phone.replace(/\D/g, '').length < 10) {
-      setError('a valid phone number is required')
-      return
-    }
-
-    if (!profileForm.year) {
-      setError('please select your year')
-      return
-    }
-
-    if (!profileForm.major.trim()) {
-      setError('major is required')
+    const validationError = validateProfileForm()
+    if (validationError) {
+      setError(validationError)
       return
     }
 
@@ -230,10 +231,70 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
     setStep(memberType!)
   }
 
+  function validateAdingForm(): string | null {
+    if (!adingForm.instagram?.trim())
+      return 'Instagram handle is required'
+    if (!adingForm.phone?.trim())
+      return 'Phone Number is required'
+    if (adingForm.phone && adingForm.phone.replace(/\D/g, '').length !== 10)
+      return 'Phone Number must be 10 digits — e.g. (214) 333-4444'
+    if (!adingForm.birthday)
+      return 'Birthday is required'
+    if (!adingForm.pronouns)
+      return 'Pronouns is required — please select an option'
+    if (!adingForm.activity_level)
+      return 'Activity Level is required — please select a value'
+    if (!adingForm.hangout_size_preference)
+      return 'Hangout Size Preference is required — please select a value'
+    if (!adingForm.availability?.days?.length)
+      return 'Availability is required — please select at least one day'
+    if (!adingForm.hobbies?.trim())
+      return 'Hobbies is required'
+    if (!adingForm.fave_food?.trim())
+      return 'Favorite Food is required'
+    if (!adingForm.pam_vibe?.trim())
+      return 'Pamilya Vibe is required'
+    if (!adingForm.thoughts_on_drinking?.trim())
+      return 'Thoughts on Drinking is required'
+    if (!adingForm.dislikes?.trim())
+      return 'Dislikes is required'
+    if (!adingForm.pam_dealbreakers?.trim())
+      return 'Things You Cannot Have in a Pam is required'
+    return null
+  }
+
+  function validateKuyateForm(): string | null {
+    if (!kuyateForm.instagram?.trim())
+      return 'Instagram handle is required'
+    if (!kuyateForm.pamilya_name?.trim())
+      return 'Pamilya Name is required — select a pamilya or I am unsure'
+    if (kuyateForm.wants_to_be_pam_head && !kuyateForm.pam_head_phone?.trim())
+      return 'Phone Number is required when applying for Pamilya Head'
+    if (kuyateForm.wants_to_be_pam_head && kuyateForm.pam_head_phone &&
+      kuyateForm.pam_head_phone.replace(/\D/g, '').length !== 10)
+      return 'Pamilya Head Phone Number must be 10 digits'
+    if (!kuyateForm.why_kuyate?.trim())
+      return 'Why do you want to be a Kuya/Ate is required'
+    if (kuyateForm.why_kuyate && kuyateForm.why_kuyate.trim().length < 50)
+      return 'Why do you want to be a Kuya/Ate must be at least 50 characters'
+    if (!kuyateForm.acknowledges_responsibilities)
+      return 'You must acknowledge your responsibilities before submitting'
+    return null
+  }
+
   async function handleFinalSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError(null)
+
+    const appValidationError = memberType === 'ading'
+      ? validateAdingForm()
+      : validateKuyateForm()
+    if (appValidationError) {
+      setError(appValidationError)
+      setLoading(false)
+      return
+    }
 
     // api: calls POST /api/onboarding/submit — saves profile + application data and marks onboarding complete — do not change this endpoint
     const res = await fetch('/api/onboarding/submit', {
@@ -771,7 +832,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 ))}
               </div>
               <label className="block font-sans text-xs text-white/40 mb-1">
-                What times are you usually free on those days?
+                What times are you usually free on those days? <span className="text-red-400">*</span>
               </label>
               <textarea
                 value={adingForm.availability.times}
@@ -845,6 +906,24 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
               )}
             </div>
 
+            {/* pam incompatibilities — optional */}
+            <div>
+              <label className={labelCls}>
+                Who can&rsquo;t you be in a Pamilya with and why?
+              </label>
+              <textarea
+                value={adingForm.pam_incompatibilities}
+                onChange={e => setAdingForm(p => ({ ...p, pam_incompatibilities: e.target.value }))}
+                className={fieldCls}
+                rows={2}
+                placeholder="Optional — share any conflicts or reasons you need to be separated from someone"
+                maxLength={500}
+              />
+              {adingForm.pam_incompatibilities.length > 400 && (
+                <p className="font-sans text-xs text-white/40 text-right mt-0.5">{adingForm.pam_incompatibilities.length} / 500</p>
+              )}
+            </div>
+
             {/* future kuyate */}
             <div>
               <label className={labelCls}>
@@ -855,7 +934,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 value={adingForm.future_kuyate}
                 onChange={e => setAdingForm(p => ({ ...p, future_kuyate: e.target.value }))}
                 className={fieldCls}
-                placeholder="Leave blank if unsure"
+                placeholder="Enter N/A if unsure"
                 maxLength={100}
                 required
               />

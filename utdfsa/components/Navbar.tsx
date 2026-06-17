@@ -122,7 +122,7 @@ export default function Navbar({ initialMember }: NavbarProps) {
       {/* z-[60]: above carousel cards (z-20) and page content; below Modal (z-[300]) */}
       <nav className="flex justify-between items-center px-6 md:px-14 bg-brand-bg h-20 sticky top-0 z-[60]">
         {/* route: / — home page — do not change this path */}
-        <Link href="/" className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3" onClick={closeMobileMenu}>
           <Image
             src="/logo-head.png"
             alt="UTD FSA Logo"

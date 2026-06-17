@@ -92,13 +92,16 @@ function nullIfEmpty(v: unknown) {
   return v === '' || v === null || v === undefined ? null : v
 }
 
-// 10-digit phone — accepts formatted or raw; stores digits only
+// 10-digit phone — accepts formatted or raw; stores as (xxx) xxx-xxxx
 export const phoneField = z.preprocess(
   nullIfEmpty,
   z.string()
-    // strip all non-digit characters before length check (handles formatted input like (214) 555-1234)
-    .transform(v => v.replace(/\D/g, ''))
-    .refine(v => v.length === 10, 'must be a valid 10-digit phone number')
+    .transform(v => {
+      const digits = v.replace(/\D/g, '')
+      if (digits.length !== 10) return digits
+      return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`
+    })
+    .refine(v => /^\(\d{3}\) \d{3}-\d{4}$/.test(v), 'must be a valid 10-digit phone number')
     .nullable()
 )
 
@@ -165,6 +168,8 @@ export const adingApplicationSchema = z.object({
   dislikes: z.preprocess(nullIfEmpty, z.string().max(500).nullable()).optional(),
 
   pam_dealbreakers: z.preprocess(nullIfEmpty, z.string().max(500).nullable()).optional(),
+
+  pam_incompatibilities: z.preprocess(nullIfEmpty, z.string().max(500).nullable()).optional(),
 
   future_kuyate: z.preprocess(nullIfEmpty, z.string().max(100).nullable()).optional(),
 

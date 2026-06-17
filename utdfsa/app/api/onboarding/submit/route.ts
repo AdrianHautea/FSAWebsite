@@ -145,6 +145,7 @@ export async function POST(req: Request) {
         thoughts_on_drinking:     d.thoughts_on_drinking ?? null,
         dislikes:                 d.dislikes ?? null,
         pam_dealbreakers:         d.pam_dealbreakers ?? null,
+        pam_incompatibilities:    d.pam_incompatibilities ?? null,
         future_kuyate:            d.future_kuyate ?? null,
         mbti:                     d.mbti ?? null,
         additional_notes:         d.additional_notes ?? null,
