@@ -230,7 +230,7 @@ export default function AboutClient() {
               ABOUT US
             </h1>
             <p
-              className="font-sans text-white/60 leading-relaxed max-w-2xl mx-auto"
+              className="font-sans text-white leading-relaxed max-w-2xl mx-auto"
               style={{ fontSize: 'clamp(15px, 1.5vw, 18px)' }}
             >
               UTD FSA is a student-led social organization at the University of Texas at Dallas,

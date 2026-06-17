@@ -62,7 +62,7 @@ export default function ModernPage() {
       </section>
 
       {/* ── SECTION 3 — PAST PERFORMANCES ────────────────────────── */}
-      <section className="bg-[#497047] py-16 px-6 md:px-8">
+      <section className="bg-[#2d452c] py-16 px-6 md:px-8">
         <div className="max-w-3xl mx-auto">
 
           <h2

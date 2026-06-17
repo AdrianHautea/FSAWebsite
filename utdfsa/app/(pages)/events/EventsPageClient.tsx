@@ -76,6 +76,8 @@ function getEventTypeColor(type: string): string {
   return TYPE_STYLE[type.toLowerCase()]?.dot ?? '#9a9a9a'
 }
 
+const EVENTS_PER_PAGE = 12
+
 // ── section divider ───────────────────────────────────────────────────────────
 function SectionLabel({ label }: { label: string }) {
   return (
@@ -122,6 +124,32 @@ interface Props {
 export default function EventsPageClient({ events, isMember, member, registeredEventIds, success }: Props) {
   // tracks which event card was clicked to open the detail modal; null = closed
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // ── pagination ────────────────────────────────────────────
+  const totalEvents = events.length
+  const totalPages = Math.ceil(totalEvents / EVENTS_PER_PAGE)
+  const paginatedEvents = events.slice(
+    (currentPage - 1) * EVENTS_PER_PAGE,
+    currentPage * EVENTS_PER_PAGE,
+  )
+
+  function handlePageChange(page: number) {
+    setCurrentPage(page)
+    document.getElementById('all-events')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  function getPageNumbers(current: number, total: number): (number | '...')[] {
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+    const pages: (number | '...')[] = [1]
+    if (current > 3) pages.push('...')
+    for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
+      pages.push(i)
+    }
+    if (current < total - 2) pages.push('...')
+    pages.push(total)
+    return pages
+  }
 
   // ── this-week filter ──────────────────────────────────────
   // compute a 7-day window from now; dates compared in JS local time
@@ -213,7 +241,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
         </div>
 
         {/* ── all events grid ───────────────────────────────────────────────── */}
-        <div className="mt-10">
+        <div id="all-events" className="mt-10">
           <SectionLabel label="All Events" />
 
           {/* only renders empty state when no active events exist — do not remove this condition */}
@@ -221,7 +249,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
             <p className="py-6" style={{ color: '#6f6f6f' }}>No upcoming events right now — check back soon!</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[22px]">
-              {events.map((event, index) => {
+              {paginatedEvents.map((event, index) => {
                 const badge = getBadge(event.event_type)
                 const isPastCard = new Date(event.event_date) < now
                 return (
@@ -250,7 +278,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                           fill
                           className={`object-cover object-top${isPastCard ? ' brightness-75' : ''}`}
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          priority={index === 0}
+                          priority={index === 0 && currentPage === 1}
                           loading={index === 0 ? 'eager' : 'lazy'}
                         />
                       ) : (
@@ -294,6 +322,64 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                   </button>
                 )
               })}
+            </div>
+          )}
+
+          {/* ── pagination controls ───────────────────────────────────────────── */}
+          {totalPages > 1 && (
+            <div className="mt-8 mb-4">
+              <p className="text-center text-[13px] font-medium mb-4" style={{ color: '#6f6f6f' }}>
+                Showing {(currentPage - 1) * EVENTS_PER_PAGE + 1}–{Math.min(currentPage * EVENTS_PER_PAGE, totalEvents)} of {totalEvents} events
+              </p>
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-[10px] border text-[13px] font-semibold transition-colors${
+                    currentPage === 1
+                      ? ' opacity-40 cursor-not-allowed border-white/16 bg-transparent text-[#8c8c8c]'
+                      : ' border-white/16 bg-transparent text-[#8c8c8c] hover:border-white/30 hover:text-[#cfcfcf]'
+                  }`}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  Previous
+                </button>
+
+                {getPageNumbers(currentPage, totalPages).map((page, i) =>
+                  page === '...' ? (
+                    <span key={`ellipsis-${i}`} className="px-2 text-[13px] font-medium" style={{ color: '#6f6f6f' }}>...</span>
+                  ) : (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page as number)}
+                      className={`px-4 py-2 rounded-[10px] border text-[13px] font-semibold transition-colors${
+                        page === currentPage
+                          ? ' text-white'
+                          : ' border-white/16 bg-transparent text-[#8c8c8c] hover:border-white/30 hover:text-[#cfcfcf]'
+                      }`}
+                      style={page === currentPage ? {
+                        background: '#272727',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                      } : undefined}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-[10px] border text-[13px] font-semibold transition-colors${
+                    currentPage === totalPages
+                      ? ' opacity-40 cursor-not-allowed border-white/16 bg-transparent text-[#8c8c8c]'
+                      : ' border-white/16 bg-transparent text-[#8c8c8c] hover:border-white/30 hover:text-[#cfcfcf]'
+                  }`}
+                >
+                  Next
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </button>
+              </div>
             </div>
           )}
         </div>
