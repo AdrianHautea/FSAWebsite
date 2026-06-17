@@ -47,7 +47,16 @@ export function kuyateStatusEmailHtml({
         <!-- header -->
         <tr>
           <td bgcolor="#10220f" style="background:linear-gradient(135deg,#0a160c 0%,#10220f 55%,#16331a 100%);padding:40px 44px 36px;border-bottom:1px solid rgba(70,106,71,0.25);">
-            <p style="margin:0 0 18px;font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#9db89e;font-family:Arial,Helvetica,sans-serif;">UTD Filipino Student Association</p>
+            <table cellpadding="0" cellspacing="0" style="margin:0 0 18px;">
+              <tr>
+                <td style="vertical-align:middle;">
+                  <img src="https://www.utdfsa.org/logo-head.png" width="36" height="36" alt="UTD FSA" style="display:block;border:0;" />
+                </td>
+                <td style="vertical-align:middle;padding-left:10px;">
+                  <span style="font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#9db89e;font-family:Arial,Helvetica,sans-serif;">Filipino Student Association</span>
+                </td>
+              </tr>
+            </table>
             <h1 style="margin:0;color:#ffffff;font-size:30px;font-weight:900;font-family:Arial,Helvetica,sans-serif;letter-spacing:-0.01em;line-height:1.05;">Kuya/Ate Application</h1>
           </td>
         </tr>
@@ -86,7 +95,7 @@ export function kuyateStatusEmailHtml({
         <!-- footer -->
         <tr>
           <td bgcolor="#080808" style="background:#080808;padding:20px 44px;border-top:1px solid rgba(255,255,255,0.07);text-align:center;">
-            <p style="margin:0;font-size:12px;color:#6f6f6f;letter-spacing:0.01em;font-family:Arial,Helvetica,sans-serif;"><strong style="color:#8fae90;font-weight:700;">UTD</strong> Filipino Student Association &mdash; University of Texas at Dallas</p>
+            <p style="margin:0;font-size:12px;color:#6f6f6f;letter-spacing:0.01em;font-family:Arial,Helvetica,sans-serif;">UTD Filipino Student Association &mdash; University of Texas at Dallas</p>
           </td>
         </tr>
 
@@ -116,7 +125,16 @@ export function kuyateStatusEmailHtml({
         <!-- header -->
         <tr>
           <td bgcolor="#10220f" style="background:linear-gradient(135deg,#0a160c 0%,#10220f 55%,#16331a 100%);padding:40px 44px 36px;border-bottom:1px solid rgba(70,106,71,0.25);">
-            <p style="margin:0 0 18px;font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#9db89e;font-family:Arial,Helvetica,sans-serif;">UTD Filipino Student Association</p>
+            <table cellpadding="0" cellspacing="0" style="margin:0 0 18px;">
+              <tr>
+                <td style="vertical-align:middle;">
+                  <img src="https://www.utdfsa.org/logo-head.png" width="36" height="36" alt="UTD FSA" style="display:block;border:0;" />
+                </td>
+                <td style="vertical-align:middle;padding-left:10px;">
+                  <span style="font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#9db89e;font-family:Arial,Helvetica,sans-serif;">Filipino Student Association</span>
+                </td>
+              </tr>
+            </table>
             <h1 style="margin:0;color:#ffffff;font-size:30px;font-weight:900;font-family:Arial,Helvetica,sans-serif;letter-spacing:-0.01em;line-height:1.05;">Kuya/Ate Application</h1>
           </td>
         </tr>
@@ -145,7 +163,7 @@ export function kuyateStatusEmailHtml({
         <!-- footer -->
         <tr>
           <td bgcolor="#080808" style="background:#080808;padding:20px 44px;border-top:1px solid rgba(255,255,255,0.07);text-align:center;">
-            <p style="margin:0;font-size:12px;color:#6f6f6f;letter-spacing:0.01em;font-family:Arial,Helvetica,sans-serif;"><strong style="color:#8fae90;font-weight:700;">UTD</strong> Filipino Student Association &mdash; University of Texas at Dallas</p>
+            <p style="margin:0;font-size:12px;color:#6f6f6f;letter-spacing:0.01em;font-family:Arial,Helvetica,sans-serif;">UTD Filipino Student Association &mdash; University of Texas at Dallas</p>
           </td>
         </tr>
 

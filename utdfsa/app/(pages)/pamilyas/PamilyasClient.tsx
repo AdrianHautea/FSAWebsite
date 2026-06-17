@@ -462,7 +462,7 @@ export default function PamilyasClient({
         <div className="bg-section-bg py-16 px-8">
           <div className="max-w-xl mx-auto">
             <div className="bg-white rounded-3xl p-8 text-center">
-              <p className="font-sans font-bold text-[#1f1f1f] text-lg leading-relaxed">
+              <p className="font-sans font-normal text-[#1f1f1f] text-lg leading-relaxed">
                 Pamilyas will be revealed after the sorting ceremony. Check back soon!
               </p>
             </div>
@@ -482,7 +482,7 @@ export default function PamilyasClient({
 
         <div className="bg-section-bg px-8 py-12">
 
-          <p className="font-sans font-bold text-[clamp(16px,1.5vw,22px)] text-white/70 text-center mb-10 max-w-[1194px] mx-auto">
+          <p className="font-sans font-normal text-[clamp(16px,1.5vw,22px)] text-white/70 text-center mb-10 max-w-[1194px] mx-auto">
             Select the form that best fits the role you&rsquo;ll play in your UTD FSA pamilya experience!
           </p>
 
