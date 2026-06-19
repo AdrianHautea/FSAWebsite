@@ -52,6 +52,10 @@ export default function Navbar({ initialMember }: NavbarProps) {
   const goodphilRef = useRef<HTMLLIElement>(null)
   // stable client instance; useRef prevents re-creation on every render
   const supabase = useRef(createClient()).current
+  // false = navbar has slid off the top; true = visible
+  const [navVisible, setNavVisible] = useState(true)
+  // ref so the scroll handler can read current dropdown state without a stale closure
+  const anyDropdownOpenRef = useRef(false)
 
   useEffect(() => {
     // only listen for changes after initial load
@@ -98,6 +102,26 @@ export default function Navbar({ initialMember }: NavbarProps) {
     return () => { document.body.style.overflow = '' }
   }, [mobileMenuOpen])
 
+  // keep the ref in sync with dropdown state; force navbar visible while any menu is open
+  useEffect(() => {
+    anyDropdownOpenRef.current = dropdownOpen || goodphilOpen || mobileMenuOpen
+    if (anyDropdownOpenRef.current) setNavVisible(true)
+  }, [dropdownOpen, goodphilOpen, mobileMenuOpen])
+
+  // hide on scroll down past 80px, reveal on scroll up; registered once, reads state via ref
+  useEffect(() => {
+    let lastY = window.scrollY
+    function onScroll() {
+      const y = window.scrollY
+      if (!anyDropdownOpenRef.current) {
+        setNavVisible(y < 80 || y < lastY)
+      }
+      lastY = y
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   async function handleLogout() {
     // route: /auth/logout — server route that clears the Supabase session cookie — do not change this path
     window.location.href = '/auth/logout'
@@ -120,7 +144,13 @@ export default function Navbar({ initialMember }: NavbarProps) {
   return (
     <>
       {/* z-[60]: above carousel cards (z-20) and page content; below Modal (z-[300]) */}
-      <nav className="flex justify-between items-center px-6 md:px-14 bg-brand-bg h-20 sticky top-0 z-[60]">
+      <nav
+        className="flex justify-between items-center px-6 md:px-14 bg-brand-bg h-20 sticky top-0 z-[60]"
+        style={{
+          transform: navVisible ? 'translateY(0)' : 'translateY(-100%)',
+          transition: 'transform 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+      >
         {/* route: / — home page — do not change this path */}
         <Link href="/" className="flex items-center gap-3" onClick={closeMobileMenu}>
           <Image

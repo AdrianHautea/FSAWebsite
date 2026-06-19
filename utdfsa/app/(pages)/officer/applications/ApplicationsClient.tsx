@@ -629,6 +629,9 @@ export default function ApplicationsClient({
   // separate page counters per tab so pagination resets independently
   const [adingPage, setAdingPage] = useState(1)
   const [kuyatePage, setKuyatePage] = useState(1)
+  // name search — separate state per tab, composes on top of status filter
+  const [adingSearch, setAdingSearch] = useState('')
+  const [kuyateSearch, setKuyateSearch] = useState('')
   // id of the application whose detail modal is open; null means closed
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null)
   const [selectedAppType, setSelectedAppType] = useState<'ading' | 'kuyate'>('ading')
@@ -667,9 +670,24 @@ export default function ApplicationsClient({
     ? kuyateApps
     : kuyateApps.filter(a => a.status === kuyateFilter)
 
+  // name search applied on top of status filter (csv export still reads filteredAding/filteredKuyate)
+  const adingSearchTerm = adingSearch.trim().toLowerCase()
+  const searchedAding = adingSearchTerm
+    ? filteredAding.filter(a =>
+        `${a.members.first_name} ${a.members.last_name}`.toLowerCase().includes(adingSearchTerm)
+      )
+    : filteredAding
+
+  const kuyateSearchTerm = kuyateSearch.trim().toLowerCase()
+  const searchedKuyate = kuyateSearchTerm
+    ? filteredKuyate.filter(a =>
+        `${a.members.first_name} ${a.members.last_name}`.toLowerCase().includes(kuyateSearchTerm)
+      )
+    : filteredKuyate
+
   // Paginated slices
-  const paginatedAding = filteredAding.slice((adingPage - 1) * ITEMS_PER_PAGE, adingPage * ITEMS_PER_PAGE)
-  const paginatedKuyate = filteredKuyate.slice((kuyatePage - 1) * ITEMS_PER_PAGE, kuyatePage * ITEMS_PER_PAGE)
+  const paginatedAding = searchedAding.slice((adingPage - 1) * ITEMS_PER_PAGE, adingPage * ITEMS_PER_PAGE)
+  const paginatedKuyate = searchedKuyate.slice((kuyatePage - 1) * ITEMS_PER_PAGE, kuyatePage * ITEMS_PER_PAGE)
 
   function adingCounts(): Record<Filter, number> {
     return {
@@ -696,6 +714,16 @@ export default function ApplicationsClient({
 
   function handleKuyateFilterChange(f: Filter) {
     setKuyateFilter(f)
+    setKuyatePage(1)
+  }
+
+  function handleAdingSearchChange(q: string) {
+    setAdingSearch(q)
+    setAdingPage(1)
+  }
+
+  function handleKuyateSearchChange(q: string) {
+    setKuyateSearch(q)
     setKuyatePage(1)
   }
 
@@ -826,7 +854,7 @@ export default function ApplicationsClient({
         {/* ading tab */}
         {tab === 'ading' && (
           <section>
-            <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
+            <div className="flex items-center justify-between gap-4 mb-3 flex-wrap">
               <FilterBar active={adingFilter} onChange={handleAdingFilterChange} counts={adingCounts()} />
               <button
                 onClick={() => exportAdingCSV(filteredAding)}
@@ -838,8 +866,17 @@ export default function ApplicationsClient({
                 Export CSV
               </button>
             </div>
+            <div className="mb-5">
+              <input
+                type="search"
+                value={adingSearch}
+                onChange={e => handleAdingSearchChange(e.target.value)}
+                placeholder="Search by name…"
+                className="w-full max-w-[280px] px-3.5 py-2 rounded-[10px] bg-[#0d0d0d] border border-white/10 text-[13px] text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-white/24 transition-[border-color] font-[inherit]"
+              />
+            </div>
 
-            {filteredAding.length === 0 ? (
+            {searchedAding.length === 0 ? (
               <p className="text-[#5e5e5e] text-sm py-14 text-center">No applications found.</p>
             ) : (
               <>
@@ -861,10 +898,10 @@ export default function ApplicationsClient({
                     />
                   ))}
                 </div>
-                {filteredAding.length > ITEMS_PER_PAGE && (
+                {searchedAding.length > ITEMS_PER_PAGE && (
                   <PaginationBar
                     page={adingPage}
-                    total={filteredAding.length}
+                    total={searchedAding.length}
                     onPrev={() => setAdingPage(p => p - 1)}
                     onNext={() => setAdingPage(p => p + 1)}
                   />
@@ -877,7 +914,7 @@ export default function ApplicationsClient({
         {/* kuyate tab */}
         {tab === 'kuyate' && (
           <section>
-            <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
+            <div className="flex items-center justify-between gap-4 mb-3 flex-wrap">
               <FilterBar active={kuyateFilter} onChange={handleKuyateFilterChange} counts={kuyateCounts()} />
               <button
                 onClick={() => exportKuyateCSV(filteredKuyate)}
@@ -889,8 +926,17 @@ export default function ApplicationsClient({
                 Export CSV
               </button>
             </div>
+            <div className="mb-5">
+              <input
+                type="search"
+                value={kuyateSearch}
+                onChange={e => handleKuyateSearchChange(e.target.value)}
+                placeholder="Search by name…"
+                className="w-full max-w-[280px] px-3.5 py-2 rounded-[10px] bg-[#0d0d0d] border border-white/10 text-[13px] text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-white/24 transition-[border-color] font-[inherit]"
+              />
+            </div>
 
-            {filteredKuyate.length === 0 ? (
+            {searchedKuyate.length === 0 ? (
               <p className="text-[#5e5e5e] text-sm py-14 text-center">No applications found.</p>
             ) : (
               <>
@@ -912,10 +958,10 @@ export default function ApplicationsClient({
                     />
                   ))}
                 </div>
-                {filteredKuyate.length > ITEMS_PER_PAGE && (
+                {searchedKuyate.length > ITEMS_PER_PAGE && (
                   <PaginationBar
                     page={kuyatePage}
-                    total={filteredKuyate.length}
+                    total={searchedKuyate.length}
                     onPrev={() => setKuyatePage(p => p - 1)}
                     onNext={() => setKuyatePage(p => p + 1)}
                   />

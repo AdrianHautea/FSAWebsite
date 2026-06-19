@@ -303,34 +303,70 @@ export default function OfficerGalleryClient({ galleries }: Props) {
 
               <div>
                 <label className={labelCls}>Cover Photo <span className="text-[#ef6f6f]">*</span></label>
-                {/* clicking anywhere in this div opens the hidden file input — do not remove the onClick */}
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full h-44 border-2 border-dashed border-white/18 rounded-xl overflow-hidden cursor-pointer hover:border-[rgba(151,71,255,0.55)] hover:bg-[#101010] transition-colors bg-[#0d0d0d]"
-                >
-                  {/* only renders the preview once a file has been selected — do not remove this condition */}
-                  {coverPreview ? (
-                    <img
-                      src={coverPreview}
-                      alt="Cover preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="h-full flex flex-col items-center justify-center gap-3 text-center">
-                      <div className="w-10 h-10 rounded-xl bg-white/4 flex items-center justify-center">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8c8c8c" strokeWidth={1.7}>
-                          <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.7"/>
-                          <path d="M21 15l-5-5L4 21"/>
-                        </svg>
+                <div className="flex gap-4 items-start">
+                  <div className="flex-1 min-w-0">
+                    {/* clicking this area opens the hidden file input — do not remove the onClick */}
+                    {coverPreview ? (
+                      <div
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full aspect-[1/1] rounded-xl overflow-hidden cursor-pointer mb-2"
+                      >
+                        <img
+                          src={coverPreview}
+                          alt="Cover preview"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                      <div>
-                        <div className="text-sm font-semibold text-[#d4d4d4]">Click to select a photo</div>
-                        <div className="text-xs text-[#6e6e6e] font-medium mt-0.5">JPEG, PNG, or WEBP</div>
+                    ) : (
+                      <div
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full aspect-[1/1] border-2 border-dashed border-white/18 rounded-xl bg-[#0d0d0d] flex flex-col items-center justify-center gap-3 text-center cursor-pointer hover:border-[rgba(151,71,255,0.55)] hover:bg-[#101010] transition-colors mb-2"
+                      >
+                        <div className="w-10 h-10 rounded-xl bg-white/4 flex items-center justify-center">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8c8c8c" strokeWidth={1.7}>
+                            <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.7"/>
+                            <path d="M21 15l-5-5L4 21"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <div className="text-sm font-semibold text-[#d4d4d4]">Click to select a photo</div>
+                          <div className="text-xs text-[#6e6e6e] font-medium mt-0.5">JPEG, PNG, or WEBP · 1:1 square</div>
+                        </div>
                       </div>
+                    )}
+                    {/* only renders the remove button after a file is selected — do not remove this condition */}
+                    {coverPreview && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCoverFile(null)
+                          setCoverPreview(null)
+                          if (fileInputRef.current) fileInputRef.current.value = ''
+                        }}
+                        className="text-[12px] text-[#6e6e6e] hover:text-[#ef6f6f] font-medium transition-colors"
+                      >
+                        Remove photo
+                      </button>
+                    )}
+                  </div>
+
+                  {/* reference tile — mirrors the 1:1 thumbnail shown on the archives list */}
+                  <div className="flex-shrink-0">
+                    <div
+                      className="w-[72px] aspect-[1/1] rounded-[13px] border border-white/10 bg-[#141414] flex flex-col items-center justify-center gap-1.5"
+                      style={{ backgroundImage: 'repeating-linear-gradient(135deg,transparent 0 11px,rgba(255,255,255,0.025) 11px 12px)' }}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth={1.4}>
+                        <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.7"/>
+                        <path d="M21 15l-5-5L4 21"/>
+                      </svg>
+                      <span className="font-mono text-[8px] tracking-[0.1em] text-white/30">1:1</span>
                     </div>
-                  )}
+                    <p className="text-[10px] text-[#6e6e6e] font-medium mt-1.5 text-center max-w-[72px]">as shown in archives</p>
+                  </div>
                 </div>
-                {/* hidden — triggered programmatically by the div above — do not remove */}
+
+                {/* hidden — triggered programmatically by the area above — do not remove */}
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -338,20 +374,6 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   onChange={handleFileChange}
                   className="hidden"
                 />
-                {/* only renders the remove button after a file is selected — do not remove this condition */}
-                {coverPreview && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setCoverFile(null)
-                      setCoverPreview(null)
-                      if (fileInputRef.current) fileInputRef.current.value = ''
-                    }}
-                    className="mt-2 text-[12px] text-[#6e6e6e] hover:text-[#ef6f6f] font-medium transition-colors"
-                  >
-                    Remove photo
-                  </button>
-                )}
               </div>
 
               <div>

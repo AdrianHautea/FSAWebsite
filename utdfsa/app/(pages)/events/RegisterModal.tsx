@@ -12,7 +12,7 @@
 import { useState } from 'react'
 import Modal from '@/components/Modal'
 
-interface Ticket { fname: string; lname: string; email: string }
+interface Ticket { fname: string; lname: string; email: string; emailConfirm: string }
 
 /**
  * Props — passed down from EventsPage server component (events/page.tsx)
@@ -38,7 +38,7 @@ function fmt(cents: number) {
   return `$${(cents / 100).toFixed(2)}`
 }
 
-const blank = (): Ticket => ({ fname: '', lname: '', email: '' })
+const blank = (): Ticket => ({ fname: '', lname: '', email: '', emailConfirm: '' })
 
 // ============================================================
 // UI — safe to restyle everything below this line
@@ -62,13 +62,15 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
   // list of attendee ticket rows; first slot pre-filled from memberInfo when available
   const [tickets, setTickets] = useState<Ticket[]>([
     memberInfo
-      ? { fname: memberInfo.fname, lname: memberInfo.lname, email: memberInfo.email }
+      ? { fname: memberInfo.fname, lname: memberInfo.lname, email: memberInfo.email, emailConfirm: '' }
       : blank(),
   ])
   // true while POST /api/events/register is in flight
   const [loading, setLoading] = useState(false)
   // validation or api error message shown below the form
   const [error, setError] = useState<string | null>(null)
+  // per-ticket email confirmation mismatch errors; indexed by ticket slot
+  const [emailErrors, setEmailErrors] = useState<string[]>([])
 
   // member pricing vs. general admission — both stored as cents in the db
   const pricePerTicket = isMember ? event.price_cents_members : event.price_cents_nonmembers
@@ -81,11 +83,15 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
 
   // hard cap at 10 tickets per order for non-members
   function addTicket() {
-    if (tickets.length < 10) setTickets(prev => [...prev, blank()])
+    if (tickets.length < 10) {
+      setTickets(prev => [...prev, blank()])
+      setEmailErrors(prev => [...prev, ''])
+    }
   }
 
   function removeTicket(i: number) {
     setTickets(prev => prev.filter((_, idx) => idx !== i))
+    setEmailErrors(prev => prev.filter((_, idx) => idx !== i))
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -93,12 +99,28 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
     setError(null)
     setLoading(true)
 
+    // validate email confirmation for each editable ticket slot before hitting the api
+    const errs = tickets.map((t, i) => {
+      if (isMember && i === 0) return '' // member's first slot email is pre-filled and locked — skip
+      if (t.email.trim().toLowerCase() !== t.emailConfirm.trim().toLowerCase()) {
+        return 'Email addresses do not match.'
+      }
+      return ''
+    })
+    if (errs.some(e => e)) {
+      setEmailErrors(errs)
+      setLoading(false)
+      return
+    }
+    setEmailErrors([])
+
     try {
       // api: calls POST /api/events/register — creates registration + Stripe checkout session — do not change this endpoint
+      // strip emailConfirm before sending — the api does not expect or validate it
       const res = await fetch('/api/events/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ event_id: event.id, tickets }),
+        body: JSON.stringify({ event_id: event.id, tickets: tickets.map(({ fname, lname, email }) => ({ fname, lname, email })) }),
       })
 
       const data = await res.json()
@@ -271,6 +293,29 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                       placeholder="email@example.com"
                     />
                   </div>
+
+                  {/* confirm-email field — shown for all slots except the pre-filled member slot */}
+                  {!(isMember && i === 0) && (
+                    <div>
+                      <label className={labelCls} style={{ color: '#7a7a7a' }}>Confirm Email</label>
+                      <input
+                        required
+                        type="email"
+                        value={ticket.emailConfirm}
+                        onChange={e => {
+                          updateTicket(i, 'emailConfirm', e.target.value)
+                          // clear this slot's mismatch error as the user corrects it
+                          if (emailErrors[i]) setEmailErrors(prev => { const n = [...prev]; n[i] = ''; return n })
+                        }}
+                        className={fieldCls}
+                        placeholder="Confirm email address"
+                      />
+                      {/* only renders when this slot has a mismatch error */}
+                      {emailErrors[i] && (
+                        <p className="text-xs font-medium mt-1.5" style={{ color: '#ff84b0' }}>{emailErrors[i]}</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
 

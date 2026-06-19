@@ -106,6 +106,13 @@ function PhotoPlaceholder({ ratio = '4/5' }: { ratio?: string }) {
 }
 
 // ── props ────────────────────────────────────────────────────────────────────
+interface TicketQR {
+  attendee_fname: string
+  attendee_lname: string
+  attendee_email: string
+  qr_data_url: string
+}
+
 interface Props {
   events: Event[]
   isMember: boolean
@@ -119,13 +126,17 @@ interface Props {
   } | null
   registeredEventIds: string[]
   success?: string
+  // populated for non-member purchases once payment is confirmed; undefined until then
+  ticketQRs?: TicketQR[]
 }
 
-export default function EventsPageClient({ events, isMember, member, registeredEventIds, success }: Props) {
+export default function EventsPageClient({ events, isMember, member, registeredEventIds, success, ticketQRs }: Props) {
   // tracks which event card was clicked to open the detail modal; null = closed
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [showPast, setShowPast] = useState(false)
+  // controls the "already registered" info modal for members who have a paid ticket
+  const [showAlreadyRegistered, setShowAlreadyRegistered] = useState(false)
   // refreshed every 60s so events that pass their date while the page is open move to past automatically
   const [now, setNow] = useState(() => new Date())
 
@@ -215,12 +226,48 @@ export default function EventsPageClient({ events, isMember, member, registeredE
         {/* ── success banner ────────────────────────────────────────────────── */}
         {/* only renders after a successful free-event registration or Stripe redirect — do not remove this condition */}
         {success && (
-          <div className="mb-8 px-5 py-4 rounded-2xl text-sm font-medium" style={{
-            background: 'rgba(117,186,120,0.1)',
-            border: '1px solid rgba(117,186,120,0.3)',
-            color: '#75ba78',
+          <div className="mb-8 rounded-2xl overflow-hidden" style={{
+            background: 'rgba(117,186,120,0.08)',
+            border: '1px solid rgba(117,186,120,0.28)',
           }}>
-            You&apos;re registered! Check your email for your QR code ticket.
+            <div className="px-5 py-4 text-sm font-medium" style={{ color: '#75ba78' }}>
+              {ticketQRs && ticketQRs.length > 0
+                ? 'You\'re registered! Your QR code tickets are below — screenshot or save each one. Your QR code tickets have also been sent to their respective recipient emails.'
+                : 'You\'re registered! Check your email for your QR code ticket.'}
+            </div>
+
+            {/* qr code grid — only populated for non-member purchases once payment is confirmed */}
+            {ticketQRs && ticketQRs.length > 0 && (
+              <div className="px-5 pb-6" style={{ borderTop: '1px solid rgba(117,186,120,0.14)' }}>
+                <div className="flex flex-wrap gap-6 pt-5">
+                  {ticketQRs.map((t, i) => {
+                    const name = [t.attendee_fname, t.attendee_lname].filter(Boolean).join(' ')
+                    return (
+                      <div key={i} className="flex flex-col items-center gap-2">
+                        {/* white padding is part of the qr spec — scanners need quiet zone */}
+                        <img
+                          src={t.qr_data_url}
+                          alt={`QR code for ${name || t.attendee_email}`}
+                          width={160}
+                          height={160}
+                          className="rounded-xl"
+                          style={{ background: '#fff', padding: '10px' }}
+                        />
+                        <p className="text-[12px] font-semibold text-center" style={{ color: '#cfcfcf', maxWidth: '160px' }}>
+                          {name || t.attendee_email || `Ticket ${i + 1}`}
+                        </p>
+                        {/* only renders the email line when both name and email are available */}
+                        {name && t.attendee_email && (
+                          <p className="text-[11px] text-center" style={{ color: '#6e6e6e', maxWidth: '160px' }}>
+                            {t.attendee_email}
+                          </p>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -502,7 +549,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
            new Date() > new Date(event.registration_closes_at))
 
         return (
-          <Modal onClose={() => setSelectedEvent(null)} size="lg">
+          <Modal onClose={() => { setSelectedEvent(null); setShowAlreadyRegistered(false) }} size="lg">
             <div
               style={{
                 background: '#141414',
@@ -512,7 +559,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
               className="rounded-2xl relative"
             >
               <button
-                onClick={() => setSelectedEvent(null)}
+                onClick={() => { setSelectedEvent(null); setShowAlreadyRegistered(false) }}
                 className="absolute top-3.5 right-3.5 z-10 flex items-center justify-center rounded-full transition-colors"
                 style={{
                   width: '34px',
@@ -659,19 +706,21 @@ export default function EventsPageClient({ events, isMember, member, registeredE
 
                 {/* CTA */}
                 {ticketed ? (
-                  // only renders Already Registered badge when the member is in registeredEventIds — do not remove this condition
+                  // only renders Already Registered button when the member has a paid ticket — do not remove this condition
                   alreadyRegistered ? (
-                    <div
-                      className="w-full text-center text-[14.5px] font-bold tracking-[0.01em] rounded-[13px]"
+                    <button
+                      onClick={() => setShowAlreadyRegistered(true)}
+                      className="w-full text-center text-[14.5px] font-bold tracking-[0.01em] rounded-[13px] transition-opacity hover:opacity-75"
                       style={{
                         padding: '16px',
                         background: 'rgba(255,255,255,0.04)',
                         border: '1px solid rgba(255,255,255,0.08)',
                         color: '#75ba78',
+                        cursor: 'pointer',
                       }}
                     >
                       ✓ Already Registered
-                    </div>
+                    </button>
                   ) : registrationClosed ? (
                     // only renders when registration_closes_at has passed — do not remove this condition
                     <div
@@ -729,6 +778,31 @@ export default function EventsPageClient({ events, isMember, member, registeredE
           </Modal>
         )
       })()}
+
+      {/* already registered info modal — only for members with a confirmed paid ticket */}
+      {showAlreadyRegistered && (
+        <Modal onClose={() => setShowAlreadyRegistered(false)} size="sm">
+          <div
+            style={{
+              background: '#141414',
+              border: '1px solid rgba(255,255,255,0.1)',
+              animation: 'modalIn .26s cubic-bezier(0.22,1,0.36,1)',
+            }}
+            className="rounded-2xl p-7"
+          >
+            <h2 className="text-[17px] font-bold text-white mb-2">Already registered</h2>
+            <p className="text-[13.5px] font-medium leading-relaxed mb-6" style={{ color: '#8c8c8c' }}>
+              You already have a ticket for this event. Members are limited to one ticket per paid event.
+            </p>
+            <button
+              onClick={() => setShowAlreadyRegistered(false)}
+              className="w-full px-4 py-2.5 text-sm font-semibold rounded-xl border border-white/16 bg-transparent text-[#cfcfcf] hover:border-white/30 hover:text-white transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </Modal>
+      )}
     </main>
   )
 }
