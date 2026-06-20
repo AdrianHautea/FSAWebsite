@@ -6,7 +6,8 @@
 //   accountability, third-party services, data retention, your rights, contact.
 // notes: update the "last updated" date manually whenever a material
 //   section changes; third-party list confirmed against package.json
-//   and utils/s3.ts as of june 2026.
+//   and utils/s3.ts as of june 2026, vercel analytics/speed insights
+//   added june 2026 (free tier, no custom events, no cookies).
 // ─────────────────────────────────────────────────────────
 
 export default function PrivacyPage() {
@@ -111,7 +112,7 @@ export default function PrivacyPage() {
                 The ading application includes a field asking whether there are specific FSA members you cannot be placed in a pamilya with. In answering this question, you may choose to name other members by name.
               </p>
               <p>
-                Any names you provide in this field are used solely to inform placement decisions made by FSA officers. Individuals you name are not notified that they were referenced in your application. This information is not shared outside the officer team conducting matching and is not disclosed to other members or third parties.
+                Any names you provide in these fields — including pamilya incompatibilities, pamilya dealbreakers, and future kuya/ate preferences — are used solely to inform placement decisions and are visible to FSA officers conducting or assisting with the matching process. Individuals you name are not notified that they were referenced in your application. This information is not disclosed to members outside the officer team or to third parties.
               </p>
             </div>
           </section>
@@ -191,6 +192,10 @@ export default function PrivacyPage() {
                 <li>
                   <span className="text-[#e0e0e0] font-semibold">Amazon Web Services (S3)</span> —
                   cloud storage for cover photos and gallery images uploaded by officers.
+                </li>
+                <li>
+                  <span className="text-[#e0e0e0] font-semibold">Vercel Analytics and Speed Insights</span> —
+                  anonymous, aggregated site traffic and performance monitoring. This records page views, approximate geographic location, device type, and browser, but does not use cookies and does not identify you individually.
                 </li>
               </ul>
               <p>Each provider operates under its own privacy policy and data practices, which govern how it handles the data it receives.</p>

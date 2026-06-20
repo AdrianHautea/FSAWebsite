@@ -117,7 +117,7 @@ export default function PhotoCarousel() {
 
       {/* Stage — all 5 cards always in the DOM; only styles change per transition */}
       <div
-        className="relative h-[330px] md:h-[440px] overflow-hidden cursor-grab touch-pan-y select-none"
+        className="relative h-[330px] md:h-[440px] cursor-grab touch-pan-y select-none"
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
@@ -143,7 +143,7 @@ export default function PhotoCarousel() {
                 opacity: pos.opacity,
                 transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               }}
-              className="rounded-2xl shadow-2xl overflow-hidden bg-[#2a2a2a] cursor-pointer"
+              className="rounded-2xl overflow-hidden bg-[#2a2a2a] cursor-pointer"
               // Clicking a side card navigates in that direction
               onClick={offset < 0 ? () => { if (!suppressClick.current) prev() } : offset > 0 ? () => { if (!suppressClick.current) next() } : undefined}
             >

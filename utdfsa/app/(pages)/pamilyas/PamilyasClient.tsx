@@ -117,7 +117,7 @@ function PamilyasCarousel() {
     <div className="flex flex-col gap-6 w-full">
       {/* stage height accommodates 4:3 active card with breathing room */}
       <div
-        className="relative h-[280px] md:h-[560px] overflow-hidden cursor-grab touch-pan-y select-none"
+        className="relative h-[280px] md:h-[560px] cursor-grab touch-pan-y select-none"
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
@@ -142,7 +142,7 @@ function PamilyasCarousel() {
                 opacity: pos.opacity,
                 transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               }}
-              className="rounded-2xl shadow-2xl overflow-hidden bg-[#2a2a2a] cursor-pointer"
+              className="rounded-2xl overflow-hidden bg-[#2a2a2a] cursor-pointer"
               onClick={offset < 0 ? () => { if (!suppressClick.current) prev() } : offset > 0 ? () => { if (!suppressClick.current) next() } : undefined}
             >
               <Image

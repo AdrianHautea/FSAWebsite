@@ -69,10 +69,10 @@ export default function Home() {
 
       {/* ── WHO ARE WE? ───────────────────────────────────────────── */}
       <section className="bg-section-bg">
-        <div className="max-w-[1512px] mx-auto flex flex-col lg:flex-row px-4 sm:px-8 lg:px-16 py-12 lg:py-20 gap-8 lg:gap-16">
+        <div className="max-w-[1512px] mx-auto flex flex-col px-4 sm:px-8 lg:px-16 py-12 lg:py-20 gap-8">
 
-          {/* Left: text */}
-          <div className="w-full lg:w-[420px] lg:shrink-0 flex flex-col justify-start">
+          {/* Title and description */}
+          <div className="w-full flex flex-col">
             <h2 className="font-display font-black text-[37px] md:text-[54px] text-white leading-none tracking-[-3.2px] mb-6 lg:mb-8">
               WHO ARE{'\n'}WE?
             </h2>
@@ -84,11 +84,8 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Vertical divider — hidden on mobile, shown on lg */}
-          <div className="hidden lg:block w-px bg-white/20 mx-12 self-stretch shrink-0" />
-
-          {/* Right: photo carousel */}
-          <div className="flex-1 flex items-center justify-center mt-8 lg:mt-0">
+          {/* Photo carousel */}
+          <div className="w-full flex items-center justify-center">
             <PhotoCarousel />
           </div>
 
