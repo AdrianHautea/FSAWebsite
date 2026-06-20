@@ -38,15 +38,24 @@ export default function BasicInfoClient({ initial }: Props) {
   }
 
   async function handleSubmit() {
-    // client-side validation: names are required
     if (!form.first_name.trim() || !form.last_name.trim()) {
       setError('first and last name are required')
       return
     }
-
-    // strip non-digits to check the raw digit count (must be at least 10 for a valid us number)
-    if (!form.phone || form.phone.replace(/\D/g, '').length < 10) {
-      setError('a valid phone number is required')
+    if (!form.phone?.trim()) {
+      setError('phone number is required')
+      return
+    }
+    if (form.phone.replace(/\D/g, '').length < 10) {
+      setError('a valid phone number is required — e.g. (214) 333-4444')
+      return
+    }
+    if (!form.year) {
+      setError('year is required — please select an option')
+      return
+    }
+    if (!form.major.trim()) {
+      setError('major is required')
       return
     }
     setLoading(true)
@@ -74,110 +83,134 @@ export default function BasicInfoClient({ initial }: Props) {
   // ============================================================
   // UI — safe to restyle everything below this line
   // available data:
-  //   form — { first_name, last_name, phone, year, major, pamilya }
+  //   form — { first_name, last_name, phone, year, major }
   //   loading (bool) — true while the submit API call is in flight
   //   error (string | null) — validation or API error
   // change classnames, layout, colors, and typography freely
   // do not remove or rename the variables being rendered
   // ============================================================
-  const fieldCls = 'w-full border border-white/30 rounded-lg p-2.5 text-sm text-white bg-brand-bg placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-accent-green focus:border-accent-green transition-colors'
-  const labelCls = 'block font-display font-bold text-xs uppercase tracking-widest text-white/60 mb-1.5'
+  const fieldCls = 'w-full px-4 py-[14px] bg-[#141414] border border-white/10 rounded-[12px] text-white text-[15px] outline-none focus:border-accent-green focus:bg-[#171717] transition-colors placeholder:text-[#5a5a5a]'
+  const labelCls = 'flex items-center gap-[5px] mb-[9px] text-[12px] font-bold tracking-[0.1em] text-[#9a9a9a] uppercase'
 
   return (
     <main className="bg-brand-bg min-h-screen text-white">
-      <div className="max-w-lg mx-auto px-6 py-12">
-        <h1 className="font-display font-black text-[clamp(28px,4vw,48px)] text-white uppercase leading-none mb-6">
+      <div className="max-w-[660px] mx-auto px-6 py-14">
+        {/* badge */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent-green/10 border border-accent-green/30 mb-6">
+          <span className="w-[7px] h-[7px] rounded-full bg-accent-green shrink-0" />
+          <span className="font-display font-bold text-[10.5px] tracking-[0.12em] text-accent-green uppercase">No pamilya — that&apos;s okay</span>
+        </div>
+
+        <h1 className="font-display font-black text-[clamp(36px,5vw,62px)] leading-[0.94] tracking-[-0.03em] text-white mb-5">
           Tell Us About Yourself
         </h1>
-        <div className="border border-white/[7%] rounded-2xl bg-[#1a1a1a] p-6">
-        <p className="font-sans text-sm text-white/50 mb-6">
-          This information helps us get to know you better.
+
+        <p className="font-sans text-[15px] text-[#9a9a9a] leading-[1.6] mb-10">
+          You can still be a full member without joining a pamilya. This sets up your member profile so you don&apos;t miss a thing.
         </p>
 
-        <div className="flex flex-col gap-5">
-          <div className="flex gap-4">
-            <div className="flex-1">
+        <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-[20px] p-6 md:p-10">
+          <div className="flex flex-col gap-5">
+            <p className="font-sans text-[14px] text-[#7a7a7a] leading-[1.6]">
+              This information will appear on your member profile.
+            </p>
+            <div className="h-px bg-white/[0.07]" />
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={labelCls}>
+                  First name <span className="text-[#e8654f]">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={form.first_name}
+                  onChange={e => set('first_name', toTitleCase(e.target.value))}
+                  className={fieldCls}
+                  placeholder="Your preferred name"
+                />
+              </div>
+              <div>
+                <label className={labelCls}>
+                  Last name <span className="text-[#e8654f]">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={form.last_name}
+                  onChange={e => set('last_name', toTitleCase(e.target.value))}
+                  className={fieldCls}
+                />
+              </div>
+            </div>
+
+            <div>
               <label className={labelCls}>
-                First name <span className="text-red-400">*</span>
+                Phone Number <span className="text-[#e8654f]">*</span>
+              </label>
+              <input
+                type="tel"
+                value={form.phone}
+                onChange={e => set('phone', formatPhone(e.target.value))}
+                className={fieldCls}
+                placeholder="(xxx) xxx-xxxx"
+                maxLength={14}
+              />
+            </div>
+
+            <div>
+              <label className={labelCls}>
+                Year <span className="text-[#e8654f]">*</span>
+              </label>
+              <div className="relative">
+                <select
+                  value={form.year}
+                  onChange={e => set('year', e.target.value)}
+                  className={`${fieldCls} appearance-none pr-10`}
+                >
+                  <option value="" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Select Your Year</option>
+                  <option value="Freshman" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Freshman</option>
+                  <option value="Sophomore" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Sophomore</option>
+                  <option value="Junior" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Junior</option>
+                  <option value="Senior" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Senior</option>
+                  <option value="Graduate" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Graduate</option>
+                </select>
+                <svg className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#7a7a7a]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+            </div>
+
+            <div>
+              <label className={labelCls}>
+                Major <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="text"
-                value={form.first_name}
-                onChange={e => set('first_name', toTitleCase(e.target.value))}
+                value={form.major}
+                onChange={e => set('major', toTitleCase(e.target.value))}
                 className={fieldCls}
-                placeholder="Your preferred first name"
+                placeholder="e.g. Computer Science"
               />
             </div>
-            <div className="flex-1">
-              <label className={labelCls}>
-                Last name <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="text"
-                value={form.last_name}
-                onChange={e => set('last_name', toTitleCase(e.target.value))}
-                className={fieldCls}
-              />
-            </div>
-          </div>
 
-          <div>
-            <label className={labelCls}>
-              Phone Number <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="tel"
-              value={form.phone}
-              onChange={e => set('phone', formatPhone(e.target.value))}
-              className={fieldCls}
-              placeholder="(xxx) xxx-xxxx"
-              maxLength={14}
-              required
-            />
-          </div>
+            {/* only renders when there is a validation or API error — do not remove this condition */}
+            {error && (
+              <p className="font-sans text-sm text-red-400">{error}</p>
+            )}
 
-          <div>
-            <label className={labelCls}>Year</label>
-            <select
-              value={form.year}
-              onChange={e => set('year', e.target.value)}
-              className={`${fieldCls} pr-8`}
-              style={{ colorScheme: 'light' }}
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] disabled:opacity-50 transition-all mt-2"
             >
-              <option value="" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Select Your Year</option>
-              <option value="Freshman" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Freshman</option>
-              <option value="Sophomore" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Sophomore</option>
-              <option value="Junior" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Junior</option>
-              <option value="Senior" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Senior</option>
-              <option value="Graduate" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Graduate</option>
-            </select>
+              {/* only shows "saving..." while the API call is in flight — do not remove this condition */}
+              {loading ? 'Saving…' : 'Save & Continue'}
+            </button>
+
+            <button
+              onClick={() => router.push('/onboarding')}
+              className="w-full text-center text-[#8e8e8e] text-[14px] font-semibold hover:text-[#cfcfcf] transition-colors"
+            >
+              ← Back to pamilya options
+            </button>
           </div>
-
-          <div>
-            <label className={labelCls}>Major</label>
-            <input
-              type="text"
-              value={form.major}
-              onChange={e => set('major', toTitleCase(e.target.value))}
-              className={fieldCls}
-              placeholder="e.g. Computer Science"
-            />
-          </div>
-
-          {/* only renders when there is a validation or API error — do not remove this condition */}
-          {error && (
-            <p className="font-sans text-sm text-red-400">{error}</p>
-          )}
-
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="w-full bg-accent-green text-[#0e0e0e] font-display font-black uppercase tracking-widest py-3.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity mt-2"
-          >
-            {/* only shows "saving..." while the API call is in flight — do not remove this condition */}
-            {loading ? 'Saving…' : 'Save & Continue'}
-          </button>
-        </div>
         </div>
       </div>
     </main>

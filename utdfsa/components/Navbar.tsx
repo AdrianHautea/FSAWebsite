@@ -110,17 +110,24 @@ export default function Navbar({ initialMember }: NavbarProps) {
 
   // hide on scroll down past 80px, reveal on scroll up; registered once, reads state via ref
   useEffect(() => {
-    let lastY = window.scrollY
-    function onScroll() {
-      const y = window.scrollY
-      if (!anyDropdownOpenRef.current) {
-        setNavVisible(y < 80 || y < lastY)
+  let lastY = window.scrollY
+  function onScroll() {
+    const y = window.scrollY
+    const scrollingUp = y < lastY
+    if (!anyDropdownOpenRef.current) {
+      if (y < 80) {
+        setNavVisible(true)
+      } else if (scrollingUp && lastY - y > 25) {
+        setNavVisible(true)
+      } else if (!scrollingUp) {
+        setNavVisible(false)
       }
-      lastY = y
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+    lastY = y
+  }
+  window.addEventListener('scroll', onScroll, { passive: true })
+  return () => window.removeEventListener('scroll', onScroll)
+}, [])
 
   async function handleLogout() {
     // route: /auth/logout — server route that clears the Supabase session cookie — do not change this path

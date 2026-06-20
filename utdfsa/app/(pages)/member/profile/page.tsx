@@ -277,7 +277,7 @@ export default async function ProfilePage() {
             <div className="flex gap-3 flex-wrap">
               <a
                 href="/onboarding?reapply=true&type=ading"
-                className="font-display font-bold text-xs uppercase tracking-widest px-5 py-2.5 bg-accent-green text-[#0e0e0e] rounded-lg hover:opacity-90 transition-opacity"
+                className="inline-flex items-center font-display font-bold text-xs uppercase tracking-widest px-5 py-2.5 bg-accent-green text-[#0e0e0e] rounded-lg hover:opacity-90 transition-opacity"
               >
                 Apply as Ading
               </a>

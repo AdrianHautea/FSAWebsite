@@ -55,12 +55,11 @@ function calcAge(birthday: string): number | null {
   return (m < 0 || (m === 0 && today.getDate() < d.getDate())) ? age - 1 : age
 }
 
-// shared class strings for form fields — dark theme matching site design language
-const fieldCls = 'w-full border border-white/30 rounded-lg p-2.5 text-sm text-white bg-brand-bg placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-accent-green focus:border-accent-green transition-colors'
+// shared class strings for form fields — mockup design language
+const fieldCls = 'w-full px-4 py-[14px] bg-[#141414] border border-white/10 rounded-[12px] text-white text-[15px] outline-none focus:border-accent-green focus:bg-[#171717] transition-colors placeholder:text-[#5a5a5a]'
 const fieldDateCls = `${fieldCls} [&::-webkit-calendar-picker-indicator]:invert`
-
-// Label class — uppercase tracking-wide matching site section label style
-const labelCls = 'block font-display font-bold text-xs uppercase tracking-widest text-white/60 mb-1.5'
+const textareaCls = `${fieldCls} min-h-[96px] resize-y leading-relaxed`
+const labelCls = 'flex items-center gap-[5px] mb-[9px] text-[12px] font-bold tracking-[0.1em] text-[#9a9a9a] uppercase'
 
 // ── IMPORTANT — do not restructure the step logic below ──────────────────────
 // Rule 7: This is a multi-step form. The step flow (pick → profile → ading|kuyate)
@@ -68,7 +67,7 @@ const labelCls = 'block font-display font-bold text-xs uppercase tracking-widest
 // Do not merge steps, reorder them, or replace the step state with a router-based flow.
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Step progress indicator — shown on profile/ading/kuyate steps
+// step progress indicator — shown on profile/ading/kuyate steps
 function StepIndicator({ step, memberType }: { step: string; memberType: MemberType | null }) {
   const step2Label = memberType === 'kuyate' ? 'Kuya/Ate Application' : 'Ading Application'
   const s1Done = step === 'ading' || step === 'kuyate'
@@ -76,36 +75,33 @@ function StepIndicator({ step, memberType }: { step: string; memberType: MemberT
   const s2Active = step === 'ading' || step === 'kuyate'
 
   return (
-    <div className="flex items-center gap-3 mb-8">
-      <div className="flex items-center gap-2 shrink-0">
-        <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center font-display font-black text-xs shrink-0 ${
-          s1Done
-            ? 'border-accent-green bg-accent-green text-[#0e0e0e]'
-            : s1Active
-            ? 'border-accent-green bg-accent-green text-[#0e0e0e]'
-            : 'border-white/30 text-white/40'
+    <div className="flex items-center gap-3 mb-9">
+      <div className="flex items-center gap-2.5 shrink-0">
+        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-display font-extrabold shrink-0 ${
+          s1Done || s1Active ? 'bg-accent-green text-[#08130a]' : 'bg-[#1e1e1e] text-[#5a5a5a]'
         }`}>
-          {s1Done ? '✓' : '1'}
+          {s1Done
+            ? <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            : '1'
+          }
         </div>
-        <span className={`font-display font-bold text-xs uppercase tracking-wide whitespace-nowrap ${
-          s1Active || s1Done ? 'text-white' : 'text-white/40'
+        <span className={`font-display font-bold text-[11px] uppercase tracking-[0.08em] whitespace-nowrap ${
+          s1Active || s1Done ? 'text-white' : 'text-[#5a5a5a]'
         }`}>
-          Tell Us About Yourself
+          Tell Us About You
         </span>
       </div>
 
-      <div className={`flex-1 h-px ${s1Done ? 'bg-accent-green' : 'bg-white/20'}`} />
+      <div className={`flex-1 h-px ${s1Done ? 'bg-accent-green' : 'bg-white/[0.08]'}`} />
 
-      <div className="flex items-center gap-2 shrink-0">
-        <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center font-display font-black text-xs shrink-0 ${
-          s2Active
-            ? 'border-accent-green bg-accent-green text-[#0e0e0e]'
-            : 'border-white/30 text-white/40'
+      <div className="flex items-center gap-2.5 shrink-0">
+        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-display font-extrabold shrink-0 ${
+          s2Active ? 'bg-accent-green text-[#08130a]' : 'bg-[#1e1e1e] text-[#5a5a5a]'
         }`}>
           2
         </div>
-        <span className={`font-display font-bold text-xs uppercase tracking-wide whitespace-nowrap ${
-          s2Active ? 'text-white' : 'text-white/40'
+        <span className={`font-display font-bold text-[11px] uppercase tracking-[0.08em] whitespace-nowrap ${
+          s2Active ? 'text-white' : 'text-[#5a5a5a]'
         }`}>
           {step2Label}
         </span>
@@ -206,7 +202,9 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
       return 'First Name is required'
     if (!profileForm.last_name.trim())
       return 'Last Name is required'
-    if (profileForm.phone && profileForm.phone.replace(/\D/g, '').length !== 10)
+    if (!profileForm.phone?.trim())
+      return 'Phone Number is required'
+    if (profileForm.phone.replace(/\D/g, '').length !== 10)
       return 'Phone Number must be 10 digits — e.g. (214) 333-4444'
     if (!profileForm.year)
       return 'Year is required — please select an option'
@@ -248,10 +246,18 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
       return 'Hangout Size Preference is required — please select a value'
     if (!adingForm.availability?.days?.length)
       return 'Availability is required — please select at least one day'
+    if (!adingForm.availability?.times?.trim())
+      return 'Please describe what times you are free on those days'
     if (!adingForm.hobbies?.trim())
       return 'Hobbies is required'
+    if (!adingForm.fave_music_genre?.trim())
+      return 'Favorite Music Genre is required'
+    if (!adingForm.fave_artist?.trim())
+      return 'Favorite Artist is required'
     if (!adingForm.fave_food?.trim())
       return 'Favorite Food is required'
+    if (!adingForm.fave_tv_show_movie?.trim())
+      return 'Favorite TV Show or Movie is required'
     if (!adingForm.pam_vibe?.trim())
       return 'Pamilya Vibe is required'
     if (!adingForm.thoughts_on_drinking?.trim())
@@ -260,6 +266,10 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
       return 'Dislikes is required'
     if (!adingForm.pam_dealbreakers?.trim())
       return 'Things You Cannot Have in a Pam is required'
+    if (!adingForm.pam_incompatibilities?.trim())
+      return 'Please share who you cannot be in a pamilya with, or enter N/A'
+    if (!adingForm.future_kuyate?.trim())
+      return 'Please share your future kuya/ate, or enter N/A'
     return null
   }
 
@@ -336,91 +346,144 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
   // do not reorder steps or change the step transition logic
   if (step === 'pick') {
     return (
-      <main className="bg-brand-bg min-h-screen text-white">
-        <div className="max-w-2xl mx-auto px-6 py-12">
-          <h1 className="font-display font-black text-[clamp(32px,5vw,56px)] text-white uppercase leading-none mb-2">
-            Welcome,<br />{firstName}!
+      <main className="bg-brand-bg min-h-screen text-white overflow-x-hidden">
+        <div className="relative flex flex-col items-center text-center px-6 py-16 md:py-20 max-w-[1280px] mx-auto">
+
+          {/* membership confirmed badge */}
+          <div className="relative z-10 inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-accent-green/10 border border-accent-green/30 mb-7">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-accent-green">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+            <span className="font-display font-bold text-[11.5px] tracking-[0.12em] text-accent-green uppercase">Membership confirmed</span>
+          </div>
+
+          <h1 className="relative z-10 font-display font-black text-[clamp(42px,6vw,76px)] leading-[0.94] tracking-[-0.03em] text-white">
+            Welcome,<br />
+            <span className="text-accent-green">{firstName}!</span>
           </h1>
-          <p className="font-sans text-sm text-white/50 mb-8">
-            Before we get started, let us know which role fits you best.
+
+          <p className="relative z-10 max-w-[560px] text-lg leading-[1.6] text-[#9a9a9a] font-medium mt-6">
+            You&rsquo;re officially part of the family. Before we get started, let us know which role fits you best — you can always change your mind later.
           </p>
 
-          <div className="flex flex-col items-center gap-6 w-full">
+          {/* step hint */}
+          <div className="relative z-10 inline-flex items-center gap-2 mt-5 text-[12px] font-bold tracking-[0.1em] text-[#6a6a6a] uppercase">
+            <span className="w-[18px] h-[18px] rounded-full bg-accent-green/10 border border-accent-green/30 flex items-center justify-center text-accent-green text-[10px] font-extrabold">1</span>
+            Choose your pamilya role
+          </div>
 
-            {/* Cards row — side by side on sm+, stacked on mobile */}
-            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl">
+          {/* role cards — 2-col when kuyate open, single centered card when closed */}
+          <div className={`relative z-10 grid gap-6 w-full max-w-[920px] mt-11 ${isKuyateOpen ? 'sm:grid-cols-2' : 'sm:max-w-[480px]'}`}>
 
-              {/* Ading card — full-bleed photo, aspect-[4/5] portrait */}
-              {/* label differs based on whether kuyate is available — do not remove this condition */}
+            {/* ading card — label differs based on whether kuyate is available */}
+            {/* do not remove the isKuyateOpen condition on the title */}
+            <button
+              onClick={() => handleMemberTypePick('ading')}
+              disabled={loading}
+              className="relative rounded-[22px] overflow-hidden border border-white/10 cursor-pointer text-left h-60 sm:h-[420px] bg-[#101010] hover:border-accent-green/60 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_-36px_rgba(147,208,123,0.4)] transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none"
+            >
+              <Image
+                src="/ading-form.png"
+                alt="Ading"
+                fill
+                className="object-cover object-center"
+                sizes="(max-width: 640px) 90vw, 45vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-[rgba(7,7,7,0.15)] via-[rgba(7,7,7,0.45)] to-[rgba(7,7,7,0.94)]" />
+              <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-7 md:p-8">
+                <span className="self-start inline-flex px-2.5 py-1 rounded-full bg-black/45 backdrop-blur-sm border border-white/[0.18] text-[9px] sm:text-[10px] font-extrabold tracking-[0.1em] text-[#e6e6e6] uppercase mb-2.5 sm:mb-3.5">
+                  New member
+                </span>
+                <h2 className="font-display font-extrabold text-[23px] sm:text-[30px] leading-none tracking-[-0.02em] text-white mb-1.5 sm:mb-2.5">
+                  {isKuyateOpen ? 'ADING FORM' : 'APPLY AS ADING'}
+                </h2>
+                <p className="hidden sm:block text-[14px] leading-[1.55] text-[#c2c2c2] font-medium mb-5 max-w-[340px]">
+                  Join as an ading and get paired with kuya &amp; ate mentors who guide you through your first year in the family.
+                </p>
+                <p className="sm:hidden text-[12.5px] leading-[1.5] text-[#c2c2c2] font-medium mb-3.5">
+                  Get paired with kuya &amp; ate mentors for your first year.
+                </p>
+                <span className="inline-flex items-center gap-2 sm:gap-2.5 font-display text-[12px] sm:text-[13px] font-bold tracking-[0.01em] text-accent-green">
+                  I&rsquo;m an ading
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                </span>
+              </div>
+            </button>
+
+            {/* kuyate card — only renders when kuyate applications are open */}
+            {/* do not remove this condition */}
+            {isKuyateOpen && (
               <button
-                onClick={() => handleMemberTypePick('ading')}
+                onClick={() => handleMemberTypePick('kuyate')}
                 disabled={loading}
-                className="flex-1 relative aspect-[4/5] rounded-[27px] overflow-hidden disabled:opacity-50 hover:scale-[1.02] hover:brightness-110 transition-transform duration-200"
+                className="relative rounded-[22px] overflow-hidden border border-white/10 cursor-pointer text-left h-60 sm:h-[420px] bg-[#101010] hover:border-accent-green/60 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_-36px_rgba(147,208,123,0.4)] transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none"
               >
                 <Image
-                  src="/ading-form.png"
-                  alt="Ading"
+                  src="/kuyate-form.png"
+                  alt="Kuya/Ate"
                   fill
-                  className="object-cover object-top"
-                  sizes="(max-width: 640px) 100vw, 50vw"
+                  className="object-cover object-center"
+                  sizes="(max-width: 640px) 90vw, 45vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                <span className="absolute inset-0 flex items-center justify-center text-white font-display font-black text-xl uppercase tracking-wide px-4">
-                  {isKuyateOpen ? 'ADING FORM' : 'APPLY AS ADING'}
-                </span>
-              </button>
-
-              {/* only renders when kuyate applications are open — do not remove this condition */}
-              {isKuyateOpen && (
-                <button
-                  onClick={() => handleMemberTypePick('kuyate')}
-                  disabled={loading}
-                  className="flex-1 relative aspect-[4/5] rounded-[27px] overflow-hidden disabled:opacity-50 hover:scale-[1.02] hover:brightness-110 transition-transform duration-200"
-                >
-                  <Image
-                    src="/kuyate-form.png"
-                    alt="Kuya/Ate"
-                    fill
-                    className="object-cover object-top"
-                    sizes="(max-width: 640px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                  <span className="absolute inset-0 flex items-center justify-center text-white font-display font-black text-xl uppercase tracking-wide px-4">
-                    KUYA/ATE FORM
+                <div className="absolute inset-0 bg-gradient-to-b from-[rgba(7,7,7,0.15)] via-[rgba(7,7,7,0.45)] to-[rgba(7,7,7,0.94)]" />
+                <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-7 md:p-8">
+                  <span className="self-start inline-flex px-2.5 py-1 rounded-full bg-black/45 backdrop-blur-sm border border-white/[0.18] text-[9px] sm:text-[10px] font-extrabold tracking-[0.1em] text-[#e6e6e6] uppercase mb-2.5 sm:mb-3.5">
+                    Returning / mentor
                   </span>
-                </button>
-              )}
-            </div>
-
-            {/* not interested — centered below cards; full button when kuyate is closed, subtle link when open */}
-            {/* do not remove this condition */}
-            {isKuyateOpen ? (
-              <button
-                onClick={handleNotInterested}
-                disabled={loading}
-                className="font-sans text-sm text-gray-400 hover:text-gray-200 cursor-pointer text-center disabled:opacity-50 transition-colors"
-              >
-                {loading ? 'saving...' : 'Not interested in the pamilya program'}
-              </button>
-            ) : (
-              <button
-                onClick={handleNotInterested}
-                disabled={loading}
-                className="p-6 border-2 border-white/20 rounded-[27px] text-left hover:border-white/40 transition-colors disabled:opacity-50 bg-brand-bg w-full max-w-2xl"
-              >
-                <h2 className="font-display font-black text-base text-white uppercase mb-1">Not Interested</h2>
-                <p className="font-sans text-sm text-white/50">
-                  I&rsquo;ll sit out the pamilya program for now. I can still apply later if I change my mind.
-                </p>
+                  <h2 className="font-display font-extrabold text-[23px] sm:text-[30px] leading-none tracking-[-0.02em] text-white mb-1.5 sm:mb-2.5">
+                    KUYA/ATE FORM
+                  </h2>
+                  <p className="hidden sm:block text-[14px] leading-[1.55] text-[#c2c2c2] font-medium mb-5 max-w-[340px]">
+                    Step up as a kuya or ate to mentor incoming adings, share your experience, and lead your pamilya by example.
+                  </p>
+                  <p className="sm:hidden text-[12.5px] leading-[1.5] text-[#c2c2c2] font-medium mb-3.5">
+                    Mentor incoming adings and lead your pamilya.
+                  </p>
+                  <span className="inline-flex items-center gap-2 sm:gap-2.5 font-display text-[12px] sm:text-[13px] font-bold tracking-[0.01em] text-accent-green">
+                    I&rsquo;m a kuya/ate
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                  </span>
+                </div>
               </button>
             )}
 
           </div>
 
+          {/* not interested — text link when kuyate is open, prominent card when closed */}
+          {/* do not remove this condition */}
+          {isKuyateOpen ? (
+            <button
+              onClick={handleNotInterested}
+              disabled={loading}
+              className="relative z-10 mt-9 text-[14px] font-semibold text-[#8e8e8e] hover:text-[#cfcfcf] cursor-pointer inline-flex items-center gap-2 transition-colors duration-200 disabled:opacity-50"
+            >
+              {loading ? 'saving...' : (
+                <>
+                  Not interested in the pamilya program
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              onClick={handleNotInterested}
+              disabled={loading}
+              className="relative z-10 mt-9 p-6 border-2 border-white/20 rounded-[22px] text-left hover:border-white/40 transition-colors disabled:opacity-50 bg-brand-bg w-full max-w-[920px]"
+            >
+              <h2 className="font-display font-black text-base text-white uppercase mb-1">Not Interested</h2>
+              <p className="font-sans text-sm text-white/50">
+                I&rsquo;ll sit out the pamilya program for now. I can still apply later if I change my mind.
+              </p>
+            </button>
+          )}
+
           {/* only renders when handleNotInterested returns an API error — do not remove this condition */}
           {error && (
-            <p className="font-sans text-sm text-red-400 mt-4">{error}</p>
+            <p className="relative z-10 font-sans text-sm text-red-400 mt-4">{error}</p>
           )}
+
         </div>
       </main>
     )
@@ -440,46 +503,36 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
   if (step === 'profile') {
     return (
       <main className="bg-brand-bg min-h-screen text-white">
-        <div className="max-w-lg mx-auto px-6 py-12">
-          <h1 className="font-display font-black text-[clamp(28px,4vw,48px)] text-white uppercase leading-none mb-6">
+        <div className="max-w-[660px] mx-auto px-6 py-16">
+          <h1 className="font-display font-black text-[clamp(36px,5vw,62px)] leading-[0.94] tracking-[-0.03em] text-white mb-8">
             Tell Us About Yourself
           </h1>
           <StepIndicator step={step} memberType={memberType} />
 
-          <div className="border border-white/[7%] rounded-2xl bg-[#1a1a1a] p-6">
-          <p className="font-sans text-sm text-white/50 mb-6">
-            This information will appear on your member profile.
-          </p>
-
+          <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-[20px] p-6 md:p-10">
           <form onSubmit={handleProfileSubmit} className="flex flex-col gap-5">
-            <div className="flex gap-4">
-              <div className="flex-1">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
                 <label className={labelCls}>
-                  First Name <span className="text-red-400">*</span>
+                  First Name <span className="text-[#e8654f]">*</span>
                 </label>
                 <input
                   type="text"
                   value={profileForm.first_name}
-                  onChange={e => setProfileForm(p => ({
-                    ...p,
-                    first_name: toTitleCase(e.target.value)
-                  }))}
+                  onChange={e => setProfileForm(p => ({ ...p, first_name: toTitleCase(e.target.value) }))}
                   className={fieldCls}
-                  placeholder="Your preferred first name"
+                  placeholder="Your preferred name"
                   required
                 />
               </div>
-              <div className="flex-1">
+              <div>
                 <label className={labelCls}>
-                  Last Name <span className="text-red-400">*</span>
+                  Last Name <span className="text-[#e8654f]">*</span>
                 </label>
                 <input
                   type="text"
                   value={profileForm.last_name}
-                  onChange={e => setProfileForm(p => ({
-                    ...p,
-                    last_name: toTitleCase(e.target.value)
-                  }))}
+                  onChange={e => setProfileForm(p => ({ ...p, last_name: toTitleCase(e.target.value) }))}
                   className={fieldCls}
                   required
                 />
@@ -488,15 +541,12 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
 
             <div>
               <label className={labelCls}>
-                Phone Number <span className="text-red-400">*</span>
+                Phone Number <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="tel"
                 value={profileForm.phone}
-                onChange={e => setProfileForm(p => ({
-                  ...p,
-                  phone: formatPhone(e.target.value)
-                }))}
+                onChange={e => setProfileForm(p => ({ ...p, phone: formatPhone(e.target.value) }))}
                 className={fieldCls}
                 placeholder="(xxx) xxx-xxxx"
                 maxLength={14}
@@ -506,34 +556,34 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
 
             <div>
               <label className={labelCls}>
-                Year <span className="text-red-400">*</span>
+                Year <span className="text-[#e8654f]">*</span>
               </label>
-              <select
-                value={profileForm.year}
-                onChange={e => setProfileForm(p => ({ ...p, year: e.target.value }))}
-                className={`${fieldCls} pr-8`}
-                required
-              >
-                <option value="" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Select Your Year</option>
-                <option value="Freshman" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Freshman</option>
-                <option value="Sophomore" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Sophomore</option>
-                <option value="Junior" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Junior</option>
-                <option value="Senior" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Senior</option>
-                <option value="Graduate" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Graduate</option>
-              </select>
+              <div className="relative">
+                <select
+                  value={profileForm.year}
+                  onChange={e => setProfileForm(p => ({ ...p, year: e.target.value }))}
+                  className={`${fieldCls} appearance-none pr-10`}
+                  required
+                >
+                  <option value="" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Select Your Year</option>
+                  <option value="Freshman" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Freshman</option>
+                  <option value="Sophomore" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Sophomore</option>
+                  <option value="Junior" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Junior</option>
+                  <option value="Senior" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Senior</option>
+                  <option value="Graduate" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Graduate</option>
+                </select>
+                <svg className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#7a7a7a]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
             </div>
 
             <div>
               <label className={labelCls}>
-                Major <span className="text-red-400">*</span>
+                Major <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="text"
                 value={profileForm.major}
-                onChange={e => setProfileForm(p => ({
-                  ...p,
-                  major: toTitleCase(e.target.value)
-                }))}
+                onChange={e => setProfileForm(p => ({ ...p, major: toTitleCase(e.target.value) }))}
                 className={fieldCls}
                 placeholder="e.g. Computer Science"
                 required
@@ -547,7 +597,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
 
             <button
               type="submit"
-              className="w-full bg-accent-green text-[#0e0e0e] font-display font-black uppercase tracking-widest py-3.5 rounded-lg hover:opacity-90 transition-opacity mt-2"
+              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] disabled:opacity-50 transition-all mt-2"
             >
               Continue
             </button>
@@ -555,7 +605,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             <button
               type="button"
               onClick={() => setStep('pick')}
-              className="font-sans text-sm text-white/40 hover:text-white/60 text-center transition-colors"
+              className="w-full text-center text-[#8e8e8e] text-[14px] font-semibold hover:text-[#cfcfcf] transition-colors"
             >
               ← Go Back
             </button>
@@ -589,23 +639,30 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
 
     return (
       <main className="bg-brand-bg min-h-screen text-white">
-        <div className="max-w-lg mx-auto px-6 py-12">
-          <h1 className="font-display font-black text-[clamp(28px,4vw,48px)] text-white uppercase leading-none mb-6">
+        <div className="max-w-[660px] mx-auto px-6 py-16">
+          <h1 className="font-display font-black text-[clamp(36px,5vw,62px)] leading-[0.94] tracking-[-0.03em] text-white mb-8">
             Ading Application
           </h1>
           <StepIndicator step={step} memberType={memberType} />
 
-          <div className="border border-white/[7%] rounded-2xl bg-[#1a1a1a] p-6">
-          <p className="font-sans text-sm text-white/50 mb-6">
-            Help us place you in the right pamilya.
-          </p>
-
+          <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-[20px] p-6 md:p-10">
           <form onSubmit={handleFinalSubmit} className="flex flex-col gap-5">
+
+            {/* intro text */}
+            <p className="font-sans text-[14px] text-[#7a7a7a] leading-[1.6]">
+              Help us pair you with a Pamilya that fits — there are no wrong answers.
+            </p>
+
+            {/* contacts & basics divider */}
+            <div className="flex items-center gap-[14px]">
+              <span className="font-display text-[13px] font-bold text-white whitespace-nowrap">Contact &amp; Basics</span>
+              <div className="flex-1 h-px bg-white/[0.07]" />
+            </div>
 
             {/* instagram */}
             <div>
               <label className={labelCls}>
-                Instagram Handle <span className="text-red-400">*</span>
+                Instagram Handle <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="text"
@@ -622,7 +679,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             {/* phone — pre-filled from profile step */}
             <div>
               <label className={labelCls}>
-                Phone Number <span className="text-red-400">*</span>
+                Phone Number <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="tel"
@@ -638,7 +695,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             {/* birthday — white calendar icon via CSS invert; warn if under 16 */}
             <div>
               <label className={labelCls}>
-                Birthday <span className="text-red-400">*</span>
+                Birthday <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="date"
@@ -650,7 +707,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
               />
               {/* only renders when age is under 16 — do not remove this condition */}
               {birthdayAge !== null && birthdayAge < 16 && (
-                <p className="font-sans text-xs text-amber-400 mt-1">
+                <p className="font-sans text-xs text-amber-400 mt-1.5">
                   heads up — members must be at least 16 to participate in the pamilya program
                 </p>
               )}
@@ -659,19 +716,28 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             {/* pronouns */}
             <div>
               <label className={labelCls}>
-                Pronouns <span className="text-red-400">*</span>
+                Pronouns <span className="text-[#e8654f]">*</span>
               </label>
-              <select
-                value={adingForm.pronouns}
-                onChange={e => setAdingForm(p => ({ ...p, pronouns: e.target.value }))}
-                className={fieldCls}
-                required
-              >
-                <option value="" style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>Select pronouns</option>
-                {PRONOUNS_OPTIONS.map(opt => (
-                  <option key={opt} value={opt} style={{ color: '#ffffff', backgroundColor: '#0e0e0e' }}>{opt}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  value={adingForm.pronouns}
+                  onChange={e => setAdingForm(p => ({ ...p, pronouns: e.target.value }))}
+                  className={`${fieldCls} appearance-none pr-10`}
+                  required
+                >
+                  <option value="" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Select pronouns</option>
+                  {PRONOUNS_OPTIONS.map(opt => (
+                    <option key={opt} value={opt} style={{ color: '#ffffff', backgroundColor: '#141414' }}>{opt}</option>
+                  ))}
+                </select>
+                <svg className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#7a7a7a]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+            </div>
+
+            {/* — about you — */}
+            <div className="flex items-center gap-[14px] pt-1">
+              <span className="font-display text-[13px] font-bold text-white whitespace-nowrap">About You</span>
+              <div className="flex-1 h-px bg-white/[0.07]" />
             </div>
 
             {/* activity level slider — always has a value, no required needed */}
@@ -683,11 +749,11 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 max={10}
                 value={adingForm.activity_level}
                 onChange={e => setAdingForm(p => ({ ...p, activity_level: Number(e.target.value) }))}
-                className="w-full accent-[#75ba78]"
+                className="w-full accent-[#93d07b] mt-1"
               />
-              <div className="flex justify-between font-sans text-xs text-white/40 mt-1">
+              <div className="flex justify-between font-sans text-xs text-[#7a7a7a] mt-1.5">
                 <span>1 — barely active</span>
-                <span className="font-display font-bold text-sm text-accent-green">{adingForm.activity_level}</span>
+                <span className="font-display font-bold text-[13px] text-accent-green">{adingForm.activity_level}</span>
                 <span>10 — very active</span>
               </div>
             </div>
@@ -695,25 +761,30 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             {/* hobbies */}
             <div>
               <label className={labelCls}>
-                Hobbies? <span className="text-red-400">*</span>
+                Hobbies? <span className="text-[#e8654f]">*</span>
               </label>
               <textarea
                 value={adingForm.hobbies}
                 onChange={e => setAdingForm(p => ({ ...p, hobbies: e.target.value }))}
-                className={fieldCls}
-                rows={2}
+                className={textareaCls}
                 maxLength={300}
                 required
               />
               {adingForm.hobbies.length > 240 && (
-                <p className="font-sans text-xs text-white/40 text-right mt-0.5">{adingForm.hobbies.length} / 300</p>
+                <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.hobbies.length} / 300</p>
               )}
+            </div>
+
+            {/* — interests — */}
+            <div className="flex items-center gap-[14px] pt-1">
+              <span className="font-display text-[13px] font-bold text-white whitespace-nowrap">Interests</span>
+              <div className="flex-1 h-px bg-white/[0.07]" />
             </div>
 
             {/* fave music genre */}
             <div>
               <label className={labelCls}>
-                Favorite Music Genre? <span className="text-red-400">*</span>
+                Favorite Music Genre? <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="text"
@@ -728,7 +799,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             {/* fave artist */}
             <div>
               <label className={labelCls}>
-                Favorite Artist? <span className="text-red-400">*</span>
+                Favorite Artist? <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="text"
@@ -743,7 +814,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             {/* fave food */}
             <div>
               <label className={labelCls}>
-                Favorite Food? <span className="text-red-400">*</span>
+                Favorite Food? <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="text"
@@ -755,53 +826,10 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
               />
             </div>
 
-            {/* pam vibe */}
-            <div>
-              <label className={labelCls}>
-                What vibe are you looking for in a pam? <span className="text-red-400">*</span>
-              </label>
-              <textarea
-                value={adingForm.pam_vibe}
-                onChange={e => setAdingForm(p => ({ ...p, pam_vibe: e.target.value }))}
-                className={fieldCls}
-                rows={3}
-                placeholder="Describe the energy, personality, activities..."
-                maxLength={500}
-                required
-              />
-              {adingForm.pam_vibe.length > 400 && (
-                <p className="font-sans text-xs text-white/40 text-right mt-0.5">{adingForm.pam_vibe.length} / 500</p>
-              )}
-            </div>
-
-            {/* hangout size preference — 10 clickable icons; always has a value, no required needed */}
-            <div>
-              <label className={labelCls}>Hangout Size Preference?</label>
-              <div className="flex gap-1.5">
-                {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setAdingForm(p => ({ ...p, hangout_size_preference: n }))}
-                    className={`flex-1 aspect-square rounded-full border-2 transition-colors ${
-                      n <= adingForm.hangout_size_preference
-                        ? 'bg-accent-green border-accent-green'
-                        : 'border-white/30 hover:border-accent-green/50'
-                    }`}
-                  />
-                ))}
-              </div>
-              <div className="flex justify-between font-sans text-xs text-white/40 mt-1">
-                <span>Small</span>
-                <span>Mix</span>
-                <span>Big</span>
-              </div>
-            </div>
-
             {/* fave tv show / movie */}
             <div>
               <label className={labelCls}>
-                Favorite TV Show or Movie? <span className="text-red-400">*</span>
+                Favorite TV Show or Movie? <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="text"
@@ -813,26 +841,77 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
               />
             </div>
 
-            {/* availability — days checkboxes + times textarea */}
+            {/* — pam match — */}
+            <div className="flex items-center gap-[14px] pt-1">
+              <span className="font-display text-[13px] font-bold text-white whitespace-nowrap">Pam Matching</span>
+              <div className="flex-1 h-px bg-white/[0.07]" />
+            </div>
+
+            {/* pam vibe */}
             <div>
               <label className={labelCls}>
-                Availability? <span className="text-red-400">*</span>
+                What vibe are you looking for in a pam? <span className="text-[#e8654f]">*</span>
+              </label>
+              <textarea
+                value={adingForm.pam_vibe}
+                onChange={e => setAdingForm(p => ({ ...p, pam_vibe: e.target.value }))}
+                className={textareaCls}
+                placeholder="Describe the energy, personality, activities..."
+                maxLength={500}
+                required
+              />
+              {adingForm.pam_vibe.length > 400 && (
+                <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.pam_vibe.length} / 500</p>
+              )}
+            </div>
+
+            {/* hangout size preference — dots span full form width */}
+            <div>
+              <label className={labelCls}>Hangout Size Preference?</label>
+              <div className="flex justify-between w-full mt-1">
+                {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setAdingForm(p => ({ ...p, hangout_size_preference: n }))}
+                    className={`w-6 h-6 sm:w-[30px] sm:h-[30px] rounded-full border-2 transition-all ${
+                      n <= adingForm.hangout_size_preference
+                        ? 'bg-accent-green border-accent-green'
+                        : 'border-white/[0.18] hover:border-accent-green/50'
+                    }`}
+                  />
+                ))}
+              </div>
+              <div className="flex justify-between font-sans text-xs text-[#7a7a7a] mt-1.5">
+                <span>Small</span>
+                <span>Mix</span>
+                <span>Big</span>
+              </div>
+            </div>
+
+            {/* availability — day chips + times textarea */}
+            <div>
+              <label className={labelCls}>
+                Availability? <span className="text-[#e8654f]">*</span>
               </label>
               <div className="flex flex-wrap gap-2 mb-3">
                 {DAYS_OF_WEEK.map(day => (
-                  <label key={day} className="flex items-center gap-1.5 font-sans text-sm text-white/70 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={adingForm.availability.days.includes(day)}
-                      onChange={() => toggleAvailabilityDay(day)}
-                      className="rounded accent-[#75ba78]"
-                    />
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => toggleAvailabilityDay(day)}
+                    className={`px-3.5 py-2 rounded-full text-[13px] font-semibold border transition-all ${
+                      adingForm.availability.days.includes(day)
+                        ? 'bg-accent-green border-accent-green text-[#08130a]'
+                        : 'bg-[#141414] border-white/[0.12] text-[#b5b5b5] hover:border-accent-green/50'
+                    }`}
+                  >
                     {day}
-                  </label>
+                  </button>
                 ))}
               </div>
-              <label className="block font-sans text-xs text-white/40 mb-1">
-                What times are you usually free on those days? <span className="text-red-400">*</span>
+              <label className={labelCls}>
+                What times are you usually free on those days? <span className="text-[#e8654f]">*</span>
               </label>
               <textarea
                 value={adingForm.availability.times}
@@ -840,94 +919,102 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                   ...p,
                   availability: { ...p.availability, times: e.target.value },
                 }))}
-                className={fieldCls}
-                rows={2}
+                className={textareaCls}
                 maxLength={200}
                 required
               />
               {adingForm.availability.times.length > 160 && (
-                <p className="font-sans text-xs text-white/40 text-right mt-0.5">{adingForm.availability.times.length} / 200</p>
+                <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.availability.times.length} / 200</p>
               )}
+            </div>
+
+            {/* — compatibility — */}
+            <div className="flex items-center gap-[14px] pt-1">
+              <span className="font-display text-[13px] font-bold text-white whitespace-nowrap">Compatibility</span>
+              <div className="flex-1 h-px bg-white/[0.07]" />
             </div>
 
             {/* thoughts on drinking */}
             <div>
               <label className={labelCls}>
-                Thoughts on drinking? <span className="text-red-400">*</span>
+                Thoughts on drinking? <span className="text-[#e8654f]">*</span>
               </label>
               <textarea
                 value={adingForm.thoughts_on_drinking}
                 onChange={e => setAdingForm(p => ({ ...p, thoughts_on_drinking: e.target.value }))}
-                className={fieldCls}
-                rows={2}
+                className={textareaCls}
                 placeholder="Share your thoughts and comfort level..."
                 maxLength={500}
                 required
               />
               {adingForm.thoughts_on_drinking.length > 400 && (
-                <p className="font-sans text-xs text-white/40 text-right mt-0.5">{adingForm.thoughts_on_drinking.length} / 500</p>
+                <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.thoughts_on_drinking.length} / 500</p>
               )}
             </div>
 
             {/* dislikes */}
             <div>
               <label className={labelCls}>
-                Dislikes? <span className="text-red-400">*</span>
+                Dislikes? <span className="text-[#e8654f]">*</span>
               </label>
               <textarea
                 value={adingForm.dislikes}
                 onChange={e => setAdingForm(p => ({ ...p, dislikes: e.target.value }))}
-                className={fieldCls}
-                rows={2}
+                className={textareaCls}
                 maxLength={500}
                 required
               />
               {adingForm.dislikes.length > 400 && (
-                <p className="font-sans text-xs text-white/40 text-right mt-0.5">{adingForm.dislikes.length} / 500</p>
+                <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.dislikes.length} / 500</p>
               )}
             </div>
 
-            {/* pam dealbreakers */}
+            {/* pam dealbreakers — own row, min-height matches hobbies */}
             <div>
               <label className={labelCls}>
-                Things You Cannot Have in a Pam? <span className="text-red-400">*</span>
+                Things You Cannot Have in a Pam? <span className="text-[#e8654f]">*</span>
               </label>
               <textarea
                 value={adingForm.pam_dealbreakers}
                 onChange={e => setAdingForm(p => ({ ...p, pam_dealbreakers: e.target.value }))}
-                className={fieldCls}
-                rows={2}
+                className={textareaCls}
                 placeholder="Dealbreakers, things that would make you uncomfortable..."
                 maxLength={500}
                 required
               />
               {adingForm.pam_dealbreakers.length > 400 && (
-                <p className="font-sans text-xs text-white/40 text-right mt-0.5">{adingForm.pam_dealbreakers.length} / 500</p>
+                <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.pam_dealbreakers.length} / 500</p>
               )}
             </div>
 
-            {/* pam incompatibilities — optional */}
+            {/* pam incompatibilities — own row, required */}
             <div>
               <label className={labelCls}>
-                Who can&rsquo;t you be in a Pamilya with and why?
+                Who can&rsquo;t you be in a Pamilya with and why? <span className="text-[#e8654f]">*</span>
               </label>
               <textarea
                 value={adingForm.pam_incompatibilities}
                 onChange={e => setAdingForm(p => ({ ...p, pam_incompatibilities: e.target.value }))}
-                className={fieldCls}
-                rows={2}
-                placeholder="Optional — share any conflicts or reasons you need to be separated from someone"
+                className={textareaCls}
+                placeholder="Share any conflicts, or enter N/A if none"
                 maxLength={500}
+                required
               />
               {adingForm.pam_incompatibilities.length > 400 && (
-                <p className="font-sans text-xs text-white/40 text-right mt-0.5">{adingForm.pam_incompatibilities.length} / 500</p>
+                <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.pam_incompatibilities.length} / 500</p>
               )}
             </div>
 
-            {/* future kuyate */}
+            {/* — wrap up — */}
+            <div className="flex items-center gap-[14px] pt-1">
+              <span className="font-display text-[13px] font-bold text-white whitespace-nowrap">Wrap Up</span>
+              <div className="flex-1 h-px bg-white/[0.07]" />
+            </div>
+
+            {/* future kuyate — text input per user instruction */}
             <div>
               <label className={labelCls}>
-                Future Kuya/Ate? <span className="text-red-400">*</span>
+                Who do you think will be your future kuya/ate? <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="text"
@@ -940,20 +1027,37 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
               />
             </div>
 
-            {/* mbti */}
+            {/* mbti — dropdown of all 16 valid types */}
             <div>
               <label className={labelCls}>
-                MBTI Type? <span className="text-red-400">*</span>
+                MBTI Type? <span className="text-[#e8654f]">*</span>
               </label>
-              <input
-                type="text"
-                value={adingForm.mbti}
-                onChange={e => setAdingForm(p => ({ ...p, mbti: e.target.value.toUpperCase() }))}
-                className={fieldCls}
-                placeholder="e.g. INFP, INTJ, ENFP"
-                maxLength={4}
-                required
-              />
+              <div className="relative">
+                <select
+                  value={adingForm.mbti}
+                  onChange={e => setAdingForm(p => ({ ...p, mbti: e.target.value }))}
+                  className={`${fieldCls} appearance-none pr-10`}
+                >
+                  <option value="" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Not sure / don&apos;t know</option>
+                  <option value="INTJ" style={{ color: '#ffffff', backgroundColor: '#141414' }}>INTJ</option>
+                  <option value="INTP" style={{ color: '#ffffff', backgroundColor: '#141414' }}>INTP</option>
+                  <option value="ENTJ" style={{ color: '#ffffff', backgroundColor: '#141414' }}>ENTJ</option>
+                  <option value="ENTP" style={{ color: '#ffffff', backgroundColor: '#141414' }}>ENTP</option>
+                  <option value="INFJ" style={{ color: '#ffffff', backgroundColor: '#141414' }}>INFJ</option>
+                  <option value="INFP" style={{ color: '#ffffff', backgroundColor: '#141414' }}>INFP</option>
+                  <option value="ENFJ" style={{ color: '#ffffff', backgroundColor: '#141414' }}>ENFJ</option>
+                  <option value="ENFP" style={{ color: '#ffffff', backgroundColor: '#141414' }}>ENFP</option>
+                  <option value="ISTJ" style={{ color: '#ffffff', backgroundColor: '#141414' }}>ISTJ</option>
+                  <option value="ISFJ" style={{ color: '#ffffff', backgroundColor: '#141414' }}>ISFJ</option>
+                  <option value="ESTJ" style={{ color: '#ffffff', backgroundColor: '#141414' }}>ESTJ</option>
+                  <option value="ESFJ" style={{ color: '#ffffff', backgroundColor: '#141414' }}>ESFJ</option>
+                  <option value="ISTP" style={{ color: '#ffffff', backgroundColor: '#141414' }}>ISTP</option>
+                  <option value="ISFP" style={{ color: '#ffffff', backgroundColor: '#141414' }}>ISFP</option>
+                  <option value="ESTP" style={{ color: '#ffffff', backgroundColor: '#141414' }}>ESTP</option>
+                  <option value="ESFP" style={{ color: '#ffffff', backgroundColor: '#141414' }}>ESFP</option>
+                </select>
+                <svg className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#7a7a7a]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
             </div>
 
             {/* additional notes — optional */}
@@ -964,12 +1068,11 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
               <textarea
                 value={adingForm.additional_notes}
                 onChange={e => setAdingForm(p => ({ ...p, additional_notes: e.target.value }))}
-                className={fieldCls}
-                rows={3}
+                className={textareaCls}
                 maxLength={1000}
               />
               {adingForm.additional_notes.length > 800 && (
-                <p className="font-sans text-xs text-white/40 text-right mt-0.5">{adingForm.additional_notes.length} / 1000</p>
+                <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.additional_notes.length} / 1000</p>
               )}
             </div>
 
@@ -981,7 +1084,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-accent-green text-[#0e0e0e] font-display font-black uppercase tracking-widest py-3.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity mt-2"
+              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] disabled:opacity-50 transition-all mt-2"
             >
               {/* only shows "submitting..." while the API call is in flight — do not remove this condition */}
               {loading ? 'Submitting...' : 'Complete Sign Up'}
@@ -990,7 +1093,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             <button
               type="button"
               onClick={() => setStep('profile')}
-              className="font-sans text-sm text-white/40 hover:text-white/60 text-center transition-colors"
+              className="w-full text-center text-[#8e8e8e] text-[14px] font-semibold hover:text-[#cfcfcf] transition-colors"
             >
               ← Go Back
             </button>
@@ -1022,23 +1125,24 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
   if (step === 'kuyate') {
     return (
       <main className="bg-brand-bg min-h-screen text-white">
-        <div className="max-w-lg mx-auto px-6 py-12">
-          <h1 className="font-display font-black text-[clamp(28px,4vw,48px)] text-white uppercase leading-none mb-6">
+        <div className="max-w-[660px] mx-auto px-6 py-16">
+          <h1 className="font-display font-black text-[clamp(36px,5vw,62px)] leading-[0.94] tracking-[-0.03em] text-white mb-8">
             Kuya / Ate Application
           </h1>
           <StepIndicator step={step} memberType={memberType} />
 
-          <div className="border border-white/[7%] rounded-2xl bg-[#1a1a1a] p-6">
-          <p className="font-sans text-sm text-white/50 mb-6">
-            Tell us about your interest in being a pamilya leader.
-          </p>
-
+          <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-[20px] p-6 md:p-10">
           <form onSubmit={handleFinalSubmit} className="flex flex-col gap-5">
+
+            {/* intro text */}
+            <p className="font-sans text-[14px] text-[#7a7a7a] leading-[1.6]">
+              Tell us about your interest in being a pamilya leader.
+            </p>
 
             {/* instagram */}
             <div>
               <label className={labelCls}>
-                Instagram Handle <span className="text-red-400">*</span>
+                Instagram Handle <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="text"
@@ -1052,10 +1156,12 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
               />
             </div>
 
+            <div className="h-px bg-white/[0.07]" />
+
             {/* pamilya name — free text since pams aren't finalized */}
             <div>
               <label className={labelCls}>
-                Which pamilya are you applying to lead? <span className="text-red-400">*</span>
+                Which pamilya are you applying to lead? <span className="text-[#e8654f]">*</span>
               </label>
               <input
                 type="text"
@@ -1077,10 +1183,10 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 <button
                   type="button"
                   onClick={() => setKuyateForm(p => ({ ...p, wants_to_be_pam_head: true }))}
-                  className={`flex-1 py-2.5 rounded-lg border-2 font-display font-bold text-xs uppercase tracking-widest transition-colors ${
+                  className={`flex-1 py-3 rounded-[10px] border-2 font-display font-bold text-[13px] uppercase tracking-[0.06em] transition-all ${
                     kuyateForm.wants_to_be_pam_head
-                      ? 'bg-accent-green border-accent-green text-[#0e0e0e]'
-                      : 'border-white/30 text-white hover:border-accent-green/50'
+                      ? 'bg-accent-green border-accent-green text-[#08130a]'
+                      : 'border-white/[0.12] text-[#b5b5b5] hover:border-accent-green/50'
                   }`}
                 >
                   Yes
@@ -1088,10 +1194,10 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 <button
                   type="button"
                   onClick={() => setKuyateForm(p => ({ ...p, wants_to_be_pam_head: false }))}
-                  className={`flex-1 py-2.5 rounded-lg border-2 font-display font-bold text-xs uppercase tracking-widest transition-colors ${
+                  className={`flex-1 py-3 rounded-[10px] border-2 font-display font-bold text-[13px] uppercase tracking-[0.06em] transition-all ${
                     !kuyateForm.wants_to_be_pam_head
-                      ? 'bg-accent-green border-accent-green text-[#0e0e0e]'
-                      : 'border-white/30 text-white hover:border-accent-green/50'
+                      ? 'bg-accent-green border-accent-green text-[#08130a]'
+                      : 'border-white/[0.12] text-[#b5b5b5] hover:border-accent-green/50'
                   }`}
                 >
                   No
@@ -1102,9 +1208,9 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             {/* pam head phone — only shown when wants_to_be_pam_head is true */}
             {/* auto-fills from profileForm.phone on focus if the field is empty */}
             {kuyateForm.wants_to_be_pam_head && (
-              <div>
+              <div className="bg-accent-green/10 border border-accent-green/30 rounded-[14px] p-4">
                 <label className={labelCls}>
-                  Your Phone Number <span className="text-red-400">*</span>
+                  Your Phone Number <span className="text-[#e8654f]">*</span>
                 </label>
                 <input
                   type="tel"
@@ -1120,8 +1226,8 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                   maxLength={14}
                   required
                 />
-                <p className="font-sans text-xs text-white/40 mt-1">
-                  Your phone number will be shared with the pam chair.
+                <p className="font-sans text-xs text-accent-green/70 mt-2">
+                  Your number will be shared with the pam chair.
                 </p>
               </div>
             )}
@@ -1129,23 +1235,22 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             {/* why kuyate */}
             <div>
               <label className={labelCls}>
-                Why do you want to be a kuya/ate? <span className="text-red-400">*</span>
+                Why do you want to be a kuya/ate? <span className="text-[#e8654f]">*</span>
               </label>
               <textarea
                 value={kuyateForm.why_kuyate}
                 onChange={e => setKuyateForm(p => ({ ...p, why_kuyate: e.target.value }))}
-                className={fieldCls}
-                rows={4}
+                className={textareaCls}
                 maxLength={1000}
                 required
               />
-              <div className="flex justify-between items-center mt-1">
+              <div className="flex justify-between items-center mt-1.5">
                 {kuyateForm.why_kuyate.length > 0 && kuyateForm.why_kuyate.length < 50 ? (
                   <span className="font-sans text-xs text-amber-400">at least 50 characters required</span>
                 ) : (
                   <span />
                 )}
-                <span className="font-sans text-xs text-white/40 ml-auto">{kuyateForm.why_kuyate.length} / 1000 characters</span>
+                <span className="font-sans text-xs text-[#7a7a7a] ml-auto">{kuyateForm.why_kuyate.length} / 1000 characters</span>
               </div>
             </div>
 
@@ -1157,25 +1262,35 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
               <textarea
                 value={kuyateForm.additional_notes}
                 onChange={e => setKuyateForm(p => ({ ...p, additional_notes: e.target.value }))}
-                className={fieldCls}
-                rows={3}
+                className={textareaCls}
                 maxLength={1000}
               />
               {kuyateForm.additional_notes.length > 800 && (
-                <p className="font-sans text-xs text-white/40 text-right mt-0.5">{kuyateForm.additional_notes.length} / 1000</p>
+                <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{kuyateForm.additional_notes.length} / 1000</p>
               )}
             </div>
 
-            {/* acknowledgement — visually separated, must be checked to submit */}
-            <div className="border-t border-white/20 pt-4">
+            {/* acknowledgement — custom checkbox, must be checked to submit */}
+            <div className="border-t border-white/[0.07] pt-5">
               <label className="flex items-start gap-3 cursor-pointer">
+                <div className={`w-[22px] h-[22px] shrink-0 rounded-[5px] border-2 flex items-center justify-center transition-all mt-0.5 ${
+                  kuyateForm.acknowledges_responsibilities
+                    ? 'bg-accent-green border-accent-green'
+                    : 'bg-[#141414] border-white/[0.18] hover:border-accent-green/40'
+                }`}>
+                  {kuyateForm.acknowledges_responsibilities && (
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#08130a" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                  )}
+                </div>
                 <input
                   type="checkbox"
+                  className="sr-only"
                   checked={kuyateForm.acknowledges_responsibilities}
                   onChange={e => setKuyateForm(p => ({ ...p, acknowledges_responsibilities: e.target.checked }))}
-                  className="mt-0.5 rounded accent-[#75ba78]"
                 />
-                <span className="font-sans text-sm text-white/70">
+                <span className="font-sans text-[14px] text-[#a8a8a8] leading-[1.55]">
                   I understand the responsibilities of being a kuya/ate and commit to fulfilling
                   them to the best of my ability.
                 </span>
@@ -1191,7 +1306,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             <button
               type="submit"
               disabled={loading || !kuyateForm.acknowledges_responsibilities}
-              className="w-full bg-accent-green text-[#0e0e0e] font-display font-black uppercase tracking-widest py-3.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity mt-2"
+              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] disabled:opacity-50 transition-all mt-2"
             >
               {/* only shows "submitting..." while the API call is in flight — do not remove this condition */}
               {loading ? 'Submitting...' : 'Complete Sign Up'}
@@ -1200,7 +1315,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             <button
               type="button"
               onClick={() => setStep('profile')}
-              className="font-sans text-sm text-white/40 hover:text-white/60 text-center transition-colors"
+              className="w-full text-center text-[#8e8e8e] text-[14px] font-semibold hover:text-[#cfcfcf] transition-colors"
             >
               ← Go Back
             </button>

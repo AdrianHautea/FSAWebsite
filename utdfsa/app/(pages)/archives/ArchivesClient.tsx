@@ -53,8 +53,8 @@ export default function ArchivesClient({ galleries }: Props) {
         <p className="font-display font-bold text-[12px] tracking-[0.2em] text-[#6f6f6f] uppercase mb-[18px]">
           Photo Archive
         </p>
-        <h1 className="font-display font-black leading-[0.94] tracking-[-0.02em] text-white uppercase"
-          style={{ fontSize: 'clamp(46px, 7vw, 78px)' }}>
+        <h1 className="font-display font-black leading-[0.96] tracking-[-0.02em] text-white"
+          style={{ fontSize: 'clamp(42px,6vw,74px)' }}>
           Archives
         </h1>
         <p className="text-[18px] text-[#8c8c8c] font-medium mt-4">

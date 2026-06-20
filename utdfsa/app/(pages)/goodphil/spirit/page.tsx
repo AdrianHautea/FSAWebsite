@@ -150,14 +150,14 @@ export default function SpiritPage() {
       <section className="bg-section-bg py-16 px-6 md:px-8">
         <div className="max-w-[956px] mx-auto">
           <div
-            className="bg-white rounded-[70px] px-10 py-8 text-center mx-auto max-w-2xl"
+            className="flex items-center justify-center w-full py-5 px-8 bg-white rounded-[70px] text-center"
             style={{ boxShadow: '0px 0px 8px 2px rgba(255,255,255,0.05)' }}
           >
-            <h2 className="font-display font-black text-[#0e0e0e] mb-4" style={{ fontSize: 'clamp(20px, 2vw, 30px)' }}>
-              INTERESTED IN JOINING SPIRIT?
-            </h2>
-            <p className="font-sans leading-relaxed text-gray-600" style={{ fontSize: 'clamp(16px, 1.9vw, 29px)' }}>
-              Stay tuned for upcoming Goodphil updates in the Spring!
+            <p
+              className="font-sans text-[#0e0e0e] text-center"
+              style={{ fontSize: 'clamp(13px, 1.9vw, 29px)', fontWeight: 590 }}
+            >
+              Interested in joining Spirit? Stay tuned for upcoming Goodphil updates in the Spring!
             </p>
           </div>
         </div>
