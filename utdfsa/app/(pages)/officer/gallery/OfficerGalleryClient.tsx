@@ -1,13 +1,14 @@
 // ── OfficerGalleryClient.tsx ──────────────────────────────
-// officer client component for creating and deleting gallery archives.
+// officer client component for creating, editing, and deleting gallery archives.
 //
 // data:  galleries table (id, title, cover_photo_url, google_photos_url, semester, year,
 //          description, is_published)
-// deps:  POST /api/galleries, DELETE /api/galleries/[id], browser-image-compression (npm)
+// deps:  POST /api/galleries, PATCH /api/galleries/[id], DELETE /api/galleries/[id],
+//        browser-image-compression (npm)
 // notes: cover preview uses FileReader (data: url) instead of URL.createObjectURL
 //        because the CSP blocks blob: urls in img-src. images over 1 mb are compressed
-//        client-side before upload. after create or delete, router.refresh() re-fetches
-//        the gallery list from the server without a full navigation.
+//        client-side before upload. after create, edit, or delete, router.refresh()
+//        re-fetches the gallery list from the server without a full navigation.
 'use client'
 
 import { useState, useRef } from 'react'
@@ -30,6 +31,24 @@ const EMPTY_FORM = {
   description: '',
   semester: '',
   year: '',
+}
+
+interface EditForm {
+  title: string
+  google_photos_url: string
+  description: string
+  semester: string
+  year: string
+  is_published: boolean
+}
+
+const EMPTY_EDIT_FORM: EditForm = {
+  title: '',
+  google_photos_url: '',
+  description: '',
+  semester: '',
+  year: '',
+  is_published: true,
 }
 
 // ============================================================
@@ -67,6 +86,16 @@ export default function OfficerGalleryClient({ galleries }: Props) {
   const [deletingId, setDeletingId] = useState<string | null>(null)
   // ref used to programmatically trigger the hidden file input from the drop zone div
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // edit modal state
+  const [editingGallery, setEditingGallery] = useState<Gallery | null>(null)
+  const [editForm, setEditForm] = useState<EditForm>(EMPTY_EDIT_FORM)
+  const [editCoverFile, setEditCoverFile] = useState<File | null>(null)
+  const [editCoverPreview, setEditCoverPreview] = useState<string | null>(null)
+  const [editSubmitting, setEditSubmitting] = useState(false)
+  const [editError, setEditError] = useState<string | null>(null)
+  const [editDeleting, setEditDeleting] = useState(false)
+  const editFileInputRef = useRef<HTMLInputElement>(null)
 
   function closeModal() {
     setModalOpen(false)
@@ -167,6 +196,113 @@ export default function OfficerGalleryClient({ galleries }: Props) {
     router.refresh()
   }
 
+  function openEdit(gallery: Gallery) {
+    setEditingGallery(gallery)
+    setEditForm({
+      title: gallery.title,
+      google_photos_url: gallery.google_photos_url ?? '',
+      description: gallery.description ?? '',
+      semester: gallery.semester ?? '',
+      year: gallery.year != null ? String(gallery.year) : '',
+      is_published: gallery.is_published,
+    })
+    setEditCoverFile(null)
+    setEditCoverPreview(null)
+    setEditError(null)
+    setEditDeleting(false)
+    setEditSubmitting(false)
+  }
+
+  function closeEdit() {
+    setEditingGallery(null)
+    setEditCoverFile(null)
+    setEditCoverPreview(null)
+    setEditError(null)
+  }
+
+  function handleEditFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null
+    if (!file) {
+      setEditCoverFile(null)
+      setEditCoverPreview(null)
+      return
+    }
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if (!allowedTypes.includes(file.type)) {
+      setEditError('Please upload a JPEG, PNG, WEBP, or GIF image.')
+      return
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      setEditError('Image must be under 20MB.')
+      return
+    }
+    setEditCoverFile(file)
+    setEditError(null)
+    const reader = new FileReader()
+    reader.onload = (ev) => setEditCoverPreview(ev.target?.result as string)
+    reader.readAsDataURL(file)
+  }
+
+  async function handleEditSubmit(e: { preventDefault(): void }) {
+    e.preventDefault()
+    if (!editingGallery) return
+    setEditSubmitting(true)
+    setEditError(null)
+
+    let fileToUpload: File | null = editCoverFile
+    if (editCoverFile && editCoverFile.size > 1 * 1024 * 1024) {
+      try {
+        const compressed = await imageCompression(editCoverFile, {
+          maxSizeMB: 2,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        })
+        fileToUpload = new File([compressed], editCoverFile.name, { type: editCoverFile.type })
+      } catch (err) {
+        console.error('[gallery edit] compression failed, using original:', err)
+      }
+    }
+
+    const body = new FormData()
+    body.append('title', editForm.title)
+    body.append('google_photos_url', editForm.google_photos_url)
+    body.append('description', editForm.description)
+    body.append('semester', editForm.semester)
+    body.append('year', editForm.year)
+    body.append('is_published', String(editForm.is_published))
+    if (fileToUpload) body.append('cover', fileToUpload)
+
+    // api: calls PATCH /api/galleries/[id] — updates gallery fields — do not change this endpoint
+    const res = await fetch(`/api/galleries/${editingGallery.id}`, { method: 'PATCH', body })
+    const data = await res.json()
+
+    if (!res.ok) {
+      setEditError(data.error ?? 'Something went wrong')
+      setEditSubmitting(false)
+      return
+    }
+
+    closeEdit()
+    setEditSubmitting(false)
+    router.refresh()
+  }
+
+  async function handleEditDelete() {
+    if (!editingGallery) return
+    if (!confirm(`Delete "${editingGallery.title}"? This cannot be undone.`)) return
+    setEditDeleting(true)
+    // api: calls DELETE /api/galleries/[id] — removes gallery row from database — do not change this endpoint
+    const res = await fetch(`/api/galleries/${editingGallery.id}`, { method: 'DELETE' })
+    setEditDeleting(false)
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setEditError(data.error ?? 'Failed to delete archive.')
+      return
+    }
+    closeEdit()
+    router.refresh()
+  }
+
   return (
     <main className="min-h-screen bg-[#070707] px-6 md:px-10 py-10">
       <div className="max-w-5xl mx-auto">
@@ -176,7 +312,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
             <h1 className="font-display font-black text-[32px] text-white tracking-tight leading-[1.02] mb-2">
               Gallery Management
             </h1>
-            <p className="text-[14.5px] text-[#8c8c8c] font-medium">Create and delete photo archives.</p>
+            <p className="text-[14.5px] text-[#8c8c8c] font-medium">Create and manage photo archives.</p>
           </div>
           <button
             onClick={() => setModalOpen(true)}
@@ -211,7 +347,15 @@ export default function OfficerGalleryClient({ galleries }: Props) {
 
                 {/* info */}
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-bold text-[15.5px] text-white truncate leading-snug">{gallery.title}</h2>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="font-bold text-[15.5px] text-white truncate leading-snug">{gallery.title}</h2>
+                    {/* only renders when the gallery is unpublished — do not remove this condition */}
+                    {!gallery.is_published && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-bold tracking-[0.05em] uppercase bg-white/5 text-[#6e6e6e] border border-white/10">
+                        Draft
+                      </span>
+                    )}
+                  </div>
                   {/* only renders when at least one of semester/year is set — do not remove this condition */}
                   {(gallery.semester || gallery.year) && (
                     <p className="text-[12.5px] text-[#8c8c8c] font-medium mt-0.5">
@@ -241,6 +385,12 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                       </svg>
                     </a>
                   )}
+                  <button
+                    onClick={() => openEdit(gallery)}
+                    className="min-h-[44px] flex items-center text-[13px] font-semibold text-[#5fa8e8] hover:text-[#8ec5f5] transition-colors"
+                  >
+                    Edit
+                  </button>
                   <button
                     onClick={() => handleDelete(gallery.id, gallery.title)}
                     disabled={deletingId === gallery.id}
@@ -443,6 +593,219 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   {/* only shows "Saving…" while the upload+insert API call is in flight — do not remove this condition */}
                   {submitting ? 'Saving…' : 'Create Archive'}
                 </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+      )}
+
+      {/* only renders when the officer has opened the Edit Archive modal — do not remove this condition */}
+      {editingGallery && (
+        <Modal onClose={closeEdit} size="md">
+          <div
+            className="bg-[#141414] border border-white/10 rounded-[20px] shadow-[0_32px_72px_-16px_rgba(0,0,0,0.8)] w-full"
+            style={{ animation: 'modalIn 0.18s ease-out' }}
+          >
+            <div className="px-4 sm:px-7 pt-4 sm:pt-7 pb-0">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-[7px] h-[7px] rounded-full bg-[#9747FF]" />
+                  <h2 className="font-display font-bold text-[17px] text-white tracking-[-0.01em]">Edit Archive</h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={closeEdit}
+                  className="w-8 h-8 rounded-full bg-white/6 hover:bg-white/12 flex items-center justify-center text-[#8c8c8c] hover:text-white transition-colors"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+
+              {/* only renders when the API or file validation returned an error — do not remove this condition */}
+              {editError && (
+                <p className="text-[13px] text-[#ef6f6f] bg-[rgba(239,111,111,0.08)] border border-[rgba(239,111,111,0.25)] rounded-xl px-4 py-3 mb-5">
+                  {editError}
+                </p>
+              )}
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="px-4 sm:px-7 pb-4 sm:pb-7 flex flex-col gap-5">
+
+              {/* Archive Name */}
+              <div>
+                <label className={labelCls}>Archive Name <span className="text-[#ef6f6f]">*</span></label>
+                <input
+                  type="text"
+                  required
+                  value={editForm.title}
+                  onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))}
+                  className={inputCls}
+                  placeholder="e.g. Spring Formal 2025"
+                />
+              </div>
+
+              {/* Cover Photo */}
+              <div>
+                <label className={labelCls}>Cover Photo</label>
+                <div className="flex gap-4 items-start">
+                  <div className="flex-1 min-w-0">
+                    <div
+                      onClick={() => editFileInputRef.current?.click()}
+                      className="w-full aspect-[1/1] rounded-xl overflow-hidden cursor-pointer mb-2"
+                    >
+                      <img
+                        src={editCoverPreview ?? editingGallery.cover_photo_url}
+                        alt="Cover preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {/* only renders the remove button after a new file is staged — do not remove this condition */}
+                    {editCoverPreview && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditCoverFile(null)
+                          setEditCoverPreview(null)
+                          if (editFileInputRef.current) editFileInputRef.current.value = ''
+                        }}
+                        className="text-[12px] text-[#6e6e6e] hover:text-[#ef6f6f] font-medium transition-colors"
+                      >
+                        Remove new photo
+                      </button>
+                    )}
+                  </div>
+
+                  {/* reference tile */}
+                  <div className="flex-shrink-0">
+                    <div
+                      className="w-[72px] aspect-[1/1] rounded-[13px] border border-white/10 bg-[#141414] flex flex-col items-center justify-center gap-1.5"
+                      style={{ backgroundImage: 'repeating-linear-gradient(135deg,transparent 0 11px,rgba(255,255,255,0.025) 11px 12px)' }}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth={1.4}>
+                        <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.7"/>
+                        <path d="M21 15l-5-5L4 21"/>
+                      </svg>
+                      <span className="font-mono text-[8px] tracking-[0.1em] text-white/30">1:1</span>
+                    </div>
+                    <p className="text-[10px] text-[#6e6e6e] font-medium mt-1.5 text-center max-w-[72px]">as shown in archives</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => editFileInputRef.current?.click()}
+                  className="text-[12px] font-semibold px-3.5 py-1.5 rounded-lg border border-white/16 text-[#cfcfcf] hover:border-white/30 hover:text-white transition-colors mt-2"
+                >
+                  {editCoverPreview ? 'Change Cover' : 'Replace Cover'}
+                </button>
+                <input
+                  ref={editFileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleEditFileChange}
+                  className="hidden"
+                />
+              </div>
+
+              {/* Album Link */}
+              <div>
+                <label className={labelCls}>Album Link</label>
+                <input
+                  type="url"
+                  value={editForm.google_photos_url}
+                  onChange={e => setEditForm(f => ({ ...f, google_photos_url: e.target.value }))}
+                  className={inputCls}
+                  placeholder="https://photos.google.com/..."
+                />
+              </div>
+
+              {/* Semester / Year */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className={labelCls}>Semester</label>
+                  <select
+                    value={editForm.semester}
+                    onChange={e => setEditForm(f => ({ ...f, semester: e.target.value }))}
+                    className={selectCls}
+                  >
+                    <option value="">—</option>
+                    <option value="Spring">Spring</option>
+                    <option value="Summer">Summer</option>
+                    <option value="Fall">Fall</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelCls}>Year</label>
+                  <input
+                    type="number"
+                    min="2000"
+                    max="2100"
+                    value={editForm.year}
+                    onChange={e => setEditForm(f => ({ ...f, year: e.target.value }))}
+                    className={inputCls}
+                    placeholder="2025"
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className={labelCls}>Description</label>
+                <textarea
+                  value={editForm.description}
+                  onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
+                  rows={2}
+                  className={`${inputCls} resize-none`}
+                  placeholder="Optional description…"
+                />
+              </div>
+
+              {/* Published toggle */}
+              <div className="flex items-center justify-between gap-4 pt-4 border-t border-white/7">
+                <div>
+                  <div className="text-sm font-semibold text-[#e8e8e8]">Published</div>
+                  <div className="text-[12.5px] text-[#7e7e7e] font-medium mt-0.5">Show this archive on the public Gallery page</div>
+                </div>
+                <label className="relative cursor-pointer select-none flex-shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={editForm.is_published}
+                    onChange={e => setEditForm(f => ({ ...f, is_published: e.target.checked }))}
+                    className="sr-only"
+                  />
+                  <div className={`w-[46px] h-[27px] rounded-full relative transition-colors duration-150 ${editForm.is_published ? 'bg-[#9747FF]' : 'bg-white/12'}`}>
+                    <span className={`absolute top-[3px] w-[21px] h-[21px] rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.4)] transition-all duration-150 ${editForm.is_published ? 'left-[22px]' : 'left-[3px]'}`} />
+                  </div>
+                </label>
+              </div>
+
+              {/* Footer */}
+              <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between pt-5 border-t border-white/7 gap-3">
+                <button
+                  type="button"
+                  disabled={editDeleting}
+                  onClick={handleEditDelete}
+                  className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 rounded-[11px] bg-transparent border border-[rgba(239,111,111,0.4)] text-[#ef6f6f] text-sm font-bold cursor-pointer hover:bg-[rgba(239,111,111,0.1)] disabled:opacity-50 transition-colors"
+                >
+                  {editDeleting ? 'Deleting…' : 'Delete Archive'}
+                </button>
+                <div className="flex gap-2.5 w-full sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={closeEdit}
+                    className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 rounded-xl bg-transparent border border-white/16 text-[#cfcfcf] text-sm font-semibold hover:border-white/32 hover:text-white transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={editSubmitting}
+                    className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl border-none bg-[#9747FF] hover:bg-[#a85eff] disabled:opacity-50 text-white font-bold text-sm transition-colors"
+                  >
+                    {editSubmitting ? 'Saving…' : 'Save Changes'}
+                  </button>
+                </div>
               </div>
             </form>
           </div>
