@@ -36,6 +36,16 @@ export default function Footer() {
           </p>
         </div>
 
+        {/* credit content — center column, desktop only; mobile version is below */}
+        <div className="hidden md:flex flex-col items-center gap-1.5">
+          <Link href="/privacy" className="text-white/35 text-[11px] uppercase tracking-widest font-medium hover:text-white/65 transition-colors whitespace-nowrap">
+            Privacy Policy
+          </Link>
+          <p className="text-white/60 text-xs uppercase tracking-widest font-medium text-center">
+            WEBSITE CURATED BY THE UTD FSA 2026-27 WEB COMMITTEE
+          </p>
+        </div>
+
         {/* right: social links + slogan */}
         <div className="flex flex-col items-end gap-3">
           <div className="flex items-center gap-3">
@@ -66,14 +76,21 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* credit bar */}
-      <div className="border-t border-white/10 py-3 px-6 flex items-center justify-center gap-6 flex-wrap">
-        <p className="text-white/60 text-xs uppercase tracking-widest font-medium">
-          WEBSITE CURATED BY THE UTD FSA 2026-27 WEB COMMITTEE
-        </p>
+      {/* credit bar — mobile only; desktop version lives as center column above */}
+      <div className="md:hidden py-3 px-6 flex flex-col items-center justify-center gap-1.5">
         <Link href="/privacy" className="text-white/35 text-[11px] uppercase tracking-widest font-medium hover:text-white/65 transition-colors whitespace-nowrap">
           Privacy Policy
         </Link>
+        <p className="text-white/60 text-xs uppercase tracking-widest font-medium text-center">
+          WEBSITE CURATED BY THE UTD FSA 2026-27 WEB COMMITTEE
+        </p>
+      </div>
+
+      {/* institutional disclaimer — required non-link text, visually recedes below all other footer content */}
+      <div className="border-t border-white/10 py-3 px-6">
+        <p className="font-sans text-[10px] text-white/25 text-center leading-[1.6] max-w-2xl mx-auto">
+          This website is published by the Filipino Student Association at UTD, a registered student organization. This website is not an official publication of The University of Texas at Dallas and does not represent the views of the University or its officers.
+        </p>
       </div>
     </footer>
   )

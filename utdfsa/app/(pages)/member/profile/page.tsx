@@ -193,14 +193,17 @@ export default async function ProfilePage() {
 
             {/* Meetings bar */}
             <div className="mb-4">
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="font-sans text-xs text-white/60">Meetings Attended (3 required, must include Risk Management)</span>
-                <span className="font-display font-bold text-xs text-white/60">{Math.min(goodphilMeetings, 3)} / 3</span>
+              <div className="flex justify-between items-center mb-1.5 gap-2">
+                <span className="font-sans text-xs text-white/60">Meetings Attended (3 required)</span>
+                <span className="font-display font-bold text-xs text-white/60 shrink-0">{Math.min(goodphilMeetings, 3)} / 3</span>
               </div>
               <div className="h-2 rounded-full bg-white/10 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-accent-green transition-all"
-                  style={{ width: `${Math.min((goodphilMeetings / 3) * 100, 100)}%` }}
+                  className="h-full rounded-full transition-all"
+                  style={{
+                    width: `${Math.min((goodphilMeetings / 3) * 100, 100)}%`,
+                    background: goodphilMeetings >= 3 ? '#75ba78' : '#5a96ff',
+                  }}
                 />
               </div>
               <p className={`font-sans text-xs mt-1 ${riskMgmtAttended ? 'text-accent-green' : 'text-white/40'}`}>

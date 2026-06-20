@@ -123,13 +123,21 @@ export function ticketEmailHtml({
           </td>
         </tr>
 
-        <!-- footer -->
+        <!-- footer — nested table keeps both rows visible in gmail; separate <p> tags get collapsed -->
         <tr>
-          <td bgcolor="#080808" style="background:#080808;padding:20px 44px;border-top:1px solid rgba(255,255,255,0.07);text-align:center;">
-            <p style="margin:0 0 8px;font-size:11px;line-height:1.55;color:#4a4a4a;font-family:Arial,Helvetica,sans-serif;">
-              This ticket was purchased on your behalf. For information on how UTD FSA handles your data, see our <a href="https://www.utdfsa.org/privacy" style="color:#5a5a5a;text-decoration:underline;">Privacy Policy</a>.
-            </p>
-            <p style="margin:0;font-size:12px;color:#6f6f6f;letter-spacing:0.01em;font-family:Arial,Helvetica,sans-serif;">UTD Filipino Student Association &mdash; University of Texas at Dallas</p>
+          <td bgcolor="#080808" style="background:#080808;padding:20px 44px;border-top:1px solid rgba(255,255,255,0.07);">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="text-align:center;padding-bottom:7px;font-size:11px;line-height:1.55;color:#4a4a4a;font-family:Arial,Helvetica,sans-serif;">
+                  This ticket was purchased on your behalf. For information on how UTD FSA handles your data, see our <a href="https://www.utdfsa.org/privacy" style="color:#5a5a5a;text-decoration:underline;">Privacy Policy</a>.
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:center;font-size:12px;color:#6f6f6f;letter-spacing:0.01em;font-family:Arial,Helvetica,sans-serif;">
+                  UTD Filipino Student Association &mdash; University of Texas at Dallas
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
 

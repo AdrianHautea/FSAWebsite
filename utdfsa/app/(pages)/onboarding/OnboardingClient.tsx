@@ -705,7 +705,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 type="date"
                 value={adingForm.birthday}
                 onChange={e => setAdingForm(p => ({ ...p, birthday: e.target.value }))}
-                className={fieldDateCls}
+                className={`${fieldDateCls} max-w-[240px]`}
                 max={TODAY}
                 required
               />
@@ -947,7 +947,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 value={adingForm.thoughts_on_drinking}
                 onChange={e => setAdingForm(p => ({ ...p, thoughts_on_drinking: e.target.value }))}
                 className={textareaCls}
-                placeholder="Share your thoughts and comfort level..."
+                placeholder="Share your thoughts and comfort level... (enter n/a if unsure)"
                 maxLength={500}
                 required
               />

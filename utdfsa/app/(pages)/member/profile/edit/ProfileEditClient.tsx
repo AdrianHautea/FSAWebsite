@@ -70,8 +70,17 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
   // ── handleSubmit ──────────────────────────────────────────────
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setLoading(true)
     setError(null)
+
+    if (!form.first_name.trim()) return setError('First Name is required')
+    if (!form.last_name.trim()) return setError('Last Name is required')
+    if (!form.contact_email.trim()) return setError('Contact Email is required')
+    if (!form.phone.trim()) return setError('Phone Number is required')
+    if (form.phone.replace(/\D/g, '').length !== 10) return setError('Phone Number must be 10 digits — e.g. (214) 333-4444')
+    if (!form.year) return setError('Year is required — please select an option')
+    if (!form.major.trim()) return setError('Major is required')
+
+    setLoading(true)
 
     // api: calls POST /api/member/update-profile — saves profile fields to the members table — do not change this endpoint
     const res = await fetch('/api/member/update-profile', {
@@ -93,20 +102,20 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
     setTimeout(() => router.push('/member/profile'), 1200)
   }
 
-  const fieldCls = 'w-full border border-white/30 rounded-lg p-2.5 text-sm text-white bg-brand-bg placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-accent-green focus:border-accent-green transition-colors'
+  const fieldCls = 'w-full px-4 py-3 bg-[#141414] border border-white/10 rounded-[12px] text-sm text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-accent-green focus:bg-[#171717] transition-colors'
   const labelCls = 'block font-display font-bold text-xs uppercase tracking-widest text-white/60 mb-1.5'
 
   return (
-    <main className="bg-section-bg min-h-screen text-white">
+    <main className="bg-brand-bg min-h-screen text-white">
       <div className="max-w-lg mx-auto px-6 py-12">
         <h1 className="font-display font-black text-[clamp(28px,4vw,48px)] text-white uppercase leading-none mb-6">
           Edit Profile
         </h1>
 
         {/* loginEmail is the Google OAuth address — shown read-only because it cannot be changed here */}
-        <div className="mb-6 p-3 bg-white/5 border border-white/10 rounded-lg">
+        <div className="mb-6 p-4 bg-[#141414] border border-white/10 rounded-[12px]">
           <span className={labelCls}>Login email</span>
-          <p className="font-sans text-sm text-white/70">{loginEmail}</p>
+          <p className="font-sans text-sm text-accent-gold">{loginEmail}</p>
           <p className="font-sans text-xs text-white/40 mt-1">
             This is tied to your Google account and cannot be changed here.
           </p>
@@ -115,7 +124,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className={labelCls}>First Name</label>
+              <label className={labelCls}>First Name <span className="text-[#e8654f]">*</span></label>
               <input
                 type="text"
                 value={form.first_name}
@@ -125,7 +134,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
               />
             </div>
             <div className="flex-1">
-              <label className={labelCls}>Last Name</label>
+              <label className={labelCls}>Last Name <span className="text-[#e8654f]">*</span></label>
               <input
                 type="text"
                 value={form.last_name}
@@ -138,7 +147,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
 
           <div>
             <label className={labelCls}>
-              Contact Email
+              Contact Email <span className="text-[#e8654f]">*</span>
               <span className="text-white/30 font-normal normal-case tracking-normal ml-1">
                 (for event tickets and notifications)
               </span>
@@ -148,15 +157,13 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
               value={form.contact_email}
               onChange={e => set('contact_email', e.target.value)}
               className={fieldCls}
-              placeholder={loginEmail}
+              placeholder="your@email.com"
+              required
             />
-            <p className="font-sans text-xs text-white/40 mt-1">
-              Leave blank to use your Google email for notifications.
-            </p>
           </div>
 
           <div>
-            <label className={labelCls}>Phone</label>
+            <label className={labelCls}>Phone <span className="text-[#e8654f]">*</span></label>
             <input
               type="tel"
               value={form.phone ?? ''}
@@ -164,34 +171,39 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
               className={fieldCls}
               placeholder="(xxx) xxx-xxxx"
               maxLength={14}
+              required
             />
           </div>
 
           <div>
-            <label className={labelCls}>Year</label>
-            <select
-              value={form.year ?? ''}
-              onChange={e => set('year', e.target.value)}
-              className={`${fieldCls} pr-8 text-gray-900`}
-              style={{ colorScheme: 'light' }}
-            >
-              <option value="" style={{ color: '#111827', backgroundColor: '#ffffff' }}>Select your year</option>
-              <option value="Freshman" style={{ color: '#111827', backgroundColor: '#ffffff' }}>Freshman</option>
-              <option value="Sophomore" style={{ color: '#111827', backgroundColor: '#ffffff' }}>Sophomore</option>
-              <option value="Junior" style={{ color: '#111827', backgroundColor: '#ffffff' }}>Junior</option>
-              <option value="Senior" style={{ color: '#111827', backgroundColor: '#ffffff' }}>Senior</option>
-              <option value="Graduate" style={{ color: '#111827', backgroundColor: '#ffffff' }}>Graduate</option>
-            </select>
+            <label className={labelCls}>Year <span className="text-[#e8654f]">*</span></label>
+            <div className="relative">
+              <select
+                value={form.year ?? ''}
+                onChange={e => set('year', e.target.value)}
+                className={`${fieldCls} appearance-none pr-10`}
+                required
+              >
+                <option value="" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Select your year</option>
+                <option value="Freshman" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Freshman</option>
+                <option value="Sophomore" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Sophomore</option>
+                <option value="Junior" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Junior</option>
+                <option value="Senior" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Senior</option>
+                <option value="Graduate" style={{ color: '#ffffff', backgroundColor: '#141414' }}>Graduate</option>
+              </select>
+              <svg className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#7a7a7a]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
           </div>
 
           <div>
-            <label className={labelCls}>Major</label>
+            <label className={labelCls}>Major <span className="text-[#e8654f]">*</span></label>
             <input
               type="text"
               value={form.major ?? ''}
               onChange={e => set('major', toTitleCase(e.target.value))}
               className={fieldCls}
               placeholder="e.g. Computer Science"
+              required
             />
           </div>
 

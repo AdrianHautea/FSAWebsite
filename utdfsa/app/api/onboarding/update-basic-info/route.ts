@@ -68,7 +68,9 @@ export async function POST(req: Request) {
   // bypass rls — user client cannot update its own members row
   const admin = createAdminClient()
 
-  // update basic profile fields; phone is normalized to e.164 format via formatPhone
+  // update basic profile fields and stamp onboarding complete in one write;
+  // onboarding_complete is set here (not in not-interested) so the back button
+  // on the basic-info form can return to /onboarding without being redirected to /member/profile
   const { error } = await admin
     .from('members')
     .update({
@@ -77,6 +79,7 @@ export async function POST(req: Request) {
       phone: parsed.data.phone ? formatPhone(parsed.data.phone) : null,
       year: parsed.data.year || null,
       major: parsed.data.major ?? null,
+      onboarding_complete: true,
     })
     .eq('id', member.id)
 

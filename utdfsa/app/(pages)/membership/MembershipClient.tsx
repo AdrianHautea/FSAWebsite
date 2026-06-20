@@ -396,7 +396,7 @@ export default function MembershipClient({
             <h2 className="font-display font-extrabold text-2xl tracking-[-0.02em] text-white whitespace-nowrap">Questions</h2>
             <span className="h-px flex-1 bg-white/[0.08]" />
           </div>
-          <div className="flex flex-col gap-3 max-w-[860px]">
+          <div className="flex flex-col gap-3">
             {FAQS.map((f, i) => (
               <div
                 key={i}
