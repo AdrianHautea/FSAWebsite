@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, type PointerEvent } from 'react'
 import Modal from '@/components/Modal'
 import Image from 'next/image'
 import Link from 'next/link'
+import AnimatedTitle from '@/components/AnimatedTitle'
 
 export type MemberState = {
   isLoggedIn: boolean
@@ -385,9 +386,9 @@ export default function PamilyasClient({
             sizes="100vw"
           />
           <div className="absolute inset-0 bg-black/40" />
-          <h1 className="absolute bottom-4 left-4 font-display font-black text-5xl text-white leading-none z-10">
+          <AnimatedTitle as="h1" animation="slideFromRight" className="absolute bottom-4 left-4 font-display font-black text-5xl text-white leading-none z-10">
             PAMILYAS
-          </h1>
+          </AnimatedTitle>
         </div>
       </div>
 
@@ -433,7 +434,9 @@ export default function PamilyasClient({
         </div>
 
         {/* PAMILYAS title */}
-        <h1
+        <AnimatedTitle
+          as="h1"
+          animation="slideFromRight"
           className="absolute font-display font-black text-white leading-none text-right z-10"
           style={{
             bottom: '100px',
@@ -442,7 +445,7 @@ export default function PamilyasClient({
           }}
         >
           PAMILYAS
-        </h1>
+        </AnimatedTitle>
 
   </section>
 
@@ -501,7 +504,7 @@ export default function PamilyasClient({
         <div className="bg-section-bg py-16 px-8">
           <div className="max-w-xl mx-auto">
             <div className="bg-white rounded-3xl p-8 text-center">
-              <p className="font-sans font-normal text-[#1f1f1f] text-lg leading-relaxed">
+              <p className="font-sans font-semibold text-[#1f1f1f] text-lg leading-relaxed">
                 Pamilyas will be revealed at the 2nd General Meeting. Check back soon!
               </p>
             </div>

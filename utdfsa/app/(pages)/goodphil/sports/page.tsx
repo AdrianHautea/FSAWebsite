@@ -9,6 +9,7 @@
 // ──────────────────────────────────────────────────────────
 
 import Image from 'next/image'
+import AnimatedTitle from '@/components/AnimatedTitle'
 
 export default function SportsPage() {
   return (
@@ -40,7 +41,9 @@ export default function SportsPage() {
         </div>
 
         {/* Top layer: SPORTS title centered over hero photo */}
-        <h1
+        <AnimatedTitle
+          as="h1"
+          animation="fadeIn"
           className="absolute z-30 w-full text-center font-display font-black text-white leading-none select-none"
           style={{
             left: '50%',
@@ -51,7 +54,7 @@ export default function SportsPage() {
           }}
         >
           SPORTS
-        </h1>
+        </AnimatedTitle>
 
       </section>
 

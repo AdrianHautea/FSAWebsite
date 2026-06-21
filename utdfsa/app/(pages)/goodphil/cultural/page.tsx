@@ -8,6 +8,7 @@
 // ──────────────────────────────────────────────────────────
 
 import Image from 'next/image'
+import AnimatedTitle from '@/components/AnimatedTitle'
 
 export default function CulturalPage() {
   return (
@@ -33,7 +34,9 @@ export default function CulturalPage() {
         <div className="absolute inset-0 bg-black/40 md:hidden z-[2]" />
 
         {/* Top layer: CULTURAL title centered over hero photo */}
-        <h1
+        <AnimatedTitle
+          as="h1"
+          animation="fadeIn"
           className="absolute z-30 w-full text-center font-display font-black text-white leading-none select-none"
           style={{
             left: '50%',
@@ -44,7 +47,7 @@ export default function CulturalPage() {
           }}
         >
           CULTURAL
-        </h1>
+        </AnimatedTitle>
 
       </section>
 

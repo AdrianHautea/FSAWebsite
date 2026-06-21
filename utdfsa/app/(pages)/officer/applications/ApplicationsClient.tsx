@@ -854,26 +854,33 @@ export default function ApplicationsClient({
         {/* ading tab */}
         {tab === 'ading' && (
           <section>
-            <div className="flex items-center justify-between gap-4 mb-3 flex-wrap">
-              <FilterBar active={adingFilter} onChange={handleAdingFilterChange} counts={adingCounts()} />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5">
+              <div className="order-1 sm:order-1">
+                <FilterBar active={adingFilter} onChange={handleAdingFilterChange} counts={adingCounts()} />
+              </div>
+              <div className="relative order-2 sm:order-2 sm:flex-1 sm:min-w-0">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a5a] pointer-events-none">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
+                </svg>
+                <input
+                  type="search"
+                  value={adingSearch}
+                  onChange={e => handleAdingSearchChange(e.target.value)}
+                  placeholder="Search by name…"
+                  className="w-full pl-8 pr-3.5 py-2 rounded-[10px] bg-[#0d0d0d] border border-white/10 text-[13px] text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-white/24 transition-[border-color] font-[inherit]"
+                />
+              </div>
               <button
                 onClick={() => exportAdingCSV(filteredAding)}
-                className="flex items-center gap-2 text-[13px] font-semibold px-4 py-2 rounded-[10px] border border-white/16 bg-transparent text-[#8c8c8c] hover:border-white/30 hover:text-[#cfcfcf] transition-colors"
+                className="order-3 flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 sm:p-2 rounded-[10px] border border-white/16 bg-transparent text-[#8c8c8c] hover:border-white/30 hover:text-[#cfcfcf] transition-colors sm:shrink-0"
+                title="Export CSV"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                Export CSV
+                <span className="text-[13px] font-semibold sm:hidden">Export CSV</span>
               </button>
-            </div>
-            <div className="mb-5">
-              <input
-                type="search"
-                value={adingSearch}
-                onChange={e => handleAdingSearchChange(e.target.value)}
-                placeholder="Search by name…"
-                className="w-full max-w-[280px] px-3.5 py-2 rounded-[10px] bg-[#0d0d0d] border border-white/10 text-[13px] text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-white/24 transition-[border-color] font-[inherit]"
-              />
             </div>
 
             {searchedAding.length === 0 ? (
@@ -914,26 +921,33 @@ export default function ApplicationsClient({
         {/* kuyate tab */}
         {tab === 'kuyate' && (
           <section>
-            <div className="flex items-center justify-between gap-4 mb-3 flex-wrap">
-              <FilterBar active={kuyateFilter} onChange={handleKuyateFilterChange} counts={kuyateCounts()} />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5">
+              <div className="order-1 sm:order-1">
+                <FilterBar active={kuyateFilter} onChange={handleKuyateFilterChange} counts={kuyateCounts()} />
+              </div>
+              <div className="relative order-2 sm:order-2 sm:flex-1 sm:min-w-0">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a5a] pointer-events-none">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
+                </svg>
+                <input
+                  type="search"
+                  value={kuyateSearch}
+                  onChange={e => handleKuyateSearchChange(e.target.value)}
+                  placeholder="Search by name…"
+                  className="w-full pl-8 pr-3.5 py-2 rounded-[10px] bg-[#0d0d0d] border border-white/10 text-[13px] text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-white/24 transition-[border-color] font-[inherit]"
+                />
+              </div>
               <button
                 onClick={() => exportKuyateCSV(filteredKuyate)}
-                className="flex items-center gap-2 text-[13px] font-semibold px-4 py-2 rounded-[10px] border border-white/16 bg-transparent text-[#8c8c8c] hover:border-white/30 hover:text-[#cfcfcf] transition-colors"
+                className="order-3 flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 sm:p-2 rounded-[10px] border border-white/16 bg-transparent text-[#8c8c8c] hover:border-white/30 hover:text-[#cfcfcf] transition-colors sm:shrink-0"
+                title="Export CSV"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                Export CSV
+                <span className="text-[13px] font-semibold sm:hidden">Export CSV</span>
               </button>
-            </div>
-            <div className="mb-5">
-              <input
-                type="search"
-                value={kuyateSearch}
-                onChange={e => handleKuyateSearchChange(e.target.value)}
-                placeholder="Search by name…"
-                className="w-full max-w-[280px] px-3.5 py-2 rounded-[10px] bg-[#0d0d0d] border border-white/10 text-[13px] text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-white/24 transition-[border-color] font-[inherit]"
-              />
             </div>
 
             {searchedKuyate.length === 0 ? (

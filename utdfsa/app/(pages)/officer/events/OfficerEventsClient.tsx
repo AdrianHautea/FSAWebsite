@@ -360,18 +360,22 @@ function EventForm({
           </div>
 
           <div className="border-t border-white/7 pt-5">
-            <label className="flex items-center gap-2.5 cursor-pointer select-none mb-1">
-              <input type="checkbox" checked={form.eb_enabled}
-                onChange={e => set('eb_enabled', e.target.checked)}
-                className="sr-only" />
-              <div className={`w-[42px] h-[25px] rounded-full relative transition-colors duration-150 flex-shrink-0 ${form.eb_enabled ? 'bg-[#9747FF]' : 'bg-white/12'}`}>
-                <span className={`absolute top-[3px] w-[19px] h-[19px] rounded-full bg-white shadow-[0_2px_5px_rgba(0,0,0,0.4)] transition-all duration-150 ${form.eb_enabled ? 'left-[20px]' : 'left-[3px]'}`} />
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="text-sm font-semibold text-[#e8e8e8]">Early Bird Pricing</div>
+                <div className="text-[12.5px] text-[#7e7e7e] font-medium mt-0.5">
+                  Early bird prices are shown until the deadline, then regular prices kick in automatically — no action needed.
+                </div>
               </div>
-              <span className="text-sm font-semibold text-[#e8e8e8]">Early Bird Pricing</span>
-            </label>
-            <p className="text-[12.5px] text-[#6e6e6e] font-medium ml-[52px]">
-              Early bird prices are shown until the deadline, then regular prices kick in automatically — no action needed.
-            </p>
+              <label className="relative cursor-pointer select-none flex-shrink-0">
+                <input type="checkbox" checked={form.eb_enabled}
+                  onChange={e => set('eb_enabled', e.target.checked)}
+                  className="sr-only" />
+                <div className={`w-[46px] h-[27px] rounded-full relative transition-colors duration-150 ${form.eb_enabled ? 'bg-[#9747FF]' : 'bg-white/12'}`}>
+                  <span className={`absolute top-[3px] w-[21px] h-[21px] rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.4)] transition-all duration-150 ${form.eb_enabled ? 'left-[22px]' : 'left-[3px]'}`} />
+                </div>
+              </label>
+            </div>
 
             {form.eb_enabled && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">

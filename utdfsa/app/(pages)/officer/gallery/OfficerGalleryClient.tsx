@@ -82,8 +82,6 @@ export default function OfficerGalleryClient({ galleries }: Props) {
   const [coverFile, setCoverFile] = useState<File | null>(null)
   // data: url preview for the cover — shown immediately after file selection
   const [coverPreview, setCoverPreview] = useState<string | null>(null)
-  // id of the gallery currently being deleted — used to show "Deleting…" on that row only
-  const [deletingId, setDeletingId] = useState<string | null>(null)
   // ref used to programmatically trigger the hidden file input from the drop zone div
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -179,20 +177,6 @@ export default function OfficerGalleryClient({ galleries }: Props) {
 
     closeModal()
     setSubmitting(false)
-    router.refresh()
-  }
-
-  async function handleDelete(id: string, title: string) {
-    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return
-    setDeletingId(id)
-    // api: calls DELETE /api/galleries/[id] — removes gallery row from database — do not change this endpoint
-    const res = await fetch(`/api/galleries/${id}`, { method: 'DELETE' })
-    setDeletingId(null)
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}))
-      alert(data.error ?? 'Failed to delete archive.')
-      return
-    }
     router.refresh()
   }
 
@@ -325,6 +309,13 @@ export default function OfficerGalleryClient({ galleries }: Props) {
           </button>
         </div>
 
+        {/* existing galleries header */}
+        <div className="flex items-center gap-3 mb-5">
+          <span className="font-display font-bold text-[12px] tracking-[0.16em] text-[#9a9a9a] uppercase">Existing Galleries</span>
+          <span className="h-px flex-1 bg-white/7" />
+          <span className="text-[12.5px] text-[#6e6e6e] font-medium">{galleries.length} archive{galleries.length !== 1 ? 's' : ''}</span>
+        </div>
+
         {/* gallery list */}
         {/* only renders when no galleries exist yet — do not remove this condition */}
         {galleries.length === 0 ? (
@@ -334,10 +325,10 @@ export default function OfficerGalleryClient({ galleries }: Props) {
             {galleries.map((gallery) => (
               <div
                 key={gallery.id}
-                className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 bg-[#121212] border border-white/8 rounded-2xl p-4 hover:border-white/16 transition-colors group"
+                className="flex flex-col sm:flex-row gap-3 sm:gap-5 bg-[#121212] border border-white/8 rounded-2xl p-4 hover:border-white/16 transition-colors group"
               >
                 {/* cover thumbnail */}
-                <div className="w-[72px] h-[72px] rounded-[13px] overflow-hidden flex-shrink-0 bg-[#0d0d0d] border border-white/8">
+                <div className="w-[72px] h-[72px] rounded-[13px] overflow-hidden flex-shrink-0 bg-[#0d0d0d] border border-white/8 sm:self-center sm:mt-0.5">
                   <img
                     src={gallery.cover_photo_url}
                     alt={gallery.title}
@@ -346,16 +337,8 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                 </div>
 
                 {/* info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="font-bold text-[15.5px] text-white truncate leading-snug">{gallery.title}</h2>
-                    {/* only renders when the gallery is unpublished — do not remove this condition */}
-                    {!gallery.is_published && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-bold tracking-[0.05em] uppercase bg-white/5 text-[#6e6e6e] border border-white/10">
-                        Draft
-                      </span>
-                    )}
-                  </div>
+                <div className="flex-1 min-w-0 sm:self-center">
+                  <h2 className="font-bold text-[15.5px] text-white truncate leading-snug">{gallery.title}</h2>
                   {/* only renders when at least one of semester/year is set — do not remove this condition */}
                   {(gallery.semester || gallery.year) && (
                     <p className="text-[12.5px] text-[#8c8c8c] font-medium mt-0.5">
@@ -368,36 +351,24 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   )}
                 </div>
 
-                {/* actions */}
-                <div className="flex items-center gap-3 sm:flex-shrink-0">
-                  {/* only renders when the gallery has a linked album URL — do not remove this condition */}
-                  {gallery.google_photos_url && (
-                    // route: gallery.google_photos_url — opens the Google Photos album in a new tab — do not change this path
-                    <a
-                      href={gallery.google_photos_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-[13px] text-[#5fa8e8] font-semibold hover:text-[#8ec5f5] transition-colors min-h-[44px]"
-                    >
-                      View Album
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
-                      </svg>
-                    </a>
+                {/* actions — badge pins top-right, edit pins bottom-right */}
+                <div className="flex sm:flex-col sm:justify-between sm:items-end gap-2 sm:flex-shrink-0 sm:self-stretch">
+                  {gallery.is_published ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-[0.05em] uppercase bg-[rgba(74,222,128,0.1)] text-[#4ade80] border border-[rgba(74,222,128,0.22)]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80]" />
+                      Published
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-[0.05em] uppercase bg-white/5 text-[#6e6e6e] border border-white/10">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#6e6e6e]" />
+                      Draft
+                    </span>
                   )}
                   <button
                     onClick={() => openEdit(gallery)}
                     className="min-h-[44px] flex items-center text-[13px] font-semibold text-[#5fa8e8] hover:text-[#8ec5f5] transition-colors"
                   >
                     Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(gallery.id, gallery.title)}
-                    disabled={deletingId === gallery.id}
-                    className="min-h-[44px] flex items-center text-[13px] font-semibold text-[#6e6e6e] hover:text-[#ef6f6f] disabled:opacity-50 transition-colors"
-                  >
-                    {/* only shows "Deleting…" while this specific gallery's delete call is in flight — do not remove this condition */}
-                    {deletingId === gallery.id ? 'Deleting…' : 'Delete'}
                   </button>
                 </div>
               </div>
@@ -718,6 +689,19 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   className={inputCls}
                   placeholder="https://photos.google.com/..."
                 />
+                {editForm.google_photos_url && (
+                  <a
+                    href={editForm.google_photos_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 mt-2 text-[12.5px] text-[#5fa8e8] font-semibold hover:text-[#8ec5f5] transition-colors"
+                  >
+                    View Album
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+                    </svg>
+                  </a>
+                )}
               </div>
 
               {/* Semester / Year */}

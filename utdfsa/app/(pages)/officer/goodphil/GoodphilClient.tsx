@@ -130,21 +130,16 @@ export default function GoodphilClient({ members }: { members: GoodphilEligibili
 
         {/* search + pagination controls */}
         <div className="flex items-center justify-between mb-5 gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5a5a5a]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2}>
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-              </svg>
-              <input
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                placeholder="Search by name…"
-                className="pl-10 pr-4 py-2.5 bg-[#0d0d0d] border border-white/10 rounded-xl text-sm text-white placeholder:text-[#5a5a5a] w-64 focus:outline-none focus:border-[#9747FF] focus:shadow-[0_0_0_3px_rgba(151,71,255,0.18)] transition-[border-color,box-shadow]"
-              />
-            </div>
-            <span className="text-[13.5px] text-[#6e6e6e] font-medium">
-              {filtered.length} member{filtered.length !== 1 ? 's' : ''}
-            </span>
+          <div className="relative flex-1 min-w-0">
+            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5a5a5a]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2}>
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Search by name…"
+              className="w-full pl-10 pr-4 py-2.5 bg-[#0d0d0d] border border-white/10 rounded-xl text-sm text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-[#9747FF] focus:shadow-[0_0_0_3px_rgba(151,71,255,0.18)] transition-[border-color,box-shadow]"
+            />
           </div>
 
           {/* Gmail-style pagination indicator — only renders when there is more than one page */}

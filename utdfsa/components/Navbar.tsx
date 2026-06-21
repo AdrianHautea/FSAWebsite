@@ -196,12 +196,12 @@ export default function Navbar({ initialMember }: NavbarProps) {
                 {/* route: /goodphil/about — About Goodphil page — do not change this path */}
                 <Link href="/goodphil/about" className={dropdownItemClass} onClick={() => setGoodphilOpen(false)}>About Goodphil</Link>
                 <hr className="my-1 border-white/20" />
+                {/* route: /goodphil/spirit — Spirit Goodphil branch page — do not change this path */}
+                <Link href="/goodphil/spirit" className={dropdownItemClass} onClick={() => setGoodphilOpen(false)}>Spirit</Link>
                 {/* route: /goodphil/cultural — Cultural Goodphil branch page — do not change this path */}
                 <Link href="/goodphil/cultural" className={dropdownItemClass} onClick={() => setGoodphilOpen(false)}>Cultural</Link>
                 {/* route: /goodphil/modern — Modern Goodphil branch page — do not change this path */}
                 <Link href="/goodphil/modern" className={dropdownItemClass} onClick={() => setGoodphilOpen(false)}>Modern</Link>
-                {/* route: /goodphil/spirit — Spirit Goodphil branch page — do not change this path */}
-                <Link href="/goodphil/spirit" className={dropdownItemClass} onClick={() => setGoodphilOpen(false)}>Spirit</Link>
                 {/* route: /goodphil/sports — Sports Goodphil branch page — do not change this path */}
                 <Link href="/goodphil/sports" className={dropdownItemClass} onClick={() => setGoodphilOpen(false)}>Sports</Link>
               </div>
@@ -333,12 +333,12 @@ export default function Navbar({ initialMember }: NavbarProps) {
                 <ul className="bg-white/5">
                   {/* route: /goodphil/about — About Goodphil page — do not change this path */}
                   <li><Link href="/goodphil/about" className={mobileSubLinkClass} onClick={closeMobileMenu}>About Goodphil</Link></li>
+                  {/* route: /goodphil/spirit — Spirit Goodphil branch page — do not change this path */}
+                  <li><Link href="/goodphil/spirit" className={mobileSubLinkClass} onClick={closeMobileMenu}>Spirit</Link></li>
                   {/* route: /goodphil/cultural — Cultural Goodphil branch page — do not change this path */}
                   <li><Link href="/goodphil/cultural" className={mobileSubLinkClass} onClick={closeMobileMenu}>Cultural</Link></li>
                   {/* route: /goodphil/modern — Modern Goodphil branch page — do not change this path */}
                   <li><Link href="/goodphil/modern" className={mobileSubLinkClass} onClick={closeMobileMenu}>Modern</Link></li>
-                  {/* route: /goodphil/spirit — Spirit Goodphil branch page — do not change this path */}
-                  <li><Link href="/goodphil/spirit" className={mobileSubLinkClass} onClick={closeMobileMenu}>Spirit</Link></li>
                   {/* route: /goodphil/sports — Sports Goodphil branch page — do not change this path */}
                   <li><Link href="/goodphil/sports" className={mobileSubLinkClass} onClick={closeMobileMenu}>Sports</Link></li>
                 </ul>

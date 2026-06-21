@@ -8,8 +8,9 @@
 // ─────────────────────────────────────────────────────────────
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
+import AnimatedTitle from '@/components/AnimatedTitle'
 
 // ── officer data ──────────────────────────────────────────────
 // update position/name entries each year; add new year block to PAST_OFFICERS
@@ -194,6 +195,68 @@ export default function AboutClient() {
     setOpenYear(prev => prev === year ? '' : year)
   }
 
+  // ── officer board scroll-triggered animation ──────────────
+  const boardTitleRef = useRef<HTMLHeadingElement>(null)
+  const boardGridRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const title = boardTitleRef.current
+    const grid = boardGridRef.current
+    if (!title || !grid) return
+
+    const TIMING = '0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+    // hero title (0ms) + description delay (150ms) + duration (900ms) = 1050ms
+    const HERO_DONE_MS = 1050
+    // title leads the first row by this many ms (appears "just before" cards)
+    const TITLE_LEAD_MS = 150
+    const mountTime = Date.now()
+
+    const cards = Array.from(grid.children) as HTMLElement[]
+    const animated = new Set<HTMLElement>()
+    // offsetTop values are stable after layout; compute once at mount
+    const minOffsetTop = Math.min(...cards.map(c => c.offsetTop))
+    let titleAnimated = false
+
+    title.style.opacity = '0'
+    cards.forEach(c => { c.style.opacity = '0' })
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return
+        const card = e.target as HTMLElement
+        if (animated.has(card)) return
+
+        const top = card.offsetTop
+        const isFirstRow = Math.abs(top - minOffsetTop) < 4
+        // first row waits for the hero description to finish; all other rows fire immediately
+        const cardDelay = isFirstRow ? Math.max(0, HERO_DONE_MS - (Date.now() - mountTime)) : 0
+
+        // title fades in 150ms before the first row cards
+        if (isFirstRow && !titleAnimated) {
+          titleAnimated = true
+          const titleDelay = Math.max(0, cardDelay - TITLE_LEAD_MS)
+          title.style.animation = 'none'
+          void title.offsetHeight
+          title.style.animation = `fadeUp ${TIMING} ${titleDelay}ms both`
+        }
+
+        cards
+          .filter(c => Math.abs(c.offsetTop - top) < 4)
+          .forEach(c => {
+            if (animated.has(c)) return
+            animated.add(c)
+            observer.unobserve(c)
+            c.style.animation = 'none'
+            void c.offsetHeight
+            c.style.animation = `fadeUp ${TIMING} ${cardDelay}ms both`
+          })
+      })
+    }, { threshold: 0.4 })
+
+    cards.forEach(c => observer.observe(c))
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <main className="bg-brand-bg text-white overflow-x-hidden">
 
@@ -223,13 +286,18 @@ export default function AboutClient() {
           style={{ minHeight: 'clamp(320px, 50vh, 620px)' }}>
           <div className="max-w-3xl mx-auto">
 
-            <h1
+            <AnimatedTitle
+              as="h1"
+              animation="fadeUp"
               className="font-display font-black text-white mb-8"
               style={{ fontSize: 'clamp(36px, 5.5vw, 80px)', letterSpacing: '-0.02em' }}
             >
               ABOUT US
-            </h1>
-            <p
+            </AnimatedTitle>
+            <AnimatedTitle
+              as="p"
+              animation="fadeUp"
+              delay={150}
               className="font-sans text-white leading-relaxed max-w-2xl mx-auto"
               style={{ fontSize: 'clamp(15px, 1.5vw, 18px)' }}
             >
@@ -237,7 +305,7 @@ export default function AboutClient() {
               created to unite students who are interested in promoting Filipino-American culture.
               Through dance, sports, social events, and community outreach, UTD FSA aims to celebrate
               and foster community through Filipino traditions and heritage.
-            </p>
+            </AnimatedTitle>
 
           </div>
         </div>
@@ -248,12 +316,13 @@ export default function AboutClient() {
       <section className="py-16 px-6 bg-section-bg">
         <div className="max-w-6xl mx-auto">
           <h2
+            ref={boardTitleRef}
             className="font-display font-black text-white text-center mb-12"
             style={{ fontSize: 'clamp(16px, 2.2vw, 32px)', letterSpacing: '0.02em' }}
           >
             2026-2027 OFFICER BOARD
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div ref={boardGridRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {OFFICERS_2025_2026.map(({ position, name }) => (
               <div
                 key={`${position}-${name}`}

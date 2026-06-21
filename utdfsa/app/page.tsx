@@ -1,14 +1,26 @@
 // ── page.tsx ─────────────────────────────────────────────────
-// home page — static marketing layout with hero, marquee, and mission
+// home page — hero, marquee, mission statement, and upcoming events
 //
-// data:  none — fully static, no database queries
+// data:  next 4 upcoming visible events fetched server-side for SSR
 // notes: z-10 overlay and z-20 logo/text layer the hero; marquee duplicates
 //        8 items so the looping seam is never visible at any viewport width
 // ─────────────────────────────────────────────────────────────
 import Image from "next/image"
 import PhotoCarousel from "@/components/PhotoCarousel"
+import HeroSection from "@/components/HeroSection"
+import UpcomingEventsSection from "@/components/UpcomingEventsSection"
+import { createAdminClient } from "@/utils/supabase/server"
+import type { Event } from "@/types/database"
 
-export default function Home() {
+export default async function Home() {
+  const admin = createAdminClient()
+  const { data: upcomingEvents } = await admin
+    .from('events')
+    .select('*')
+    .eq('is_visible', true)
+    .gte('event_date', new Date().toISOString())
+    .order('event_date', { ascending: true })
+    .limit(4)
   return (
     <main className="bg-brand-bg text-white overflow-x-hidden">
 
@@ -29,39 +41,17 @@ export default function Home() {
         {/* z-10 sits above the hero image but below the logo (z-20) */}
         <div className="absolute inset-0 bg-black/20 z-10" />
 
-        {/* Centered FSA logo */}
-        {/* z-20 keeps the logo and subtitle text above the dark overlay */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
-          <div className="w-[200px] h-[200px] sm:w-[360px] sm:h-[360px] md:w-[515px] md:h-[515px]">
-            <Image
-              src="/hero-logo.svg"
-              alt="UTD FSA"
-              width={515}
-              height={515}
-              className="w-full h-full object-contain"
-              priority
-            />
-          </div>
-        </div>
-
-        {/* Left subtitle */}
-        <p className="hidden 2xl:block absolute left-16 top-1/2 -translate-y-1/2 font-display font-semibold text-[11px] lg:text-[20px] text-white tracking-wide uppercase z-20">
-          Filipino Student Association
-        </p>
-
-        {/* Right subtitle */}
-        <p className="hidden 2xl:block absolute right-16 top-1/2 -translate-y-1/2 font-display font-semibold text-[11px] lg:text-[20px] text-white tracking-wide uppercase text-right max-w-[454px] z-20">
-          University of Texas at Dallas
-        </p>
+        <HeroSection />
       </section>
 
       {/* ── MARQUEE ───────────────────────────────────────────────── */}
       <div className="bg-brand-bg h-[42px] sm:h-[52px] md:h-[59px] flex items-center overflow-hidden">
         {/* 8 copies so the loop seam is never visible — animation slides to -50% */}
-        <div className="flex gap-10 whitespace-nowrap w-max animate-marquee">
+        <div className="flex gap-[34px] whitespace-nowrap w-max animate-marquee">
           {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className="font-display font-bold text-[15px] sm:text-[22px] md:text-[32px] text-white shrink-0 tracking-wide">
-              PARA SA KULTURA. FOR THE CULTURE.
+            <span key={i} className="inline-flex items-center gap-[34px] font-display font-bold text-[15px] sm:text-[22px] md:text-[32px] text-white shrink-0 tracking-wide">
+              <span>PARA SA KULTURA.</span>
+              <span>FOR THE CULTURE.</span>
             </span>
           ))}
         </div>
@@ -93,8 +83,8 @@ export default function Home() {
       </section>
 
       {/* ── FULL-BLEED PHOTO ──────────────────────────────────────── */}
-      <div className="relative h-[400px] md:h-[600px] lg:h-[800px] w-full overflow-hidden">
-        <Image src="/event-photo.jpg" alt="FSA Event" fill className="object-cover" sizes="100vw" />
+      <div className="relative h-[300px] md:h-[450px] lg:h-[600px] w-full overflow-hidden">
+        <Image src="/event-photo.jpg" alt="FSA Event" fill className="object-cover object-[center_60%]" sizes="100vw" />
       </div>
 
       {/* ── MISSION STATEMENT ─────────────────────────────────────── */}
@@ -119,6 +109,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── UPCOMING EVENTS ───────────────────────────────────────── */}
+      <UpcomingEventsSection events={(upcomingEvents ?? []) as Event[]} />
 
       {/* ── SECOND FULL-BLEED PHOTO ───────────────────────────────── */}
       <div className="relative h-[300px] md:h-[450px] lg:h-[600px] w-full overflow-hidden">

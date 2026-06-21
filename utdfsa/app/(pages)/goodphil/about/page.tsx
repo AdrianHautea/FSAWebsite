@@ -10,6 +10,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import AnimatedTitle from '@/components/AnimatedTitle'
 
 export default function GoodphilAboutPage() {
   return (
@@ -30,9 +31,9 @@ export default function GoodphilAboutPage() {
             sizes="100vw"
           />
           <div className="absolute inset-0 bg-black/30" />
-          <h1 className="absolute bottom-4 left-4 font-display font-black text-5xl text-white leading-none z-10">
+          <AnimatedTitle as="h1" animation="slideFromRight" className="absolute bottom-4 left-4 font-display font-black text-5xl text-white leading-none z-10">
             GOODPHIL
-          </h1>
+          </AnimatedTitle>
         </div>
         <div className="bg-brand-bg h-[56px] flex items-center overflow-hidden">
           <div className="flex gap-8 whitespace-nowrap w-max animate-marquee">
@@ -100,7 +101,9 @@ export default function GoodphilAboutPage() {
         </div>
 
         {/* GOODPHIL title — overlaps bottom photo and bg pattern */}
-        <h1
+        <AnimatedTitle
+          as="h1"
+          animation="slideFromRight"
           className="absolute font-display font-black text-white leading-none z-20"
           style={{
             bottom: '90px',
@@ -109,7 +112,7 @@ export default function GoodphilAboutPage() {
           }}
         >
           GOODPHIL
-        </h1>
+        </AnimatedTitle>
 
         {/* Autoscroll marquee bar — pinned to the very bottom of the hero */}
         <div className="absolute bottom-0 left-0 right-0 bg-brand-bg h-[68px] z-30 flex items-center overflow-hidden">

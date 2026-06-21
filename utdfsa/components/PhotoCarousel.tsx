@@ -109,15 +109,15 @@ export default function PhotoCarousel() {
 
   const positions = isMobile ? MOBILE : DESKTOP
   // 4:3 landscape card dimensions; smaller on mobile to fit the narrower stage
-  const cardW = isMobile ? 384 : 480
-  const cardH = isMobile ? 288 : 360
+  const cardW = isMobile ? 442 : 552
+  const cardH = isMobile ? 331 : 414
 
   return (
     <div className="flex flex-col gap-6 w-full">
 
       {/* Stage — all 5 cards always in the DOM; only styles change per transition */}
       <div
-        className="relative h-[330px] md:h-[440px] cursor-grab touch-pan-y select-none"
+        className="relative h-[380px] md:h-[506px] cursor-grab touch-pan-y select-none"
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
