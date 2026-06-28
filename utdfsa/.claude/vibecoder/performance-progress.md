@@ -1,0 +1,106 @@
+# Performance Audit Progress
+
+Branch: `vibecoder/performance`
+
+## Progress
+
+- [ ] 1. Eliminate unnecessary component re-renders
+- [ ] 2. Memoize expensive computed values
+- [ ] 3. Stabilize callbacks passed to children
+- [ ] 4. Split bloated global state
+- [ ] 5. Virtualize long scrolling lists
+- [ ] 6. Debounce text input and search
+- [ ] 7. Throttle scroll and resize handlers
+- [ ] 8. Batch related state updates
+- [ ] 9. Replace scroll listeners with observers
+- [ ] 10. Move heavy computation to Web Workers
+- [ ] 11. Break up long main-thread tasks
+- [ ] 12. Memoize list items and stabilize keys
+- [ ] 13. Defer rendering offscreen components
+- [ ] 14. Add skeleton loading placeholders
+- [ ] 15. Apply optimistic UI updates
+- [ ] 16. Prefetch the next likely route
+- [ ] 17. Stream server-rendered HTML progressively
+- [ ] 18. Show instant feedback on interactions
+- [ ] 19. Lazy-load below-the-fold page sections
+- [ ] 20. Prioritize above-the-fold content first
+- [ ] 21. Add route-level loading states
+- [ ] 22. Preconnect to critical third-party origins
+- [ ] 23. Reserve space to avoid load shift
+- [ ] 24. Render a fast static shell first
+- [ ] 25. Convert images to modern formats
+- [ ] 26. Serve responsive image sizes
+- [ ] 27. Lazy-load images below the fold
+- [ ] 28. Compress and right-size large images
+- [ ] 29. Set image dimensions to stop shift
+- [ ] 30. Subset and preload web fonts
+- [ ] 31. Use swap to avoid invisible text
+- [ ] 32. Lazy-load and poster-optimize video
+- [ ] 33. Self-host critical third-party assets
+- [ ] 34. Inline tiny critical SVGs and icons
+- [ ] 35. Serve all static media via CDN
+- [ ] 36. Code-split the app by route
+- [ ] 37. Remove unused dependencies and dead code
+- [ ] 38. Tree-shake and dedupe the bundle
+- [ ] 39. Analyze bundle composition for bloat
+- [ ] 40. Defer and async non-critical scripts
+- [ ] 41. Minify JS, CSS, and HTML
+- [ ] 42. Lazy-initialize heavy client libraries
+- [ ] 43. Replace heavy libraries with lighter ones
+- [ ] 44. Hash filenames for long-term caching
+- [ ] 45. Split vendor and app bundles
+- [ ] 46. Eliminate render-blocking CSS on load
+- [ ] 47. Compress API responses in transit
+- [ ] 48. Trim oversized API payloads
+- [ ] 49. Parallelize independent async requests
+- [ ] 50. Eliminate sequential request waterfalls
+- [ ] 51. Deduplicate concurrent identical requests
+- [ ] 52. Paginate large API responses
+- [ ] 53. Add timeouts and retry with backoff
+- [ ] 54. Cache GET responses with validators
+- [ ] 55. Use stale-while-revalidate on the client
+- [ ] 56. Batch many small requests together
+- [ ] 57. Reuse connections with keep-alive
+- [ ] 58. Move reads to the edge
+- [ ] 59. Add a client-side request cache
+- [ ] 60. Add a server cache for hot data
+- [ ] 61. Set correct Cache-Control headers
+- [ ] 62. Cache expensive computed results
+- [ ] 63. Choose sensible cache TTLs
+- [ ] 64. Invalidate caches on writes
+- [ ] 65. Add an in-memory cache layer
+- [ ] 66. Cache rendered pages or fragments
+- [ ] 67. Warm caches for hot paths
+- [ ] 68. Add a service worker asset cache
+- [ ] 69. Index frequently queried columns
+- [ ] 70. Fix N+1 query patterns
+- [ ] 71. Select only needed columns
+- [ ] 72. Add composite indexes for filters
+- [ ] 73. Switch to cursor-based pagination
+- [ ] 74. Profile and fix slow queries
+- [ ] 75. Cache repeated read queries
+- [ ] 76. Batch inserts and updates
+- [ ] 77. Add covering indexes for hot reads
+- [ ] 78. Materialize expensive aggregation queries
+- [ ] 79. Use database connection pooling
+- [ ] 80. Avoid loading whole tables into memory
+- [ ] 81. Denormalize critical read paths
+- [ ] 82. Route reads to a replica
+- [ ] 83. Partition or archive huge tables
+- [ ] 84. Add database query timeouts
+- [ ] 85. Offload slow work to background jobs
+- [ ] 86. Stream large responses instead of buffering
+- [ ] 87. Replace blocking I/O with async
+- [ ] 88. Reduce serverless cold starts
+- [ ] 89. Profile and optimize hot paths
+- [ ] 90. Pool and reuse expensive resources
+- [ ] 91. Add a circuit breaker for slow deps
+- [ ] 92. Rate-limit to protect under load
+- [ ] 93. Compress and cache server templates
+- [ ] 94. Gracefully degrade non-critical features
+- [ ] 95. Add real-user performance monitoring
+- [ ] 96. Run Lighthouse and fix top issues
+- [ ] 97. Reduce Largest Contentful Paint
+- [ ] 98. Reduce Cumulative Layout Shift
+- [ ] 99. Improve Interaction to Next Paint
+- [ ] 100. Set a performance budget in CI

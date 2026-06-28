@@ -9,7 +9,7 @@
 // ─────────────────────────────────────────────────────────────
 'use client'
 
-import { useState, useEffect, useMemo, useRef, Fragment } from 'react'
+import { useState, useEffect, useMemo, useRef, Fragment, memo } from 'react'
 import Image from 'next/image'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -79,17 +79,17 @@ function getEventTypeColor(type: string): string {
 const EVENTS_PER_PAGE = 12
 
 // ── section divider ───────────────────────────────────────────────────────────
-function SectionLabel({ label }: { label: string }) {
+const SectionLabel = memo(function SectionLabel({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-3 mb-5">
       <span className="font-display font-bold text-xs tracking-[0.18em] text-[#9a9a9a] uppercase whitespace-nowrap">{label}</span>
       <span className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.07)' }} />
     </div>
   )
-}
+})
 
 // ── placeholder grid when no photo ───────────────────────────────────────────
-function PhotoPlaceholder({ ratio = '4/5' }: { ratio?: string }) {
+const PhotoPlaceholder = memo(function PhotoPlaceholder({ ratio = '4/5' }: { ratio?: string }) {
   return (
     <div
       className="absolute inset-0 flex flex-col items-center justify-center gap-2.5"
@@ -103,7 +103,7 @@ function PhotoPlaceholder({ ratio = '4/5' }: { ratio?: string }) {
       <span className="font-mono text-[10px] tracking-[0.14em]" style={{ color: 'rgba(255,255,255,0.25)' }}>EVENT PHOTO · {ratio}</span>
     </div>
   )
-}
+})
 
 // ── props ────────────────────────────────────────────────────────────────────
 interface TicketQR {
