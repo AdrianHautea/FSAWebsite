@@ -101,7 +101,7 @@ export default function OrdersClient({ registrations, eventsData, contactEmail, 
     setExpandedCards(prev => ({ ...prev, [id]: !prev[id] }))
 
   return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-10 overflow-x-hidden">
       <h1 className="font-display text-2xl font-bold text-white mb-1">Order History</h1>
       <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.45)' }}>
         Your event registrations and QR code tickets.

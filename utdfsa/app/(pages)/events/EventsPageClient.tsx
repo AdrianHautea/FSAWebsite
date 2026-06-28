@@ -439,6 +439,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                     )}
                     <button
                       onClick={() => setSelectedEvent(event)}
+                      onAnimationEnd={e => { e.currentTarget.style.animation = 'none' }}
                       className="event-card text-left rounded-[18px] overflow-hidden"
                       style={{
                         background: '#181818',
@@ -926,7 +927,14 @@ export default function EventsPageClient({ events, isMember, member, registeredE
           to   { opacity: 1; transform: translateY(0); }
         }
         @media (prefers-reduced-motion: reduce) {
-          .event-card { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .event-card {
+          transition: transform 200ms ease-out, box-shadow 200ms ease-out;
+        }
+        .event-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 14px 36px rgba(0,0,0,0.45);
+        }
+        .event-card { animation: none !important; opacity: 1 !important; transform: none !important; }
           .week-pill  { animation: none !important; opacity: 1 !important; transform: none !important; }
         }
       `}</style>

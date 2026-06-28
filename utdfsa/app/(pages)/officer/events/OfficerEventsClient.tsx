@@ -276,7 +276,7 @@ function EventForm({
 
       {/* ── General info (all types) ────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="col-span-2">
+        <div className="col-span-full">
           <label className={labelCls}>Event Name <span className="text-[#ef6f6f]">*</span></label>
           <input required value={form.name} onChange={e => set('name', e.target.value)}
             className={inputCls} placeholder="Spring Fiesta 2025" />
@@ -306,7 +306,7 @@ function EventForm({
         </div>
 
         {(form.event_type === 'Party' || form.event_type === 'Other') && (
-          <div className="col-span-2 min-w-0 overflow-hidden">
+          <div className="col-span-full min-w-0 overflow-hidden">
             <label className={labelCls}>Registration Closes At</label>
             <input type="datetime-local" value={form.registration_closes_at}
               onChange={e => set('registration_closes_at', e.target.value)}
@@ -317,13 +317,13 @@ function EventForm({
           </div>
         )}
 
-        <div className="col-span-2">
+        <div className="col-span-full">
           <label className={labelCls}>Location <span className="text-[#ef6f6f]">*</span></label>
           <input required value={form.location} onChange={e => set('location', e.target.value)}
             className={inputCls} placeholder="Student Union, Room 2.410" />
         </div>
 
-        <div className="col-span-2">
+        <div className="col-span-full">
           <label className={labelCls}>Description</label>
           <textarea value={form.description} onChange={e => set('description', e.target.value)}
             rows={9} className={`${inputCls} resize-none`}
@@ -393,7 +393,7 @@ function EventForm({
                     onChange={e => set('eb_price_dollars_nonmembers', e.target.value)}
                     className={inputCls} placeholder="12.00" />
                 </div>
-                <div className="col-span-2 min-w-0 overflow-hidden">
+                <div className="col-span-full min-w-0 overflow-hidden">
                   <label className={labelCls}>Early Bird Deadline</label>
                   <input type="datetime-local" value={form.eb_deadline}
                     onChange={e => set('eb_deadline', e.target.value)}
@@ -402,7 +402,7 @@ function EventForm({
 
                 {/* status indicator */}
                 {form.eb_deadline && (
-                  <div className="col-span-2">
+                  <div className="col-span-full">
                     {ebExpired ? (
                       <p className="text-[12.5px] text-[#ffb347] bg-[rgba(255,170,50,0.08)] border border-[rgba(255,170,50,0.25)] rounded-xl px-4 py-2.5">
                         ⚠️ Early bird ended {fmtDate(form.eb_deadline)} — attendees now see regular prices.
