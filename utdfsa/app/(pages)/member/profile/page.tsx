@@ -34,38 +34,27 @@ export default async function ProfilePage() {
   // redirect to /login if member row doesn't exist
   if (!member) redirect('/login')
 
-  // settings table — fetch kuyateApplicationsOpen and pamilyaRevealActive
-  const { kuyateApplicationsOpen, pamilyaRevealActive } = await getSettings()
+  // parallel: settings + event ids (both independent of each other)
+  const [
+    { kuyateApplicationsOpen, pamilyaRevealActive },
+    { data: meetingAndRiskEvents },
+  ] = await Promise.all([
+    getSettings(),
+    supabase.from('events').select('id, event_type').in('event_type', ['General Meeting', 'Risk Management']),
+  ])
 
-  // events table — get ids for general meeting and risk management types (step 1 of subquery)
-  const { data: generalAndRiskEvents } = await supabase
-    .from('events')
-    .select('id')
-    .in('event_type', ['General Meeting', 'Risk Management'])
+  const generalAndRiskEventIds = meetingAndRiskEvents?.map((e: { id: string }) => e.id) ?? []
+  const riskMgmtEventIds = meetingAndRiskEvents?.filter((e: { event_type: string }) => e.event_type === 'Risk Management').map((e: { id: string }) => e.id) ?? []
 
-  const generalAndRiskEventIds = generalAndRiskEvents?.map((e: { id: string }) => e.id) ?? []
-
-  // attendance table — count meetings attended; '__none__' sentinel avoids empty .in() returning all rows
-  const { count: meetingCount } = await supabase
-    .from('attendance')
-    .select('id', { count: 'exact', head: true })
-    .eq('member_id', member.id)
-    .in('event_id', generalAndRiskEventIds.length > 0 ? generalAndRiskEventIds : ['__none__'])
-
-  // events table — get risk management event ids specifically (step 1 of subquery)
-  const { data: riskMgmtEvents } = await supabase
-    .from('events')
-    .select('id')
-    .eq('event_type', 'Risk Management')
-
-  const riskMgmtEventIds = riskMgmtEvents?.map((e: { id: string }) => e.id) ?? []
-
-  // attendance table — count risk management sessions attended specifically
-  const { count: riskMgmtCount } = await supabase
-    .from('attendance')
-    .select('id', { count: 'exact', head: true })
-    .eq('member_id', member.id)
-    .in('event_id', riskMgmtEventIds.length > 0 ? riskMgmtEventIds : ['__none__'])
+  // parallel: both attendance counts independent of each other
+  const [{ count: meetingCount }, { count: riskMgmtCount }] = await Promise.all([
+    supabase.from('attendance').select('id', { count: 'exact', head: true })
+      .eq('member_id', member.id)
+      .in('event_id', generalAndRiskEventIds.length > 0 ? generalAndRiskEventIds : ['__none__']),
+    supabase.from('attendance').select('id', { count: 'exact', head: true })
+      .eq('member_id', member.id)
+      .in('event_id', riskMgmtEventIds.length > 0 ? riskMgmtEventIds : ['__none__']),
+  ])
 
   // ============================================================
   // UI — safe to restyle everything below this line

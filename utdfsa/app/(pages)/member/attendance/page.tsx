@@ -36,10 +36,9 @@ export default async function AttendancePage() {
   // redirect to /login if no member row exists (e.g. account not set up yet)
   if (!member) redirect('/login')
 
-  // attendance table — full history with event details, newest first
-  const { data: attendanceRecords } = await supabase
-    .from('attendance')
-    .select(`
+  // parallel: attendance history + event id lookup (both need member.id but not each other)
+  const [{ data: attendanceRecords }, { data: meetingAndRiskEvents }] = await Promise.all([
+    supabase.from('attendance').select(`
       id,
       created_at,
       events (
@@ -49,35 +48,22 @@ export default async function AttendancePage() {
         event_date,
         points
       )
-    `)
-    .eq('member_id', member.id)
-    .order('created_at', { ascending: false })
+    `).eq('member_id', member.id).order('created_at', { ascending: false }),
+    supabase.from('events').select('id, event_type').in('event_type', ['General Meeting', 'Risk Management']),
+  ])
 
-  // count total meetings (General Meeting + Risk Management)
-  const { count: meetingCount } = await supabase
-    .from('attendance')
-    .select('id', { count: 'exact', head: true })
-    .eq('member_id', member.id)
-    .in('event_id',
-      (await supabase
-        .from('events')
-        .select('id')
-        .in('event_type', ['General Meeting', 'Risk Management'])
-      ).data?.map(e => e.id) ?? []
-    )
+  const generalAndRiskEventIds = meetingAndRiskEvents?.map((e: { id: string }) => e.id) ?? []
+  const riskMgmtEventIds = meetingAndRiskEvents?.filter((e: { event_type: string }) => e.event_type === 'Risk Management').map((e: { id: string }) => e.id) ?? []
 
-  // check risk management specifically
-  const { count: riskMgmtCount } = await supabase
-    .from('attendance')
-    .select('id', { count: 'exact', head: true })
-    .eq('member_id', member.id)
-    .in('event_id',
-      (await supabase
-        .from('events')
-        .select('id')
-        .eq('event_type', 'Risk Management')
-      ).data?.map(e => e.id) ?? []
-    )
+  // parallel: both counts are independent of each other
+  const [{ count: meetingCount }, { count: riskMgmtCount }] = await Promise.all([
+    supabase.from('attendance').select('id', { count: 'exact', head: true })
+      .eq('member_id', member.id)
+      .in('event_id', generalAndRiskEventIds.length > 0 ? generalAndRiskEventIds : ['__none__']),
+    supabase.from('attendance').select('id', { count: 'exact', head: true })
+      .eq('member_id', member.id)
+      .in('event_id', riskMgmtEventIds.length > 0 ? riskMgmtEventIds : ['__none__']),
+  ])
 
   // ============================================================
   // UI — rendered by AttendanceClient (client component)
