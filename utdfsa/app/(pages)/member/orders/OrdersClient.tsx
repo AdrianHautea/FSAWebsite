@@ -74,8 +74,8 @@ function TicketQRImage({ code }: { code: string }) {
   if (!dataUrl) {
     return (
       <div
-        className="rounded-xl animate-pulse"
-        style={{ width: 240, height: 240, background: '#262626' }}
+        className="rounded-xl animate-pulse w-[240px] max-w-full aspect-square"
+        style={{ background: '#262626' }}
       />
     )
   }
@@ -86,8 +86,7 @@ function TicketQRImage({ code }: { code: string }) {
       alt="Ticket QR Code"
       width={240}
       height={240}
-      className="rounded-xl"
-      style={{ width: 240, height: 240 }}
+      className="rounded-xl w-[240px] max-w-full h-auto"
     />
   )
 }

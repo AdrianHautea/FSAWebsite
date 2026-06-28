@@ -22,10 +22,10 @@ export const attendeeSchema = z.object({
   email: z.string().email(),
 })
 
-// payload sent when registering for an event; supports multi-ticket orders (up to 20)
+// payload sent when registering for an event; supports multi-ticket orders (up to 10)
 export const eventRegisterSchema = z.object({
   event_id: z.string().uuid(),
-  tickets: z.array(attendeeSchema).min(1).max(20),
+  tickets: z.array(attendeeSchema).min(1).max(10),
 })
 
 // ── member profile update ─────────────────────────────────

@@ -79,7 +79,8 @@ export async function POST(req: Request) {
 
       // updates membership_status to active — this is what unlocks member access
       // membership_expires_at is pulled from settings so all members share the same expiry date
-      await supabase
+      // .select().single() returns the activated row so the email is gated on a confirmed DB write
+      const { data: activatedMember, error: activationError } = await supabase
         .from('members')
         .update({
           membership_status: 'active',
@@ -98,43 +99,42 @@ export async function POST(req: Request) {
           },
         })
         .eq('id', member_id)
+        .select('first_name, email, contact_email')
+        .single()
+
+      if (activationError || !activatedMember) {
+        console.error('[webhook] membership activation DB write failed for member', member_id, activationError)
+        return NextResponse.json({ error: 'DB write failed' }, { status: 500 })
+      }
 
       // ── send membership confirmation email ────────────────────────────────────
-      // sends confirmation email — wrapped in try/catch so email failure
-      // never fails the webhook response — payment is already recorded at this point
+      // only reachable after a confirmed DB write — email is gated on activation success
+      // wrapped in try/catch so an email failure never fails the webhook response
       if (process.env.RESEND_FROM_EMAIL) {
         try {
-          const { data: memberData } = await supabase
-            .from('members')
-            .select('first_name, email, contact_email')
-            .eq('id', member_id)
-            .maybeSingle()
+          // prefer contact_email (member's preferred address) over the utd sso email
+          const to = activatedMember.contact_email ?? activatedMember.email
+          // format expiry date for display in the email body
+          const expiryDate = settings.membershipExpiry.toLocaleDateString('en-US', {
+            month: 'long', day: 'numeric', year: 'numeric',
+          })
 
-          if (memberData) {
-            // prefer contact_email (member's preferred address) over the utd sso email
-            const to = memberData.contact_email ?? memberData.email
-            // format expiry date for display in the email body
-            const expiryDate = settings.membershipExpiry.toLocaleDateString('en-US', {
-              month: 'long', day: 'numeric', year: 'numeric',
-            })
+          // send membership confirmation email via resend to the member's preferred address
+          const { error: sendError } = await resend.emails.send({
+            from: process.env.RESEND_FROM_EMAIL!,
+            to,
+            subject: 'Welcome to UTD FSA — Membership Confirmed',
+            html: membershipEmailHtml({
+              firstName: activatedMember.first_name,
+              membershipYear: settings.membershipYear,
+              expiryDate,
+            }),
+          })
 
-            // send membership confirmation email via resend to the member's preferred address
-            const { error: sendError } = await resend.emails.send({
-              from: process.env.RESEND_FROM_EMAIL!,
-              to,
-              subject: 'Welcome to UTD FSA — Membership Confirmed',
-              html: membershipEmailHtml({
-                firstName: memberData.first_name,
-                membershipYear: settings.membershipYear,
-                expiryDate,
-              }),
-            })
-
-            if (sendError) {
-              console.error('[webhook] membership email send error for member', member_id, sendError)
-            } else {
-              console.log('[webhook] membership confirmation email sent to', to)
-            }
+          if (sendError) {
+            console.error('[webhook] membership email send error for member', member_id, sendError)
+          } else {
+            console.log('[webhook] membership confirmation email sent to', to)
           }
         } catch (err) {
           console.error('[webhook] unexpected error sending membership email for member', member_id, err)

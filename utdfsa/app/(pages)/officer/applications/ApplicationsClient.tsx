@@ -47,6 +47,7 @@ interface AdingApplication {
   thoughts_on_drinking: string | null
   dislikes: string | null
   pam_dealbreakers: string | null
+  pam_incompatibilities: string | null
   future_kuyate: string | null
   mbti: string | null
   members: MemberInfo
@@ -78,17 +79,18 @@ const ADING_QUESTION_LABELS: Record<string, string> = {
   birthday: 'Birthday',
   pronouns: 'Pronouns',
   activity_level: 'Activity Level (1–10)',
+  hangout_size_preference: 'Hangout Size Preference (1–10)',
   hobbies: 'Hobbies',
   fave_music_genre: 'Favorite Music Genre',
   fave_artist: 'Favorite Artist',
   fave_food: 'Favorite Food',
-  pam_vibe: 'Pamilya Vibe',
-  hangout_size_preference: 'Hangout Size Preference (1–10)',
+  pam_vibe: 'Preferred Pamilya Vibe',
   fave_tv_show_movie: 'Favorite TV Show / Movie',
   availability: 'Availability',
   thoughts_on_drinking: 'Thoughts on Drinking',
   dislikes: 'Dislikes',
   pam_dealbreakers: 'Pamilya Dealbreakers',
+  pam_incompatibilities: 'Cannot Be In Pam With & Why',
   future_kuyate: 'Future Kuya/Ate Preference',
   mbti: 'MBTI',
   additional_notes: 'Additional Notes',
@@ -110,11 +112,20 @@ const KUYATE_QUESTION_KEYS = Object.keys(KUYATE_QUESTION_LABELS)
 
 const ITEMS_PER_PAGE = 15
 
-// Fields that should span the full 2-column width in the modal
+// Fields that always occupy the full 2-column width in the modal
 const WIDE_KEYS = new Set([
   'why_kuyate', 'pam_vibe', 'availability', 'thoughts_on_drinking',
-  'dislikes', 'pam_dealbreakers', 'additional_notes', 'hobbies',
-  'future_kuyate', 'fave_tv_show_movie',
+  'dislikes', 'pam_dealbreakers', 'pam_incompatibilities', 'additional_notes', 'hobbies',
+  'future_kuyate', 'fave_tv_show_movie', 'fave_food', 'mbti',
+])
+
+// Intended row pairs for col-1 fields; if a field's partner is absent (null/undefined/""),
+// the field self-promotes to col-span-2 so no orphaned empty right cell is left behind
+const PAIR_MAP = new Map<string, string>([
+  ['instagram', 'phone'], ['phone', 'instagram'],
+  ['birthday', 'pronouns'], ['pronouns', 'birthday'],
+  ['activity_level', 'hangout_size_preference'], ['hangout_size_preference', 'activity_level'],
+  ['fave_music_genre', 'fave_artist'], ['fave_artist', 'fave_music_genre'],
 ])
 
 // ============================================================
@@ -313,7 +324,10 @@ function ApplicationDetailModal({
 
               const display = renderValue(key, raw)
               if (display === null) return null
-              const isWide = WIDE_KEYS.has(key)
+              const pairKey = PAIR_MAP.get(key)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const pairIsEmpty = pairKey !== undefined && renderValue(pairKey, (application as any)[pairKey]) === null
+              const isWide = WIDE_KEYS.has(key) || pairIsEmpty
 
               return (
                 <div key={key} className={isWide ? 'col-span-2' : 'col-span-1'}>
@@ -562,7 +576,7 @@ function exportAdingCSV(apps: AdingApplication[]): void {
     'Instagram', 'Phone', 'Birthday', 'Pronouns', 'Activity Level', 'Hobbies',
     'Favorite Music Genre', 'Favorite Artist', 'Favorite Food', 'Pamilya Vibe',
     'Hangout Size Preference', 'Favorite TV Show / Movie', 'Availability',
-    'Thoughts on Drinking', 'Dislikes', 'Pamilya Dealbreakers', 'Future Kuya/Ate',
+    'Thoughts on Drinking', 'Dislikes', 'Pamilya Dealbreakers', 'Pamilya Incompatibilities', 'Future Kuya/Ate',
     'MBTI', 'Additional Notes',
   ]
 
@@ -578,7 +592,7 @@ function exportAdingCSV(apps: AdingApplication[]): void {
     a.fave_tv_show_movie ?? '',
     a.availability ? `${a.availability.days.join(', ')} — ${a.availability.times}` : '',
     a.thoughts_on_drinking ?? '', a.dislikes ?? '',
-    a.pam_dealbreakers ?? '', a.future_kuyate ?? '',
+    a.pam_dealbreakers ?? '', a.pam_incompatibilities ?? '', a.future_kuyate ?? '',
     a.mbti ?? '', a.additional_notes ?? '',
   ])
 
@@ -643,6 +657,8 @@ export default function ApplicationsClient({
     applicantFirstName: string
     status: 'accepted' | 'rejected'
   } | null>(null)
+  // conflict message shown when the optimistic lock rejects a concurrent status write
+  const [kuyateConflict, setKuyateConflict] = useState<string | null>(null)
   // delete confirmation — requires typing the applicant's full name to confirm
   const [deleteTarget, setDeleteTarget] = useState<{
     applicationId: string
@@ -756,6 +772,10 @@ export default function ApplicationsClient({
 
     if (!res.ok) {
       setKuyateApps(prev)
+      if (res.status === 409) {
+        const body = await res.json().catch(() => null)
+        setKuyateConflict(body?.message ?? 'Another officer already reviewed this application.')
+      }
     }
   }
 
@@ -1001,11 +1021,11 @@ export default function ApplicationsClient({
           }}
           onStatusChange={(id, s) => {
             if (selectedAppType === 'kuyate') {
-              if (s === 'accepted' || s === 'rejected') {
-                const app = kuyateApps.find(a => a.id === id)
-                if (app) {
-                  setPendingStatus({ applicationId: id, applicantFirstName: app.members.first_name, status: s })
-                }
+              const app = kuyateApps.find(a => a.id === id)
+              if (!app || app.status === s) {
+                // no-op: app not found or status already matches
+              } else if (s === 'accepted' || s === 'rejected') {
+                setPendingStatus({ applicationId: id, applicantFirstName: app.members.first_name, status: s })
               } else {
                 updateKuyateStatus(id, s)
               }
@@ -1060,6 +1080,26 @@ export default function ApplicationsClient({
             </div>
           </Modal>
         )}
+        {/* Conflict notice — appears when the optimistic lock rejects a concurrent review */}
+        {kuyateConflict && (
+          <Modal onClose={() => setKuyateConflict(null)} size="sm">
+            <div
+              className="bg-[#141414] border border-white/10 rounded-[18px] w-full p-7 shadow-[0_32px_72px_-16px_rgba(0,0,0,0.85)]"
+              style={{ animation: 'modalIn 0.18s ease-out' }}
+            >
+              <h2 className="text-[16px] font-bold text-white mb-2">Already Reviewed</h2>
+              <p className="text-[13.5px] text-[#8c8c8c] font-medium mb-6 leading-relaxed">{kuyateConflict}</p>
+              <button
+                type="button"
+                onClick={() => setKuyateConflict(null)}
+                className="w-full px-4 py-2.5 text-sm font-semibold text-white bg-[#2a2a2a] rounded-xl hover:bg-[#333] border border-white/10 transition-colors"
+              >
+                Got it
+              </button>
+            </div>
+          </Modal>
+        )}
+
         {/* Delete confirmation modal — appears above detail modal; requires typing exact full name */}
         {deleteTarget && (
           <Modal onClose={handleDeleteCancel} size="sm">

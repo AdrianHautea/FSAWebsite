@@ -56,7 +56,7 @@ export default async function OfficerApplicationsPage() {
         instagram, phone, birthday, pronouns, activity_level, hobbies,
         fave_music_genre, fave_artist, fave_food, pam_vibe,
         hangout_size_preference, fave_tv_show_movie, availability,
-        thoughts_on_drinking, dislikes, pam_dealbreakers, future_kuyate,
+        thoughts_on_drinking, dislikes, pam_dealbreakers, pam_incompatibilities, future_kuyate,
         mbti,
         members!member_id!inner(first_name, last_name, email, year, major, phone, pamilya)
       `),

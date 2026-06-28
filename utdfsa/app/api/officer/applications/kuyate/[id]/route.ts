@@ -53,11 +53,11 @@ export async function PATCH(req: Request, { params }: RouteContext) {
   const { status } = parsed.data
 
   // ── fetch application ─────────────────────────────────────
-  // fetch application first — need member_id, pamilya_name, and status_email_sent_at for email dedup
-  // bypass rls — officer action; reads kuyate_applications to get data needed for the email
+  // fetch application first — need member_id, pamilya_name, status, and status_email_sent_at
+  // bypass rls — officer action; reads kuyate_applications to get data needed for the email and lock check
   const { data: appRow, error: fetchError } = await ctx.admin
     .from('kuyate_applications')
-    .select('id, member_id, pamilya_name, status_email_sent_at')
+    .select('id, member_id, pamilya_name, status, status_email_sent_at')
     .eq('id', id)
     .maybeSingle()
 
@@ -66,17 +66,52 @@ export async function PATCH(req: Request, { params }: RouteContext) {
     return NextResponse.json({ error: 'Application not found.' }, { status: 404 })
   }
 
+  // no-op: requested status already matches — skip write and email
+  if (appRow.status === status) {
+    return NextResponse.json({ success: true })
+  }
+
   // ── status update ─────────────────────────────────────────
   // bypass rls — officer action; updates kuyate_applications.status
   // reviewed_by and reviewed_at are derived from the authenticated session — never client-supplied
-  const { error: updateError } = await ctx.admin
+  // .eq('status', appRow.status) is an optimistic lock: if another officer changed the status
+  // concurrently, 0 rows match and updatedRow is null — we return 409 with reviewer context
+  const { data: updatedRow, error: updateError } = await ctx.admin
     .from('kuyate_applications')
     .update({ status, reviewed_by: ctx.officerId, reviewed_at: new Date().toISOString() })
     .eq('id', id)
+    .eq('status', appRow.status)
+    .select('id')
+    .maybeSingle()
 
   if (updateError) {
     console.error('[kuyate/[id]] status update error:', updateError)
     return NextResponse.json({ error: 'Failed to update application status.' }, { status: 500 })
+  }
+
+  if (!updatedRow) {
+    // optimistic lock failed: another officer changed the status between our read and this write
+    const { data: currentRow } = await ctx.admin
+      .from('kuyate_applications')
+      .select('status, reviewed_by')
+      .eq('id', id)
+      .maybeSingle()
+
+    let reviewerName = 'Another officer'
+    if (currentRow?.reviewed_by) {
+      const { data: reviewer } = await ctx.admin
+        .from('members')
+        .select('first_name, last_name')
+        .eq('id', currentRow.reviewed_by)
+        .maybeSingle()
+      if (reviewer) reviewerName = `${reviewer.first_name} ${reviewer.last_name}`
+    }
+
+    return NextResponse.json({
+      error: 'conflict',
+      message: `${reviewerName} already reviewed this as ${currentRow?.status ?? 'unknown'}`,
+      currentStatus: currentRow?.status ?? null,
+    }, { status: 409 })
   }
 
   // ── status notification email ─────────────────────────────

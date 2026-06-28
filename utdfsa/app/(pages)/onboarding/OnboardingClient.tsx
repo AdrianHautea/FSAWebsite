@@ -384,7 +384,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             <button
               onClick={() => handleMemberTypePick('ading')}
               disabled={loading}
-              className="relative rounded-[22px] overflow-hidden border border-white/10 cursor-pointer text-left h-60 sm:h-[420px] bg-[#101010] hover:border-accent-green/60 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_-36px_rgba(147,208,123,0.4)] transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none"
+              className="relative rounded-[22px] overflow-hidden border border-white/10 cursor-pointer text-left h-60 sm:h-[420px] bg-[#101010] hover:border-accent-green/60 hover:-translate-y-1.5 transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none"
             >
               <Image
                 src="/ading-form.png"
@@ -420,7 +420,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
               <button
                 onClick={() => handleMemberTypePick('kuyate')}
                 disabled={loading}
-                className="relative rounded-[22px] overflow-hidden border border-white/10 cursor-pointer text-left h-60 sm:h-[420px] bg-[#101010] hover:border-accent-green/60 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_-36px_rgba(147,208,123,0.4)] transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none"
+                className="relative rounded-[22px] overflow-hidden border border-white/10 cursor-pointer text-left h-60 sm:h-[420px] bg-[#101010] hover:border-accent-green/60 hover:-translate-y-1.5 transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none"
               >
                 <Image
                   src="/kuyate-form.png"
@@ -765,7 +765,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             {/* hobbies */}
             <div>
               <label className={labelCls}>
-                Hobbies? <span className="text-[#e8654f]">*</span>
+                What Kind of Hobbies Are You Into? <span className="text-[#e8654f]">*</span>
               </label>
               <textarea
                 value={adingForm.hobbies}
@@ -888,7 +888,6 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
               </div>
               <div className="flex justify-between font-sans text-xs text-[#7a7a7a] mt-1.5">
                 <span>Small</span>
-                <span>Mix</span>
                 <span>Big</span>
               </div>
             </div>
