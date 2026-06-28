@@ -53,8 +53,14 @@ export default async function RootLayout({
     initialMember = data
   }
 
+  const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${unbounded.variable} h-full antialiased`}>
+      <head>
+        {supabaseOrigin && <link rel="preconnect" href={supabaseOrigin} />}
+        <link rel="preconnect" href="https://api.stripe.com" />
+        <link rel="dns-prefetch" href="https://js.stripe.com" />
+      </head>
       <body className="min-h-full flex flex-col">
         <Navbar initialMember={initialMember} />
         {children}
