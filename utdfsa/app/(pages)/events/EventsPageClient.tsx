@@ -9,11 +9,12 @@
 // ─────────────────────────────────────────────────────────────
 'use client'
 
-import { useState, useEffect, useMemo, useRef, Fragment, memo } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef, Fragment, memo } from 'react'
 import Image from 'next/image'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import type { EventClickArg } from '@fullcalendar/core'
 import RegisterModal from './RegisterModal'
 import Modal from '@/components/Modal'
 import type { Event } from '@/types/database'
@@ -233,6 +234,10 @@ export default function EventsPageClient({ events, isMember, member, registeredE
     pages.push(total)
     return pages
   }
+
+  const handleCalendarEventClick = useCallback((info: EventClickArg) => {
+    setSelectedEvent(info.event.extendedProps['event'] as Event)
+  }, [])
 
   // ── calendar events mapping — stable across renders where events don't change ─
   const calendarEvents = useMemo(() => events.map(event => ({
@@ -612,10 +617,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
               defaultAllDay={true}
               displayEventTime={false}
               events={calendarEvents}
-              eventClick={info => {
-                const event = info.event.extendedProps.event as Event
-                setSelectedEvent(event)
-              }}
+              eventClick={handleCalendarEventClick}
             />
           </div>
         </div>
