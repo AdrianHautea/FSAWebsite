@@ -77,6 +77,8 @@ function getEventTypeColor(type: string): string {
 }
 
 const EVENTS_PER_PAGE = 12
+const CALENDAR_PLUGINS = [dayGridPlugin, interactionPlugin]
+const CALENDAR_HEADER = { left: 'title', center: '', right: 'prev,next' }
 
 // ── section divider ───────────────────────────────────────────────────────────
 const SectionLabel = memo(function SectionLabel({ label }: { label: string }) {
@@ -232,14 +234,26 @@ export default function EventsPageClient({ events, isMember, member, registeredE
     return pages
   }
 
+  // ── calendar events mapping — stable across renders where events don't change ─
+  const calendarEvents = useMemo(() => events.map(event => ({
+    id: event.id,
+    title: event.name,
+    date: new Date(event.event_date).toLocaleDateString('en-CA', { timeZone: 'America/Chicago' }),
+    allDay: true,
+    backgroundColor: getEventTypeColor(event.event_type),
+    borderColor: getEventTypeColor(event.event_type),
+    extendedProps: { event },
+  })), [events])
+
   // ── this-week filter ──────────────────────────────────────
-  // compute a 7-day window from now; dates compared in JS local time
-  const weekEnd = new Date(now)
-  weekEnd.setDate(weekEnd.getDate() + 7)
-  const thisWeek = events.filter(e => {
-    const d = new Date(e.event_date)
-    return d >= now && d <= weekEnd
-  })
+  const thisWeek = useMemo(() => {
+    const weekEnd = new Date(now)
+    weekEnd.setDate(weekEnd.getDate() + 7)
+    return events.filter(e => {
+      const d = new Date(e.event_date)
+      return d >= now && d <= weekEnd
+    })
+  }, [events, now])
 
   // ── header entrance animation (mount only) ────────────────────────────────
   useEffect(() => {
@@ -590,25 +604,14 @@ export default function EventsPageClient({ events, isMember, member, registeredE
           <SectionLabel label="Event Calendar" />
           <div className="fc-dark rounded-[18px] overflow-hidden p-4" style={{ background: '#131313', border: '1px solid rgba(255,255,255,0.08)' }}>
             <FullCalendar
-              plugins={[dayGridPlugin, interactionPlugin]}
+              plugins={CALENDAR_PLUGINS}
               initialView="dayGridMonth"
               height="auto"
-              headerToolbar={{ left: 'title', center: '', right: 'prev,next' }}
+              headerToolbar={CALENDAR_HEADER}
               forceEventDuration={false}
               defaultAllDay={true}
               displayEventTime={false}
-              events={events.map(event => ({
-                id: event.id,
-                title: event.name,
-                // convert UTC datetime to CT date string (YYYY-MM-DD) before passing to FullCalendar;
-                // en-CA locale produces YYYY-MM-DD which FullCalendar expects as a date-only string;
-                // allDay:true eliminates duration overflow into adjacent calendar cells
-                date: new Date(event.event_date).toLocaleDateString('en-CA', { timeZone: 'America/Chicago' }),
-                allDay: true,
-                backgroundColor: getEventTypeColor(event.event_type),
-                borderColor: getEventTypeColor(event.event_type),
-                extendedProps: { event },
-              }))}
+              events={calendarEvents}
               eventClick={info => {
                 const event = info.event.extendedProps.event as Event
                 setSelectedEvent(event)
