@@ -256,9 +256,10 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className={labelCls} style={{ color: '#7a7a7a' }}>First Name</label>
+                      <label htmlFor={`fname-${i}`} className={labelCls} style={{ color: '#7a7a7a' }}>First Name</label>
                       {/* disabled for the member's own first ticket — their name comes from memberInfo — do not remove disabled */}
                       <input
+                        id={`fname-${i}`}
                         required
                         value={ticket.fname}
                         onChange={e => updateTicket(i, 'fname', e.target.value)}
@@ -268,9 +269,10 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                       />
                     </div>
                     <div>
-                      <label className={labelCls} style={{ color: '#7a7a7a' }}>Last Name</label>
+                      <label htmlFor={`lname-${i}`} className={labelCls} style={{ color: '#7a7a7a' }}>Last Name</label>
                       {/* disabled for the member's own first ticket — their name comes from memberInfo — do not remove disabled */}
                       <input
+                        id={`lname-${i}`}
                         required
                         value={ticket.lname}
                         onChange={e => updateTicket(i, 'lname', e.target.value)}
@@ -282,9 +284,10 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                   </div>
 
                   <div>
-                    <label className={labelCls} style={{ color: '#7a7a7a' }}>Email</label>
+                    <label htmlFor={`email-${i}`} className={labelCls} style={{ color: '#7a7a7a' }}>Email</label>
                     {/* disabled for the member's own first ticket — their contact_email comes from memberInfo — do not remove disabled */}
                     <input
+                      id={`email-${i}`}
                       required
                       type="email"
                       value={ticket.email}
@@ -298,8 +301,9 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                   {/* confirm-email field — shown for all slots except the pre-filled member slot */}
                   {!(isMember && i === 0) && (
                     <div>
-                      <label className={labelCls} style={{ color: '#7a7a7a' }}>Confirm Email</label>
+                      <label htmlFor={`email-confirm-${i}`} className={labelCls} style={{ color: '#7a7a7a' }}>Confirm Email</label>
                       <input
+                        id={`email-confirm-${i}`}
                         required
                         type="email"
                         value={ticket.emailConfirm}

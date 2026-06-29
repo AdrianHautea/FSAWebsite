@@ -50,7 +50,7 @@ Branch: `vibecoder/ui`
 - [x] 44. Load Critical Content First — N/A: server components stream HTML with data pre-loaded; LCP images have preload; UpcomingEventsSection gets events as prop (no client waterfall); loading.tsx Suspense on data-heavy routes; homepage ISR revalidate=3600
 - [x] 45. Run a Full Accessibility Audit — gaps found: (1) modals missing role=dialog/aria-modal/aria-labelledby; (2) nav dropdown buttons missing aria-expanded; (3) FAQ accordion missing aria-expanded; sr-only h1 on homepage ✓; focus-visible ring global ✓; image alts present ✓
 - [x] 46. Make Everything Keyboard Navigable — added aria-expanded to all 4 nav toggle buttons (hamburger, Goodphil desktop/mobile, avatar) + aria-haspopup on popup triggers; converted FAQ accordion from div+onClick to button+aria-expanded (now tab-reachable and keyboard-toggleable); aria-hidden on decorative SVGs
-- [ ] 47. Add Clear Visible Focus Indicators
+- [x] 47. Add Clear Visible Focus Indicators — global :focus-visible ring (2px accent-green, offset 3px) covers all buttons/links; form inputs use custom border-color+shadow focus styles (accent-green for member, purple for officer); fixed 4 remaining placeholder:#5a5a5a (2.85:1 fails) → #7a7a7a (4.5:1)
 - [ ] 48. Make Forms Fully Accessible
 - [ ] 49. Use Proper Semantic HTML
 - [ ] 50. Add Meaningful Image Alt Text

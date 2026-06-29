@@ -125,8 +125,9 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className={labelCls}>First Name <span className="text-[#e8654f]">*</span></label>
+              <label htmlFor="first-name" className={labelCls}>First Name <span className="text-[#e8654f]">*</span></label>
               <input
+                id="first-name"
                 type="text"
                 value={form.first_name}
                 onChange={e => set('first_name', toTitleCase(e.target.value))}
@@ -135,8 +136,9 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
               />
             </div>
             <div className="flex-1">
-              <label className={labelCls}>Last Name <span className="text-[#e8654f]">*</span></label>
+              <label htmlFor="last-name" className={labelCls}>Last Name <span className="text-[#e8654f]">*</span></label>
               <input
+                id="last-name"
                 type="text"
                 value={form.last_name}
                 onChange={e => set('last_name', toTitleCase(e.target.value))}
@@ -147,13 +149,14 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
           </div>
 
           <div>
-            <label className={labelCls}>
+            <label htmlFor="contact-email" className={labelCls}>
               Contact Email <span className="text-[#e8654f]">*</span>
               <span className="text-white/30 font-normal normal-case tracking-normal ml-1">
                 (for event tickets and notifications)
               </span>
             </label>
             <input
+              id="contact-email"
               type="email"
               value={form.contact_email}
               onChange={e => set('contact_email', e.target.value)}
@@ -164,8 +167,9 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
           </div>
 
           <div>
-            <label className={labelCls}>Phone <span className="text-[#e8654f]">*</span></label>
+            <label htmlFor="phone" className={labelCls}>Phone <span className="text-[#e8654f]">*</span></label>
             <input
+              id="phone"
               type="tel"
               value={form.phone ?? ''}
               onChange={e => set('phone', formatPhone(e.target.value))}
@@ -177,9 +181,10 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
           </div>
 
           <div>
-            <label className={labelCls}>Year <span className="text-[#e8654f]">*</span></label>
+            <label htmlFor="year" className={labelCls}>Year <span className="text-[#e8654f]">*</span></label>
             <div className="relative">
               <select
+                id="year"
                 value={form.year ?? ''}
                 onChange={e => set('year', e.target.value)}
                 className={`${fieldCls} appearance-none pr-10`}
@@ -197,8 +202,9 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
           </div>
 
           <div>
-            <label className={labelCls}>Major <span className="text-[#e8654f]">*</span></label>
+            <label htmlFor="major" className={labelCls}>Major <span className="text-[#e8654f]">*</span></label>
             <input
+              id="major"
               type="text"
               value={form.major ?? ''}
               onChange={e => set('major', toTitleCase(e.target.value))}
