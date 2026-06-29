@@ -37,7 +37,7 @@ Branch: `vibecoder/ui`
 - [x] 31. Run a Full Performance Audit — top issues: (1) qrcode static import ships to member/officer bundles unnecessarily; (2) FullCalendar ~200KB static import on events page; (3) browser-image-compression static in officer pages; (4) googleapis confirmed server-only ✓; html5-qrcode route-split handles it ✓
 - [x] 32. Shrink the JavaScript Bundle — converted qrcode to dynamic import() in OrdersClient, TicketQR, OfficerEventsClient (all use QRCode only inside useEffect); events/page.tsx is server-side so static import there is fine; saves ~35KB from client bundles
 - [x] 33. Add Route-Based Code Splitting — N/A: Next.js file-based routing auto-splits; FullCalendar already uses dynamic()+ssr:false+conditional md+ mount; browser-image-compression in officer-only routes (never loads for public/members)
-- [ ] 34. Optimize and Modernize All Images
+- [x] 34. Optimize and Modernize All Images — N/A: all heroes use SmoothImage (next/image+blur-up); preload+quality+sizes on all LCP images (homepage, login, about, pamilyas, goodphil); Next.js serves WebP/AVIF automatically; only plain <img> is gmail.svg (correct)
 - [ ] 35. Implement Content-Aware Loading Skeletons
 - [ ] 36. Virtualize Long Scrolling Lists
 - [ ] 37. Eliminate Unnecessary Component Re-renders
