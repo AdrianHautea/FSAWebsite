@@ -45,7 +45,7 @@ Branch: `vibecoder/ui`
 - [x] 39. Add Optimistic UI Updates — N/A: already implemented; OfficerEventsClient: optimistic QR open/close (reverts on error) + optimistic local events list for CRUD; ApplicationsClient: optimistic status updates
 - [x] 40. Prefetch Data on User Intent — N/A: router.prefetch on onboarding steps and profile edit→profile; Next.js Link auto-prefetches on hover; dns-prefetch for Stripe; no high-intent hover targets without prefetch found
 - [x] 41. Debounce and Throttle Costly Handlers — N/A: scroll handler uses passive:true; all search filters in-memory data (no API, debounce adds latency not saves); QR scan has built-in debounce via overlay state
-- [ ] 42. Optimize the Critical Rendering Path
+- [x] 42. Optimize the Critical Rendering Path — N/A: all fonts display:swap; preconnect Supabase+Stripe; dns-prefetch Stripe JS; member data server-fetched (no hydration waterfall); Analytics+SpeedInsights non-blocking
 - [ ] 43. Audit Third-Party Script Performance
 - [ ] 44. Load Critical Content First
 - [ ] 45. Run a Full Accessibility Audit
