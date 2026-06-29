@@ -852,10 +852,12 @@ export default function ApplicationsClient({
         </div>
 
         {/* tab bar */}
-        <div className="flex gap-0 border-b border-white/8 mb-6">
+        <div role="tablist" className="flex gap-0 border-b border-white/8 mb-6">
           {(['ading', 'kuyate'] as const).map(t => (
             <button
               key={t}
+              role="tab"
+              aria-selected={tab === t}
               onClick={() => setTab(t)}
               className={`px-6 py-3 text-[14px] font-bold transition-colors relative ${
                 tab === t
