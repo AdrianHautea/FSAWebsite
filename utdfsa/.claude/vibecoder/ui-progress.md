@@ -43,7 +43,7 @@ Branch: `vibecoder/ui`
 - [x] 37. Eliminate Unnecessary Component Re-renders — N/A: EventsPageClient has 5 useMemo/useCallback on heavy ops; ArchivesClient+GoodphilClient+OfficerEventsClient memoized; remaining filter loops on <50 items (microsecond cost, memo adds more overhead)
 - [x] 38. Cache and Dedupe Data Fetching — N/A: ISR revalidate=3600 on public pages (homepage, archives); gallery API has Cache-Control public+SWR; events/member/officer pages correctly dynamic (serve user-specific data); no duplicate fetch patterns found
 - [x] 39. Add Optimistic UI Updates — N/A: already implemented; OfficerEventsClient: optimistic QR open/close (reverts on error) + optimistic local events list for CRUD; ApplicationsClient: optimistic status updates
-- [ ] 40. Prefetch Data on User Intent
+- [x] 40. Prefetch Data on User Intent — N/A: router.prefetch on onboarding steps and profile edit→profile; Next.js Link auto-prefetches on hover; dns-prefetch for Stripe; no high-intent hover targets without prefetch found
 - [ ] 41. Debounce and Throttle Costly Handlers
 - [ ] 42. Optimize the Critical Rendering Path
 - [ ] 43. Audit Third-Party Script Performance
