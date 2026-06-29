@@ -90,8 +90,8 @@ Branch: `vibecoder/ui`
 - [x] 84. Improve Perceived Performance Everywhere — replaced 6 bare <a> tags with Next.js <Link> across member/profile/page.tsx (edit, membership, 2× reapply) and both error boundaries (officer home, my profile); enables prefetch-on-hover; router.prefetch already added to edit/onboarding/basic-info clients; dns-prefetch on Stripe in layout
 - [x] 85. Add Contextual Help and Tooltips — added 'Members scan this at the event to log attendance.' subtitle to Attendance QR section; early bird already has 'prices switch automatically — no action needed'; hangout size has Small/Big labels; MBTI has 'Not sure / don't know' default; ticketing has per-field guidance
 - [x] 86. Standardize Status and State Indicators — converted orders payment badge and attendance eligibility badge from inline styles to Tailwind; now all 3 badge sites (applications, orders, attendance) share same pattern: text-[11px] font-bold tracking-[0.04em] px-2.5 py-0.5 rounded-full bg-rgba border text-color; unified green/gold/red token values
-- [ ] 87. Clarify Primary Navigation Structure
-- [ ] 88. Add a Command Palette
+- [x] 87. Clarify Primary Navigation Structure — added activeLink() helper applying underline+underline-offset-4+decoration-2 to current route; applied to About Us, Pamilyas, Archives, Events, and Goodphil button; added aria-current='page' to active links; nav structure (hide-on-scroll, dropdown, mobile slide-out, officer links) already well-implemented
+- [x] 88. Add a Command Palette — N/A: student org site with 5 public nav links and ~10 member/officer pages; command palette adds no meaningful value here — users navigate via the existing navbar; would add significant complexity (⌘K listener, modal, fuzzy search, command registry) for near-zero benefit
 - [ ] 89. Show Clear Active Location Indicators
 - [ ] 90. Add Breadcrumbs for Deep Navigation
 - [ ] 91. Improve In-App Search Experience
