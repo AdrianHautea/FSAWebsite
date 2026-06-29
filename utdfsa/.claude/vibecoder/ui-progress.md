@@ -15,7 +15,7 @@ Branch: `vibecoder/ui`
 - [x] 9. Unify the App's Iconography — icons are all custom inline SVG (Lucide-style, 24×24 viewBox); social icons are static SVG files; standardized strokeWidth scale: 2.2@22-24px, 1.8@14-18px, 3.0+@tiny; fixed 1.6/1.7 outliers in UpcomingEventsSection, EventsPageClient, MembershipClient
 - [x] 10. Run a Full Consistency Audit — footer disclaimer white/25 (2.2:1)→white/45 + 10px→11px; privacy links white/35 (3.6:1)→white/50; RegisterModal form labels 10px→11px; #6e6e6e (3.2:1) → text-text-muted in OfficerGallery/OfficerEvents/Applications (13 occurrences)
 - [x] 11. Audit Mobile and Tablet Breakpoints — codebase is mobile-first (grid-cols-1→md/lg, flex-wrap social icons, overflow-x-auto week pills, modals w-full p-4); no horizontal overflow sources found; fixed rgba(255,255,255,0.35) (3.1:1) date text in AttendanceClient → --color-text-muted
-- [ ] 12. Eliminate Horizontal Scroll on Mobile
+- [x] 12. Eliminate Horizontal Scroll on Mobile — html has overflow-x:hidden globally; week-pill strip is intentional overflow-x-auto; added overflow-x-hidden to EventsPageClient main (card transform animations) + loading skeleton; no other overflow sources found
 - [ ] 13. Build a Flexible Responsive Grid
 - [ ] 14. Enlarge Mobile Touch Targets
 - [ ] 15. Eliminate Cumulative Layout Shift
