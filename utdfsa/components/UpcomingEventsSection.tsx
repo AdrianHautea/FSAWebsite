@@ -266,7 +266,7 @@ export default function UpcomingEventsSection({ events }: Props) {
                         <div className="flex items-baseline gap-2">
                           <span className="text-[26px] font-extrabold tracking-[-0.02em]" style={{ color: '#fff' }}>{fmt(memberPrice)}</span>
                           {isEB && event.price_cents_members != null && (
-                            <span className="hidden sm:inline text-[15px] font-semibold line-through" style={{ color: '#6f6f6f' }}>{fmt(event.price_cents_members)}</span>
+                            <span className="hidden sm:inline text-[15px] font-semibold line-through" style={{ color: 'var(--color-text-muted)' }}>{fmt(event.price_cents_members)}</span>
                           )}
                         </div>
                       </div>
@@ -275,7 +275,7 @@ export default function UpcomingEventsSection({ events }: Props) {
                         <div className="flex items-baseline gap-2">
                           <span className="text-[26px] font-extrabold tracking-[-0.02em]" style={{ color: '#fff' }}>{fmt(nonMemberPrice)}</span>
                           {isEB && event.price_cents_nonmembers != null && (
-                            <span className="hidden sm:inline text-[15px] font-semibold line-through" style={{ color: '#6f6f6f' }}>{fmt(event.price_cents_nonmembers)}</span>
+                            <span className="hidden sm:inline text-[15px] font-semibold line-through" style={{ color: 'var(--color-text-muted)' }}>{fmt(event.price_cents_nonmembers)}</span>
                           )}
                         </div>
                       </div>

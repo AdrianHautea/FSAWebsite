@@ -316,7 +316,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
             <p className="text-sm font-medium mt-4 mb-1" style={{ color: '#8c8c8c' }}>
               Stay up to date with everything UTD FSA.
             </p>
-            <p className="text-sm font-medium" style={{ color: '#6f6f6f' }}>
+            <p className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>
               {isMember
                 ? 'Member pricing applied. Limit one ticket per paid event.'
                 : 'Sign in as a member to unlock member pricing on paid events.'}
@@ -377,7 +377,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
           <SectionLabel label="This Week" />
           {/* only renders empty state when no events this week — do not remove this condition */}
           {thisWeek.length === 0 ? (
-            <p className="text-sm font-medium py-3" style={{ color: '#6f6f6f' }}>
+            <p className="text-sm font-medium py-3" style={{ color: 'var(--color-text-muted)' }}>
               Nothing this week — check back soon.
             </p>
           ) : (
@@ -423,7 +423,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
 
           {/* only renders empty state when no displayable events exist — do not remove this condition */}
           {displayEvents.length === 0 ? (
-            <p className="py-6" style={{ color: '#6f6f6f' }}>No upcoming events right now — check back soon!</p>
+            <p className="py-6" style={{ color: 'var(--color-text-muted)' }}>No upcoming events right now — check back soon!</p>
           ) : (
             <div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[22px]"
@@ -443,7 +443,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                     {isFirstPastEvent && (
                       <div className="col-span-full flex items-center gap-4 py-2 my-2">
                         <div className="flex-1 border-t border-white/10" />
-                        <span className="font-display font-bold text-[11px] tracking-[0.18em] uppercase whitespace-nowrap" style={{ color: '#6f6f6f' }}>Past Events</span>
+                        <span className="font-display font-bold text-[11px] tracking-[0.18em] uppercase whitespace-nowrap" style={{ color: 'var(--color-text-muted)' }}>Past Events</span>
                         <div className="flex-1 border-t border-white/10" />
                       </div>
                     )}
@@ -524,7 +524,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
           {/* ── pagination controls ───────────────────────────────────────────── */}
           {totalPages > 1 && (
             <div className="mt-8 mb-4">
-              <p className="text-center text-[13px] font-medium mb-4" style={{ color: '#6f6f6f' }}>
+              <p className="text-center text-[13px] font-medium mb-4" style={{ color: 'var(--color-text-muted)' }}>
                 Showing {(currentPage - 1) * EVENTS_PER_PAGE + 1}–{Math.min(currentPage * EVENTS_PER_PAGE, totalEvents)} of {totalEvents} events
               </p>
               <div className="flex items-center justify-center gap-2 flex-wrap">
@@ -543,7 +543,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
 
                 {getPageNumbers(currentPage, totalPages).map((page, i) =>
                   page === '...' ? (
-                    <span key={`ellipsis-${i}`} className="px-2 text-[13px] font-medium" style={{ color: '#6f6f6f' }}>...</span>
+                    <span key={`ellipsis-${i}`} className="px-2 text-[13px] font-medium" style={{ color: 'var(--color-text-muted)' }}>...</span>
                   ) : (
                     <button
                       key={page}
@@ -767,7 +767,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                           <span className="text-[26px] font-extrabold tracking-[-0.02em]" style={{ color: '#fff' }}>{fmt(memberPrice)}</span>
                           {/* only renders strikethrough when early bird pricing is active — do not remove this condition */}
                           {isEB && event.price_cents_members != null && (
-                            <span className="hidden sm:inline text-[15px] font-semibold line-through" style={{ color: '#6f6f6f' }}>{fmt(event.price_cents_members)}</span>
+                            <span className="hidden sm:inline text-[15px] font-semibold line-through" style={{ color: 'var(--color-text-muted)' }}>{fmt(event.price_cents_members)}</span>
                           )}
                         </div>
                       </div>
@@ -777,7 +777,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                           <span className="text-[26px] font-extrabold tracking-[-0.02em]" style={{ color: '#fff' }}>{fmt(nonMemberPrice)}</span>
                           {/* only renders strikethrough when early bird pricing is active — do not remove this condition */}
                           {isEB && event.price_cents_nonmembers != null && (
-                            <span className="hidden sm:inline text-[15px] font-semibold line-through" style={{ color: '#6f6f6f' }}>{fmt(event.price_cents_nonmembers)}</span>
+                            <span className="hidden sm:inline text-[15px] font-semibold line-through" style={{ color: 'var(--color-text-muted)' }}>{fmt(event.price_cents_nonmembers)}</span>
                           )}
                         </div>
                       </div>

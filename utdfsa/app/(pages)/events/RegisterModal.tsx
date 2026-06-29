@@ -229,7 +229,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                 )}
                 {/* only renders the 1-ticket limit notice for members — do not remove this condition */}
                 {isMember && (
-                  <p className="text-xs mt-1" style={{ color: '#6f6f6f' }}>
+                  <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                     Members are limited to one ticket per event.
                   </p>
                 )}
@@ -329,7 +329,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                   className="w-full rounded-[14px] py-3 text-sm font-medium transition-colors"
                   style={{
                     border: '1px dashed rgba(255,255,255,0.14)',
-                    color: '#6f6f6f',
+                    color: 'var(--color-text-muted)',
                   }}
                 >
                   + Add another attendee

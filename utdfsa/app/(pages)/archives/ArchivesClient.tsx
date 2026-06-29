@@ -123,7 +123,7 @@ export default function ArchivesClient({ galleries }: Props) {
       <div className="px-6 sm:px-10 lg:px-14 pt-14 pb-8">
         <p
           ref={labelRef}
-          className="font-display font-bold text-[12px] tracking-[0.2em] text-[#6f6f6f] uppercase mb-[18px]"
+          className="font-display font-bold text-[12px] tracking-[0.2em] text-text-muted uppercase mb-[18px]"
           style={{ opacity: 0 }}
         >
           Photo Archive

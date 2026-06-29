@@ -16,7 +16,7 @@ export default function PrivacyPage() {
       <div className="max-w-[760px] mx-auto px-6 py-16 md:py-20">
 
         {/* ── HEADER ────────────────────────────────────────────────── */}
-        <p className="font-display font-bold text-[12px] tracking-[0.2em] text-[#6f6f6f] uppercase mb-4">
+        <p className="font-display font-bold text-[12px] tracking-[0.2em] text-text-muted uppercase mb-4">
           UTD FSA
         </p>
         <h1 className="font-display font-black text-[clamp(36px,5vw,64px)] leading-[0.94] tracking-[-0.03em] text-white mb-4">

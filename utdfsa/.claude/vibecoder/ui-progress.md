@@ -8,7 +8,7 @@ Branch: `vibecoder/ui`
 - [x] 2. Build a Semantic Color System — fixed --color-text-faint (#5a5a5a→#787878, was 2.98:1 now 4.8:1); refactored login page and AttendanceClient to semantic tokens; flags: rgba(255,255,255,0.4) on card bg = ~3.1:1 which still falls short but was bumped to text-dim
 - [x] 3. Define a Consistent Spacing Scale — base is Tailwind 4px grid already; fixed off-grid values: py-[9px]→py-2.5 (archives), gap-[14px]→gap-3.5 (login+onboarding×6), mb-[14px]→mb-3.5
 - [x] 4. Create an Elevation Shadow System — 4-tier tokens: --shadow-raised/card/overlay/modal; wired into @theme; replaced event-card hover, gallery/applications modal shadows with tokens
-- [ ] 5. Standardize the Border Radius Scale
+- [x] 5. Standardize the Border Radius Scale — documented Tailwind scale in globals (lg=8/xl=12/2xl=16/3xl=24); replaced rounded-[12px]→xl (onboarding/register/profile/basic-info), [16px]→2xl (membership/events), [17px]→2xl (navbar dropdowns); left intentional design values (13,14,18,20,22px)
 - [ ] 6. Strengthen Overall Visual Hierarchy
 - [ ] 7. Polish All Button Interaction States
 - [ ] 8. Design Helpful Empty States
