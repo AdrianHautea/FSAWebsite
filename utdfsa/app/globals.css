@@ -166,6 +166,11 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, sans-serif;
   scrollbar-gutter: stable;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  text-wrap: balance;
 }
 
 /* keyboard focus ring — visible only for keyboard nav, suppressed for mouse */
