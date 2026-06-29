@@ -6,12 +6,13 @@
 
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface ModalProps {
   onClose: () => void
   size?: 'sm' | 'md' | 'lg'
   scrollable?: boolean
+  label?: string
   children: React.ReactNode
 }
 
@@ -21,7 +22,9 @@ const sizeClass = {
   lg: 'max-w-2xl',
 }
 
-export default function Modal({ onClose, size = 'md', scrollable = true, children }: ModalProps) {
+export default function Modal({ onClose, size = 'md', scrollable = true, label, children }: ModalProps) {
+  const panelRef = useRef<HTMLDivElement>(null)
+
   // close modal on escape key press; re-registers if onClose reference changes
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -37,6 +40,11 @@ export default function Modal({ onClose, size = 'md', scrollable = true, childre
     return () => { document.body.style.overflow = '' }
   }, [])
 
+  // move focus into the modal panel when it opens
+  useEffect(() => {
+    panelRef.current?.focus()
+  }, [])
+
   return (
     // z-[300]: above navbar (z-[60]), mobile menu (z-40), and any page content; clicking backdrop dismisses
     <div
@@ -45,7 +53,12 @@ export default function Modal({ onClose, size = 'md', scrollable = true, childre
     >
       {/* stop propagation so clicks inside the panel don't bubble up and close the modal */}
       <div
-        className={`relative w-full ${sizeClass[size]} max-h-[90dvh] ${scrollable ? 'overflow-y-auto' : 'overflow-hidden'} rounded-2xl shadow-2xl`}
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={label}
+        tabIndex={-1}
+        className={`relative w-full ${sizeClass[size]} max-h-[90dvh] ${scrollable ? 'overflow-y-auto' : 'overflow-hidden'} rounded-2xl shadow-2xl outline-none`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}
