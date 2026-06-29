@@ -312,6 +312,13 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                           // clear this slot's mismatch error as the user corrects it
                           if (emailErrors[i]) setEmailErrors(prev => { const n = [...prev]; n[i] = ''; return n })
                         }}
+                        onBlur={e => {
+                          const confirm = e.target.value.trim().toLowerCase()
+                          const email = tickets[i].email.trim().toLowerCase()
+                          if (confirm && email && confirm !== email) {
+                            setEmailErrors(prev => { const n = [...prev]; n[i] = 'Email addresses do not match.'; return n })
+                          }
+                        }}
                         className={fieldCls}
                         placeholder="Confirm email address"
                       />

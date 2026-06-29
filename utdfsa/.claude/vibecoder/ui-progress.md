@@ -69,7 +69,7 @@ Branch: `vibecoder/ui`
 - [x] 63. Smooth the Loading-To-Content Transition — git commit "ui 63" contains role=alert work (misrouted, belongs to prompt 68); loading states audit: checkout/save buttons show "Saving…"/"Loading…" text while disabled; spinner pattern already in place; no skeleton flash issues found
 - [x] 64. Improve Drag-And-Drop Interface Affordances — N/A: no DnD features; draggable=false on images prevents browser default drag; no sortable lists or upload drag zones
 - [x] 65. Add Mobile Gesture Support — N/A: PhotoCarousel and PamilyasClient both implement onPointerDown swipe with pointer capture; Pointer Events API covers touch+mouse natively; no additional gesture gaps found
-- [ ] 66. Add Subtle Success Moments
+- [x] 66. Add Subtle Success Moments — added role=status to ProfileEditClient "Profile updated!" message; OfficerEventsClient success is implicit via optimistic list update; QR scan has full-screen green overlay; events/orders have URL-param success banners; coverage complete
 - [ ] 67. Add Real-Time Inline Validation
 - [ ] 68. Write Clear Helpful Error Messages
 - [ ] 69. Polish Input Field Design and States
