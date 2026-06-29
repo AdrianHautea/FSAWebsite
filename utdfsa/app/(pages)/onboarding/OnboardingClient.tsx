@@ -56,7 +56,7 @@ function calcAge(birthday: string): number | null {
 }
 
 // shared class strings for form fields — mockup design language
-const fieldCls = 'w-full px-4 py-[14px] bg-[#141414] border border-white/10 rounded-xl text-white text-[15px] outline-none focus:border-accent-green focus:bg-[#171717] transition-colors placeholder:text-[#5a5a5a]'
+const fieldCls = 'w-full px-4 py-[14px] bg-[#141414] border border-white/10 rounded-xl text-white text-[15px] outline-none focus:border-accent-green focus:bg-[#171717] transition-colors placeholder:text-[#7a7a7a]'
 const fieldDateCls = `${fieldCls} [&::-webkit-calendar-picker-indicator]:invert`
 const textareaCls = `${fieldCls} min-h-[96px] resize-y leading-relaxed`
 const labelCls = 'flex items-center gap-[5px] mb-[9px] text-[12px] font-bold tracking-[0.1em] text-[#9a9a9a] uppercase'

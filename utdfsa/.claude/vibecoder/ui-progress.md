@@ -49,7 +49,7 @@ Branch: `vibecoder/ui`
 - [x] 43. Audit Third-Party Script Performance — N/A: Stripe uses server-side checkout redirect (no client JS); Vercel Analytics+SpeedInsights are async Next.js modules; Supabase server-only; FullCalendar dynamic()+ssr:false; zero render-blocking third-party scripts
 - [x] 44. Load Critical Content First — N/A: server components stream HTML with data pre-loaded; LCP images have preload; UpcomingEventsSection gets events as prop (no client waterfall); loading.tsx Suspense on data-heavy routes; homepage ISR revalidate=3600
 - [x] 45. Run a Full Accessibility Audit — gaps found: (1) modals missing role=dialog/aria-modal/aria-labelledby; (2) nav dropdown buttons missing aria-expanded; (3) FAQ accordion missing aria-expanded; sr-only h1 on homepage ✓; focus-visible ring global ✓; image alts present ✓
-- [ ] 46. Make Everything Keyboard Navigable
+- [x] 46. Make Everything Keyboard Navigable — added aria-expanded to all 4 nav toggle buttons (hamburger, Goodphil desktop/mobile, avatar) + aria-haspopup on popup triggers; converted FAQ accordion from div+onClick to button+aria-expanded (now tab-reachable and keyboard-toggleable); aria-hidden on decorative SVGs
 - [ ] 47. Add Clear Visible Focus Indicators
 - [ ] 48. Make Forms Fully Accessible
 - [ ] 49. Use Proper Semantic HTML

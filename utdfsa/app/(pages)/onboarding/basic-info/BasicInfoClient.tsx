@@ -90,7 +90,7 @@ export default function BasicInfoClient({ initial }: Props) {
   // change classnames, layout, colors, and typography freely
   // do not remove or rename the variables being rendered
   // ============================================================
-  const fieldCls = 'w-full px-4 py-[14px] bg-[#141414] border border-white/10 rounded-xl text-white text-[15px] outline-none focus:border-accent-green focus:bg-[#171717] transition-colors placeholder:text-[#5a5a5a]'
+  const fieldCls = 'w-full px-4 py-[14px] bg-[#141414] border border-white/10 rounded-xl text-white text-[15px] outline-none focus:border-accent-green focus:bg-[#171717] transition-colors placeholder:text-[#7a7a7a]'
   const labelCls = 'flex items-center gap-[5px] mb-[9px] text-[12px] font-bold tracking-[0.1em] text-[#9a9a9a] uppercase'
 
   return (
