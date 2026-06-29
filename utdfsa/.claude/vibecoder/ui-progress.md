@@ -48,7 +48,7 @@ Branch: `vibecoder/ui`
 - [x] 42. Optimize the Critical Rendering Path — N/A: all fonts display:swap; preconnect Supabase+Stripe; dns-prefetch Stripe JS; member data server-fetched (no hydration waterfall); Analytics+SpeedInsights non-blocking
 - [x] 43. Audit Third-Party Script Performance — N/A: Stripe uses server-side checkout redirect (no client JS); Vercel Analytics+SpeedInsights are async Next.js modules; Supabase server-only; FullCalendar dynamic()+ssr:false; zero render-blocking third-party scripts
 - [x] 44. Load Critical Content First — N/A: server components stream HTML with data pre-loaded; LCP images have preload; UpcomingEventsSection gets events as prop (no client waterfall); loading.tsx Suspense on data-heavy routes; homepage ISR revalidate=3600
-- [ ] 45. Run a Full Accessibility Audit
+- [x] 45. Run a Full Accessibility Audit — gaps found: (1) modals missing role=dialog/aria-modal/aria-labelledby; (2) nav dropdown buttons missing aria-expanded; (3) FAQ accordion missing aria-expanded; sr-only h1 on homepage ✓; focus-visible ring global ✓; image alts present ✓
 - [ ] 46. Make Everything Keyboard Navigable
 - [ ] 47. Add Clear Visible Focus Indicators
 - [ ] 48. Make Forms Fully Accessible

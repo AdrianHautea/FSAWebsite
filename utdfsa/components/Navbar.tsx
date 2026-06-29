@@ -189,6 +189,8 @@ export default function Navbar({ initialMember }: NavbarProps) {
             <button
               onClick={() => setGoodphilOpen(prev => !prev)}
               className={`${navLinkClass} flex items-center gap-1`}
+              aria-expanded={goodphilOpen}
+              aria-haspopup="true"
             >
               Goodphil
               <span className="text-xs">▾</span>
@@ -223,6 +225,9 @@ export default function Navbar({ initialMember }: NavbarProps) {
               <button
                 onClick={() => setDropdownOpen(prev => !prev)}
                 className="flex items-center gap-2"
+                aria-label="Open account menu"
+                aria-expanded={dropdownOpen}
+                aria-haspopup="true"
               >
                 {/* only renders the Google avatar image when member.avatar_url is set — do not remove this condition */}
                 {member.avatar_url ? (
@@ -302,6 +307,7 @@ export default function Navbar({ initialMember }: NavbarProps) {
           className="xl:hidden text-white p-2 text-2xl leading-none"
           onClick={() => setMobileMenuOpen(prev => !prev)}
           aria-label="Toggle navigation menu"
+          aria-expanded={mobileMenuOpen}
         >
           {mobileMenuOpen ? '✕' : '☰'}
         </button>
@@ -329,6 +335,8 @@ export default function Navbar({ initialMember }: NavbarProps) {
               <button
                 className="w-full text-left py-4 px-6 text-lg font-display font-semibold text-white uppercase tracking-wider hover:bg-white/10 transition-colors flex items-center justify-between"
                 onClick={() => setMobileGoodphilOpen(prev => !prev)}
+                aria-expanded={mobileGoodphilOpen}
+                aria-haspopup="true"
               >
                 Goodphil
                 <span className="text-sm">{mobileGoodphilOpen ? '▴' : '▾'}</span>

@@ -400,19 +400,23 @@ export default function MembershipClient({
             {FAQS.map((f, i) => (
               <div
                 key={i}
-                onClick={() => setFaqOpen(prev => prev.map((v, j) => j === i ? !v : v))}
-                className="border border-white/[0.08] rounded-[14px] bg-[#101010] overflow-hidden cursor-pointer hover:border-white/[0.16] transition-colors"
+                className="border border-white/[0.08] rounded-[14px] bg-[#101010] overflow-hidden hover:border-white/[0.16] transition-colors"
               >
-                <div className="flex items-center justify-between gap-4 px-6 py-5">
+                <button
+                  className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
+                  onClick={() => setFaqOpen(prev => prev.map((v, j) => j === i ? !v : v))}
+                  aria-expanded={faqOpen[i]}
+                >
                   <span className="text-[16px] font-bold text-white tracking-[-0.01em]">{f.q}</span>
                   <svg
                     width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a9a9a" strokeWidth="2.2"
                     className="shrink-0 transition-transform duration-300 ease-in-out"
                     style={{ transform: faqOpen[i] ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    aria-hidden="true"
                   >
                     <path d="M6 9l6 6 6-6" />
                   </svg>
-                </div>
+                </button>
                 {faqOpen[i] && (
                   <div className="px-6 pb-5 text-[14px] leading-[1.65] text-[#9a9a9a] font-medium">
                     {f.a}
