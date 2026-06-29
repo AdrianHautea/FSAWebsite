@@ -60,7 +60,7 @@ Branch: `vibecoder/ui`
 - [x] 54. Don't Rely on Color Alone — N/A: all status indicators use color+text: application badges have statusLabel map (Pending/Accepted/Rejected); QR scan shows emoji+text+bg color; attendance/success states use emoji+text; no color-only patterns found
 - [x] 55. Add a Skip-To-Content Link — added sr-only skip link in layout.tsx (becomes visible on focus: fixed top-4 left-4 z-400 accent-green bg); children wrapped in div#main-content tabIndex=-1 outline-none as focus target; activates on first Tab keypress on any page
 - [x] 56. Fix Page Titles and Language — added title template to root layout (default + %s | UTD FSA); exported typed Metadata from events/about/membership/archives/pamilyas pages; lang=en already set on html element
-- [ ] 57. Add Small Purposeful Micro-Interactions
+- [x] 57. Add Small Purposeful Micro-Interactions — added active:scale-[0.98]+transition-all to 4 submit buttons missing press feedback (ProfileEditClient, OfficerEventsClient, OfficerGalleryClient ×2); main CTAs (membership/onboarding/events/pamilyas/error) already had active:scale-[0.98]
 - [ ] 58. Standardize Animation Timing and Easing
 - [ ] 59. Implement Smooth Page Transitions
 - [ ] 60. Animate Value and State Changes

@@ -71,6 +71,14 @@
   --shadow-overlay: 0 24px 56px -12px rgba(0,0,0,0.75);
   --shadow-modal:   0 32px 72px -16px rgba(0,0,0,0.85);
 
+  /* tier 2: semantic — animation easing curves
+     spring:   overlay/modal entrance (overshoots slightly, settles)
+     smooth:   scroll-triggered entrance animations (ease-out-quad feel)
+     standard: nav/drawer transitions (Material Design standard curve) */
+  --ease-spring:   cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-smooth:   cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
   /* tier 3: component — carousel */
   --carousel-card-w: 75%;
   --carousel-offset: 10%;

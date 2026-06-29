@@ -130,7 +130,7 @@ export default function LoginPage() {
           {/* Google sign-in button */}
           <button
             onClick={handleGoogleLogin}
-            className="google-btn w-full flex items-center justify-center gap-3 py-[15px] px-[18px] rounded-[14px] text-[15px] font-semibold tracking-[0.01em] cursor-pointer transition-all duration-[180ms]"
+            className="google-btn w-full flex items-center justify-center gap-3 py-[15px] px-[18px] rounded-[14px] text-[15px] font-semibold tracking-[0.01em] cursor-pointer transition-all duration-150"
             style={{
               background: '#fff',
               border: '1px solid #e6e6e6',
