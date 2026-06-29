@@ -248,6 +248,10 @@ function ApplicationDetailModal({
   onPamilyaChange,
   pamilyaSaving,
   onDelete,
+  currentIndex,
+  totalCount,
+  onPrevApp,
+  onNextApp,
 }: {
   application: AdingApplication | KuyateApplication | null
   type: 'ading' | 'kuyate'
@@ -256,6 +260,10 @@ function ApplicationDetailModal({
   onPamilyaChange?: (id: string, pamilya: string | null) => void
   pamilyaSaving?: 'saving' | 'saved' | 'error' | null
   onDelete: () => void
+  currentIndex?: number
+  totalCount?: number
+  onPrevApp?: () => void
+  onNextApp?: () => void
 }) {
   if (!application) return null
 
@@ -284,15 +292,38 @@ function ApplicationDetailModal({
               )}
               <div className="mt-2.5">{statusBadge(application.status)}</div>
             </div>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 rounded-full bg-white/6 hover:bg-white/12 flex items-center justify-center text-[#8c8c8c] hover:text-white transition-colors shrink-0"
-              aria-label="Close"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
-                <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/>
-              </svg>
-            </button>
+            <div className="flex flex-col items-end gap-2 shrink-0">
+              {typeof currentIndex === 'number' && typeof totalCount === 'number' && totalCount > 1 && (
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={onPrevApp}
+                    disabled={currentIndex === 0}
+                    className="w-6 h-6 rounded-full bg-white/6 hover:bg-white/12 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-[#8c8c8c] hover:text-white transition-colors"
+                    aria-label="Previous application"
+                  >
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}><path d="M15 18l-6-6 6-6" strokeLinecap="round"/></svg>
+                  </button>
+                  <span className="text-[11px] text-[#7e7e7e] font-medium tabular-nums">{currentIndex + 1}/{totalCount}</span>
+                  <button
+                    onClick={onNextApp}
+                    disabled={currentIndex >= totalCount - 1}
+                    className="w-6 h-6 rounded-full bg-white/6 hover:bg-white/12 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-[#8c8c8c] hover:text-white transition-colors"
+                    aria-label="Next application"
+                  >
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}><path d="M9 18l6-6-6-6" strokeLinecap="round"/></svg>
+                  </button>
+                </div>
+              )}
+              <button
+                onClick={onClose}
+                className="w-8 h-8 rounded-full bg-white/6 hover:bg-white/12 flex items-center justify-center text-[#8c8c8c] hover:text-white transition-colors"
+                aria-label="Close"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
+                  <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
           </div>
           <div className="border-t border-white/8" />
         </div>
@@ -740,6 +771,7 @@ export default function ApplicationsClient({
       : kuyateApps.find(a => a.id === selectedAppId) ?? null
     : null
 
+
   // Filtered lists (used for CSV export — all filtered, not just current page)
   const filteredAding = adingFilter === 'all'
     ? adingApps
@@ -763,6 +795,10 @@ export default function ApplicationsClient({
         `${a.members.first_name} ${a.members.last_name}`.toLowerCase().includes(kuyateSearchTerm)
       )
     : filteredKuyate
+
+  // prev/next navigation — operates over the full filtered+searched list, independent of pagination
+  const modalNavList = selectedAppType === 'ading' ? searchedAding : searchedKuyate
+  const modalNavIndex = selectedAppId ? modalNavList.findIndex(a => a.id === selectedAppId) : -1
 
   // Paginated slices
   const paginatedAding = searchedAding.slice((adingPage - 1) * ITEMS_PER_PAGE, adingPage * ITEMS_PER_PAGE)
@@ -1118,6 +1154,10 @@ export default function ApplicationsClient({
           }}
           onPamilyaChange={(id, pamilya) => updatePamilya(id, pamilya)}
           pamilyaSaving={selectedAppId ? (pamilyaSaving[selectedAppId] ?? null) : null}
+          currentIndex={modalNavIndex >= 0 ? modalNavIndex : undefined}
+          totalCount={modalNavList.length}
+          onPrevApp={modalNavIndex > 0 ? () => setSelectedAppId(modalNavList[modalNavIndex - 1].id) : undefined}
+          onNextApp={modalNavIndex < modalNavList.length - 1 ? () => setSelectedAppId(modalNavList[modalNavIndex + 1].id) : undefined}
         />
 
         {/* Kuyate confirmation modal — z-50 so it layers above the detail modal */}
