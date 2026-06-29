@@ -363,7 +363,7 @@ export default function MembershipClient({
 
             {/* only renders when handlePayment returns an API error */}
             {error && (
-              <p className="font-sans text-sm text-red-400 mb-4">{error}</p>
+              <p role="alert" className="font-sans text-sm text-red-400 mb-4">{error}</p>
             )}
 
             <button

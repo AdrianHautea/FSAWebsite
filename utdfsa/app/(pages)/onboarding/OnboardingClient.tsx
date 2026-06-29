@@ -489,7 +489,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
 
           {/* only renders when handleNotInterested returns an API error — do not remove this condition */}
           {error && (
-            <p className="relative z-10 font-sans text-sm text-red-400 mt-4">{error}</p>
+            <p role="alert" className="relative z-10 font-sans text-sm text-red-400 mt-4">{error}</p>
           )}
 
         </div>
@@ -600,7 +600,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
 
             {/* only renders when handleProfileSubmit finds a validation error — do not remove this condition */}
             {error && (
-              <p className="font-sans text-sm text-red-400">{error}</p>
+              <p role="alert" className="font-sans text-sm text-red-400">{error}</p>
             )}
 
             <button
@@ -1115,7 +1115,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
 
             {/* only renders when the submit API returns an error — do not remove this condition */}
             {error && (
-              <p className="font-sans text-sm text-red-400">{error}</p>
+              <p role="alert" className="font-sans text-sm text-red-400">{error}</p>
             )}
 
             {/* disabled until privacy policy is acknowledged */}
@@ -1367,7 +1367,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
 
             {/* only renders when the submit API returns an error — do not remove this condition */}
             {error && (
-              <p className="font-sans text-sm text-red-400">{error}</p>
+              <p role="alert" className="font-sans text-sm text-red-400">{error}</p>
             )}
 
             {/* disabled until acknowledges_responsibilities and privacy policy are both checked */}

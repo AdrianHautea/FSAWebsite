@@ -467,7 +467,7 @@ function EventForm({
       </div>
 
       {error && (
-        <p className="text-[13px] text-[#ef6f6f] bg-[rgba(239,111,111,0.08)] border border-[rgba(239,111,111,0.25)] rounded-xl px-4 py-3">
+        <p role="alert" className="text-[13px] text-[#ef6f6f] bg-[rgba(239,111,111,0.08)] border border-[rgba(239,111,111,0.25)] rounded-xl px-4 py-3">
           {error}
         </p>
       )}
