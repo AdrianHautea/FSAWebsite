@@ -61,6 +61,10 @@
      none 0 | sm 2px | DEFAULT 4px | md 6px | lg 8px | xl 12px | 2xl 16px | 3xl 24px | full
      use xl for buttons/inputs, 2xl for cards/panels, 3xl for large modals */
 
+  /* tier 2: semantic — fluid display font sizes (clamp: min, preferred, max) */
+  --font-size-hero:    clamp(2.25rem, calc(1rem + 5vw), 6rem);         /* 36→96px */
+  --font-size-heading: clamp(2.3125rem, calc(1.5rem + 2.8vw), 3.375rem); /* 37→54px */
+
   /* tier 2: semantic — elevation shadows (layered ambient + diffuse) */
   --shadow-raised:  0 4px 12px -2px rgba(0,0,0,0.35);
   --shadow-card:    0 12px 32px -8px rgba(0,0,0,0.65);
