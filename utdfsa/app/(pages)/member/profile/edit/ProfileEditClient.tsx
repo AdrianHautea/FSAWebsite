@@ -103,7 +103,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
     setTimeout(() => router.push('/member/profile'), 1200)
   }
 
-  const fieldCls = 'w-full px-4 py-3 bg-[#141414] border border-white/10 rounded-xl text-sm text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-accent-green focus:bg-[#171717] transition-colors'
+  const fieldCls = 'w-full px-4 py-3 bg-[#141414] border border-white/10 rounded-xl text-sm text-white placeholder:text-[#7a7a7a] focus:outline-none focus:border-accent-green focus:bg-[#171717] transition-colors'
   const labelCls = 'block font-display font-bold text-xs uppercase tracking-widest text-white/60 mb-1.5'
 
   return (

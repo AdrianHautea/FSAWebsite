@@ -27,7 +27,7 @@ Branch: `vibecoder/ui`
 - [x] 21. Establish a Modular Type Scale — eliminated all half-pixel sizes (9.4/10.5/11.5/12.5/13.5/14.5/15.5px) → rounded to 9/11/12/13/14/15/16px across 11 files; clean integer scale renders consistently at any DPR
 - [x] 22. Add Fluid Responsive Typography — added --font-size-hero (36→96px) and --font-size-heading (37→54px) clamp tokens; applied to homepage WHO ARE WE and MISSION STATEMENT h2s, replacing 3-4 stepped breakpoint classes with smooth scaling
 - [x] 23. Optimize Reading Line Length — added max-w-prose (65ch) to WHO ARE WE body paragraph (was unconstrained → up to 1384px wide at desktop); privacy page uses max-w-[680px], about uses max-w-xl, all others already constrained; leading-relaxed (1.625) throughout
-- [ ] 24. Optimize Web Font Loading
+- [x] 24. Optimize Web Font Loading — N/A: next/font/google self-hosts all 3 fonts (no external CDN requests); display:swap added in prompt 15; adjustFontFallback:true generates metric-adjusted @font-face fallbacks automatically; preload handled by Next.js
 - [ ] 25. Tune Text Color and Contrast
 - [ ] 26. Fix Semantic Heading Structure
 - [ ] 27. Handle Text Overflow Gracefully

@@ -462,7 +462,7 @@ function AdingCard({ app, onOpen, onDelete }: { app: AdingApplication; onOpen: (
           <p className="text-[12px] text-[#9747FF] mt-0.5 line-clamp-1 font-semibold">Pamilya: {m.pamilya}</p>
         )}
         <div className="mt-auto pt-3 border-t border-white/6 flex items-center justify-between">
-          <p className="text-[12px] text-[#5a5a5a] font-medium">Submitted {fmtDate(app.submitted_at)}</p>
+          <p className="text-[12px] text-text-muted font-medium">Submitted {fmtDate(app.submitted_at)}</p>
           <button
             onClick={(e) => { e.stopPropagation(); onDelete() }}
             className="text-[11px] font-semibold text-[#ef6f6f]/50 border border-[#ef6f6f]/20 hover:border-[#ef6f6f]/55 hover:text-[#ef6f6f]/80 rounded-[6px] px-2 py-0.5 transition-colors"
@@ -494,7 +494,7 @@ function KuyateCard({ app, onOpen, onDelete }: { app: KuyateApplication; onOpen:
           {[m.year, m.major].filter(Boolean).join(' · ')}
         </p>
         <div className="mt-auto pt-3 border-t border-white/6 flex items-center justify-between">
-          <p className="text-[12px] text-[#5a5a5a] font-medium">Submitted {fmtDate(app.submitted_at)}</p>
+          <p className="text-[12px] text-text-muted font-medium">Submitted {fmtDate(app.submitted_at)}</p>
           <button
             onClick={(e) => { e.stopPropagation(); onDelete() }}
             className="text-[11px] font-semibold text-[#ef6f6f]/50 border border-[#ef6f6f]/20 hover:border-[#ef6f6f]/55 hover:text-[#ef6f6f]/80 rounded-[6px] px-2 py-0.5 transition-colors"
@@ -879,7 +879,7 @@ export default function ApplicationsClient({
                 <FilterBar active={adingFilter} onChange={handleAdingFilterChange} counts={adingCounts()} />
               </div>
               <div className="relative order-2 sm:order-2 sm:flex-1 sm:min-w-0">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a5a] pointer-events-none">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">
                   <circle cx="11" cy="11" r="8"/>
                   <path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
                 </svg>
@@ -888,7 +888,7 @@ export default function ApplicationsClient({
                   value={adingSearch}
                   onChange={e => handleAdingSearchChange(e.target.value)}
                   placeholder="Search by name…"
-                  className="w-full pl-8 pr-3.5 py-2 rounded-[10px] bg-[#0d0d0d] border border-white/10 text-[13px] text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-white/24 transition-[border-color] font-[inherit]"
+                  className="w-full pl-8 pr-3.5 py-2 rounded-[10px] bg-[#0d0d0d] border border-white/10 text-[13px] text-white placeholder:text-text-muted focus:outline-none focus:border-white/24 transition-[border-color] font-[inherit]"
                 />
               </div>
               <button
@@ -946,7 +946,7 @@ export default function ApplicationsClient({
                 <FilterBar active={kuyateFilter} onChange={handleKuyateFilterChange} counts={kuyateCounts()} />
               </div>
               <div className="relative order-2 sm:order-2 sm:flex-1 sm:min-w-0">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a5a] pointer-events-none">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">
                   <circle cx="11" cy="11" r="8"/>
                   <path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
                 </svg>
@@ -955,7 +955,7 @@ export default function ApplicationsClient({
                   value={kuyateSearch}
                   onChange={e => handleKuyateSearchChange(e.target.value)}
                   placeholder="Search by name…"
-                  className="w-full pl-8 pr-3.5 py-2 rounded-[10px] bg-[#0d0d0d] border border-white/10 text-[13px] text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-white/24 transition-[border-color] font-[inherit]"
+                  className="w-full pl-8 pr-3.5 py-2 rounded-[10px] bg-[#0d0d0d] border border-white/10 text-[13px] text-white placeholder:text-text-muted focus:outline-none focus:border-white/24 transition-[border-color] font-[inherit]"
                 />
               </div>
               <button
@@ -1126,14 +1126,14 @@ export default function ApplicationsClient({
               <p className="text-[11px] font-bold tracking-[0.07em] uppercase text-[#7e7e7e] mb-1">
                 Type their full name to confirm
               </p>
-              <p className="text-[12px] text-[#5a5a5a] font-medium mb-2">&ldquo;{deleteTarget.applicantName}&rdquo;</p>
+              <p className="text-[12px] text-text-muted font-medium mb-2">&ldquo;{deleteTarget.applicantName}&rdquo;</p>
               <input
                 type="text"
                 value={deleteConfirmInput}
                 onChange={(e) => setDeleteConfirmInput(e.target.value)}
                 placeholder="Type full name here"
                 autoFocus
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#0d0d0d] border border-white/10 text-[14px] text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-[#ef6f6f] focus:shadow-[0_0_0_3px_rgba(239,111,111,0.12)] transition-[border-color,box-shadow] font-[inherit] mb-4"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#0d0d0d] border border-white/10 text-[14px] text-white placeholder:text-text-muted focus:outline-none focus:border-[#ef6f6f] focus:shadow-[0_0_0_3px_rgba(239,111,111,0.12)] transition-[border-color,box-shadow] font-[inherit] mb-4"
               />
               {deleteError && (
                 <p className="text-[13px] text-[#ef6f6f] mb-3">{deleteError}</p>

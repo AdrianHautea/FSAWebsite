@@ -138,7 +138,7 @@ export default function GoodphilClient({ members }: { members: GoodphilEligibili
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="Search by name…"
-              className="w-full pl-10 pr-4 py-2.5 bg-[#0d0d0d] border border-white/10 rounded-xl text-sm text-white placeholder:text-[#5a5a5a] focus:outline-none focus:border-[#9747FF] focus:shadow-[0_0_0_3px_rgba(151,71,255,0.18)] transition-[border-color,box-shadow]"
+              className="w-full pl-10 pr-4 py-2.5 bg-[#0d0d0d] border border-white/10 rounded-xl text-sm text-white placeholder:text-[#7a7a7a] focus:outline-none focus:border-[#9747FF] focus:shadow-[0_0_0_3px_rgba(151,71,255,0.18)] transition-[border-color,box-shadow]"
             />
           </div>
 
@@ -146,7 +146,7 @@ export default function GoodphilClient({ members }: { members: GoodphilEligibili
           {/* do not remove this condition */}
           {filtered.length > 0 && (
             <div className="flex items-center gap-2 shrink-0">
-              <span className="text-[13px] text-[#6e6e6e] font-medium">
+              <span className="text-[13px] text-text-muted font-medium">
                 {start + 1}–{end} of {filtered.length}
               </span>
               <button

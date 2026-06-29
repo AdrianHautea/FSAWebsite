@@ -359,7 +359,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                         </p>
                         {/* only renders the email line when both name and email are available */}
                         {name && t.attendee_email && (
-                          <p className="text-[11px] text-center" style={{ color: '#6e6e6e', maxWidth: '160px' }}>
+                          <p className="text-[11px] text-center" style={{ color: 'var(--color-text-muted)', maxWidth: '160px' }}>
                             {t.attendee_email}
                           </p>
                         )}
