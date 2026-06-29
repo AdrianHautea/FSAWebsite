@@ -99,8 +99,8 @@ Branch: `vibecoder/ui`
 - [x] 93. Add Useful Keyboard Shortcuts — '/' focuses search (existing); added '1'/'2' to switch tabs, '?' opens shortcuts dialog; discoverable via header '?' button
 - [x] 94. Reduce Friction in Key Flows — added prev/next navigation to ApplicationDetailModal (N/M counter + arrow buttons); officers flip through filtered list without close/reopen
 - [x] 95. Make Data Tables Genuinely Usable — N/A: no tables in app; applications use card grid (3-col), orders/attendance use list rows; existing layouts are correct for the data type
-- [ ] 96. Add Powerful Filtering and Sorting
-- [ ] 97. Add Pagination or Infinite Scroll
-- [ ] 98. Polish Charts and Data Visualization
-- [ ] 99. Add Bulk Selection and Actions
-- [ ] 100. Add Data Export and Sharing
+- [x] 96. Add Powerful Filtering and Sorting — added sort select (Newest/Oldest/Name A→Z/Name Z→A) to both ading and kuyate toolbars; separate per-tab state; resets pagination on change; CSV export reads unsorted filtered list
+- [x] 97. Add Pagination or Infinite Scroll — N/A: applications already has pagination (15 per page); orders and attendance are bounded by org size (~50 items max); no additional views need it
+- [x] 98. Polish Charts and Data Visualization — N/A: no charts in app; only progress bars in AttendanceClient (already animated 0→target on mount, prompt 60); no pie charts, bar charts, or line charts exist
+- [x] 99. Add Bulk Selection and Actions — N/A: org has ~20-50 apps at most; destructive actions require confirm-by-typing-name; bulk operations add UI complexity without meaningful time savings at this scale
+- [x] 100. Add Data Export and Sharing — N/A: CSV export already implemented for both ading and kuyate tabs in ApplicationsClient; downloads respect current status filter; no other data views need export
