@@ -653,8 +653,8 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                 onClick={() => { setSelectedEvent(null); setShowAlreadyRegistered(false) }}
                 className="absolute top-3.5 right-3.5 z-10 flex items-center justify-center rounded-full transition-colors"
                 style={{
-                  width: '34px',
-                  height: '34px',
+                  width: '44px',
+                  height: '44px',
                   background: 'rgba(10,10,10,0.7)',
                   border: '1px solid rgba(255,255,255,0.16)',
                   color: '#e0e0e0',

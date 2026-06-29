@@ -57,7 +57,7 @@ export default function Footer() {
                 // mailto links don't need a new tab or noopener rel
                 target={href.startsWith('mailto') ? undefined : '_blank'}
                 rel={href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
-                className="w-8 h-8 flex items-center justify-center rounded-full border border-white/20 text-white/60 hover:border-white/60 hover:text-white transition-colors"
+                className="w-11 h-11 flex items-center justify-center rounded-full border border-white/20 text-white/60 hover:border-white/60 hover:text-white transition-colors"
               >
                 <Image
                   src={icon}

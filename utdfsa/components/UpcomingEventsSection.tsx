@@ -189,7 +189,7 @@ export default function UpcomingEventsSection({ events }: Props) {
               <button
                 onClick={() => { setSelectedEvent(null); setShowAlreadyRegistered(false) }}
                 className="absolute top-3.5 right-3.5 z-10 flex items-center justify-center rounded-full transition-colors"
-                style={{ width: '34px', height: '34px', background: 'rgba(10,10,10,0.7)', border: '1px solid rgba(255,255,255,0.16)', color: '#e0e0e0', backdropFilter: 'blur(4px)' }}
+                style={{ width: '44px', height: '44px', background: 'rgba(10,10,10,0.7)', border: '1px solid rgba(255,255,255,0.16)', color: '#e0e0e0', backdropFilter: 'blur(4px)' }}
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                   <path d="M18 6L6 18M6 6l12 12" />

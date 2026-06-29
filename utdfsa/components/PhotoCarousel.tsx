@@ -167,7 +167,7 @@ export default function PhotoCarousel() {
         <button
           onClick={prev}
           aria-label="Previous slide"
-          className="p-2 text-white hover:opacity-70 transition-opacity"
+          className="p-3 text-white hover:opacity-70 transition-opacity"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M15 18l-6-6 6-6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -190,7 +190,7 @@ export default function PhotoCarousel() {
         <button
           onClick={next}
           aria-label="Next slide"
-          className="p-2 text-white hover:opacity-70 transition-opacity"
+          className="p-3 text-white hover:opacity-70 transition-opacity"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M9 18l6-6-6-6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
