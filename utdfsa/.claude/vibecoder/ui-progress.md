@@ -33,7 +33,7 @@ Branch: `vibecoder/ui`
 - [x] 27. Handle Text Overflow Gracefully — added line-clamp-2 to officer events list h3 (event.name inside flex-1 min-w-0 was unguarded); orders, attendance, gallery, applications, UpcomingEventsSection all already use truncate/line-clamp on dynamic text
 - [x] 28. Format Numbers, Dates, and Currency — upgraded fmt() from `$${toFixed(2)}` to Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}) in EventsPageClient, UpcomingEventsSection, RegisterModal; date helpers already use toLocaleDateString with America/Chicago timezone
 - [x] 29. Add Refined Typographic Details — added text-rendering:optimizeLegibility to body (kerning+ligatures); text-wrap:balance on h1-h4 globally (prevents widow words in headings; graceful fallback); html already has antialiased; JSX uses &apos;/&ldquo; entities correctly
-- [ ] 30. Standardize Text Casing and Labels
+- [x] 30. Standardize Text Casing and Labels — N/A: casing is intentional and consistent; nav uses CSS uppercase on title-case HTML text (correct for screen readers); badges use CSS uppercase; body/form labels use sentence case; no mixing found
 - [ ] 31. Run a Full Performance Audit
 - [ ] 32. Shrink the JavaScript Bundle
 - [ ] 33. Add Route-Based Code Splitting
