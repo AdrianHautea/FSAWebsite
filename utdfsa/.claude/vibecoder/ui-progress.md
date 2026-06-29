@@ -73,9 +73,9 @@ Branch: `vibecoder/ui`
 - [x] 67. Add Real-Time Inline Validation — added onBlur to RegisterModal email-confirm field; shows mismatch error immediately on blur when both fields non-empty and differ; onChange clears error as user corrects; submit-time guard still runs; most impactful single field (email mismatch is the #1 registration failure)
 - [x] 68. Write Clear Helpful Error Messages — sentence-cased all lowercase validation msgs in BasicInfoClient; replaced 'something went wrong' fallbacks with context-specific msgs in 5 files (Onboarding ×2, Membership, RegisterModal, OfficerEvents, ProfileEdit)
 - [x] 69. Polish Input Field Design and States — added autocomplete (given-name/family-name/email/tel) to ProfileEditClient + BasicInfoClient; added error-border (!border-red-400) to RegisterModal email-confirm on mismatch; existing fieldCls covers focus/disabled/label states across all forms
-- [ ] 70. Add Smart Input Masking and Formatting
-- [ ] 71. Add Form Autosave and Recovery
-- [ ] 72. Improve Multi-Step Form Experience
+- [x] 70. Add Smart Input Masking and Formatting — N/A: phone already formatted via formatPhone() as-you-type; datetime-local/date use native browser UI; no credit card or raw currency inputs (Stripe handles checkout externally)
+- [x] 71. Add Form Autosave and Recovery — added beforeunload guard in OfficerEventsClient EventForm when form is dirty (useEffect compares form to initial, adds beforeunload listener); covers accidental tab close/refresh for event creation + editing; skipped localStorage draft (internal tool, ~15 users)
+- [x] 72. Improve Multi-Step Form Experience — N/A: OnboardingClient already has StepIndicator (numbered circles, green checkmark on complete, connector line), back navigation, preserved form data between steps, and step-level validation before advancing
 - [ ] 73. Upgrade Select and Dropdown Inputs
 - [ ] 74. Improve Password Field UX
 - [ ] 75. Add Input Hints and Affordances
