@@ -18,6 +18,7 @@ const EventCalendar = dynamic(() => import('./EventCalendar'), { ssr: false })
 import RegisterModal from './RegisterModal'
 import Modal from '@/components/Modal'
 import type { Event } from '@/types/database'
+import { getBadge, getEventTypeColor } from '@/utils/eventTypes'
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 // converts cents integer to dollar string (e.g. 1500 → "$15.00")
@@ -57,25 +58,6 @@ function isTicketed(type: string) { return ['party', 'other'].includes(type.toLo
 function isHybrid(type: string) { return type.toLowerCase() === 'other' }
 function hasAttendanceQR(type: string) { return ['general meeting', 'risk management', 'gp event', 'other'].includes(type.toLowerCase()) }
 function hasPointsForType(type: string) { return ['gp event', 'other'].includes(type.toLowerCase()) }
-
-// ── badge colors per event type — extracted from mockup ──────────────────────
-const TYPE_STYLE: Record<string, { text: string; bg: string; border: string; dot: string; label: string }> = {
-  'party':           { text: '#ff84b0', bg: 'rgba(255,92,150,0.13)',  border: 'rgba(255,120,170,0.34)', dot: '#ff5e9c', label: 'Party' },
-  'general meeting': { text: '#79acff', bg: 'rgba(82,150,255,0.13)',  border: 'rgba(115,168,255,0.34)', dot: '#5a96ff', label: 'General Meeting' },
-  'gp event':        { text: '#bb9eff', bg: 'rgba(151,113,255,0.15)', border: 'rgba(172,138,255,0.36)', dot: '#9b7bff', label: 'GP Event' },
-  'risk management': { text: '#ffd166', bg: 'rgba(255,209,102,0.12)', border: 'rgba(255,209,102,0.32)', dot: '#ffd166', label: 'Risk Management' },
-  'other':           { text: '#63dbc9', bg: 'rgba(82,210,190,0.12)',  border: 'rgba(112,222,205,0.32)', dot: '#4fd0bd', label: 'Other' },
-}
-
-function getBadge(type: string) {
-  return TYPE_STYLE[type.toLowerCase()] ?? {
-    text: '#9a9a9a', bg: 'rgba(255,255,255,0.06)', border: 'rgba(255,255,255,0.14)', dot: '#9a9a9a', label: type,
-  }
-}
-
-function getEventTypeColor(type: string): string {
-  return TYPE_STYLE[type.toLowerCase()]?.dot ?? '#9a9a9a'
-}
 
 const EVENTS_PER_PAGE = 12
 

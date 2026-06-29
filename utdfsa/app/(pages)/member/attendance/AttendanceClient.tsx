@@ -6,6 +6,8 @@
 //        events may be returned as an object or single-element array due to supabase join behavior
 'use client'
 
+import { getEventTypeColor } from '@/utils/eventTypes'
+
 type EventInfo = {
   id: string
   name: string
@@ -36,18 +38,6 @@ function fmtDate(iso: string) {
     month: 'short', day: 'numeric', year: 'numeric',
     timeZone: 'America/Chicago',
   })
-}
-
-// returns a color hex for the colored dot beside each attendance row
-function getEventTypeColor(type: string): string {
-  switch (type?.toLowerCase()) {
-    case 'general meeting': return '#5a96ff'
-    case 'risk management': return '#ffd166'
-    case 'gp event':        return '#9b7bff'
-    case 'party':           return '#ff5e9c'
-    case 'other':           return '#4fd0bd'
-    default:                return '#9a9a9a'
-  }
 }
 
 // normalizes the supabase join result — the events field may be an array or a plain object
