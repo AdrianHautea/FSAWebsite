@@ -56,7 +56,7 @@ Branch: `vibecoder/ui`
 - [x] 50. Add Meaningful Image Alt Text — N/A: content images have descriptive alts; decorative images (pam-hero-bg, gp-back) use alt='' + aria-hidden=true (correct); [Name] in AboutClient is a comment-only placeholder; hero/event/QR image alts are accurate
 - [x] 51. Respect Reduced Motion Preferences — added @media(prefers-reduced-motion:reduce) to globals.css: stops animate-marquee (infinite) + collapses all animation/transition to 0.01ms; ArchivesClient+EventsPageClient already have JS matchMedia checks for JS-driven animations
 - [x] 52. Announce Dynamic Changes to Screen Readers — added role=alert to QR scan result overlay (announces VALID TICKET/ALREADY CHECKED IN/INVALID immediately) and RegisterModal submit error; role=alert implies aria-live=assertive+atomic; no other untriggered dynamic content found
-- [ ] 53. Build Fully Accessible Modals
+- [x] 53. Build Fully Accessible Modals — added role=dialog+aria-modal=true+aria-label prop+focus-on-open to shared Modal component; tabIndex=-1+outline-none enables programmatic focus; Escape key dismiss was already implemented; all 7 modal usages get these semantics automatically
 - [ ] 54. Don't Rely on Color Alone
 - [ ] 55. Add a Skip-To-Content Link
 - [ ] 56. Fix Page Titles and Language
