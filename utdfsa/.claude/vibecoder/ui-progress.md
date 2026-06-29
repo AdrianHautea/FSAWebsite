@@ -85,8 +85,8 @@ Branch: `vibecoder/ui`
 - [x] 79. Add Graceful Error Boundaries — added scoped error.tsx for member (Try Again + My Profile) and officer (Try Again + Officer Home, purple accent) route groups; global error.tsx catches public page errors; all log to console; no raw error details exposed to users
 - [x] 80. Confirm Destructive and Irreversible Actions — replaced OfficerGalleryClient confirm() with inline confirmingDelete state (shows 'Delete [title]?' + Yes delete/Cancel); DeleteEventModal requires typing event name to confirm; ApplicationsClient has a modal delete confirmation — all three destructive actions now properly guarded
 - [x] 81. Add Undo for Reversible Actions — N/A: delete actions all have confirmation modals (better than undo for DB+S3 ops); status changes are optimistic and immediately re-clickable (officer clicks correct status — no undo gap); no toast infrastructure to surface undo window anyway
-- [ ] 82. Handle Offline and Network Errors
-- [ ] 83. Show Progress for Long Operations
+- [x] 82. Handle Offline and Network Errors — wrapped bare fetch calls in try/catch in 4 components (OnboardingClient ×2, BasicInfoClient, ProfileEditClient, MembershipClient); all show 'Network error — please try again.' + reset loading on fetch failure; RegisterModal and OfficerEventsClient already had try/catch
+- [x] 83. Show Progress for Long Operations — N/A: all long operations already show progress — gallery create/edit set submitting=true before imageCompression ('Saving…' on button), event cover upload shows 'Uploading…' overlay during compression+upload, event form save shows 'Saving…', onboarding submit shows loading state
 - [ ] 84. Improve Perceived Performance Everywhere
 - [ ] 85. Add Contextual Help and Tooltips
 - [ ] 86. Standardize Status and State Indicators
