@@ -36,7 +36,7 @@ Branch: `vibecoder/ui`
 - [x] 30. Standardize Text Casing and Labels — N/A: casing is intentional and consistent; nav uses CSS uppercase on title-case HTML text (correct for screen readers); badges use CSS uppercase; body/form labels use sentence case; no mixing found
 - [x] 31. Run a Full Performance Audit — top issues: (1) qrcode static import ships to member/officer bundles unnecessarily; (2) FullCalendar ~200KB static import on events page; (3) browser-image-compression static in officer pages; (4) googleapis confirmed server-only ✓; html5-qrcode route-split handles it ✓
 - [x] 32. Shrink the JavaScript Bundle — converted qrcode to dynamic import() in OrdersClient, TicketQR, OfficerEventsClient (all use QRCode only inside useEffect); events/page.tsx is server-side so static import there is fine; saves ~35KB from client bundles
-- [ ] 33. Add Route-Based Code Splitting
+- [x] 33. Add Route-Based Code Splitting — N/A: Next.js file-based routing auto-splits; FullCalendar already uses dynamic()+ssr:false+conditional md+ mount; browser-image-compression in officer-only routes (never loads for public/members)
 - [ ] 34. Optimize and Modernize All Images
 - [ ] 35. Implement Content-Aware Loading Skeletons
 - [ ] 36. Virtualize Long Scrolling Lists
