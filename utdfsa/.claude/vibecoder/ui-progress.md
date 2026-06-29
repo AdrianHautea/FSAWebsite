@@ -9,7 +9,7 @@ Branch: `vibecoder/ui`
 - [x] 3. Define a Consistent Spacing Scale — base is Tailwind 4px grid already; fixed off-grid values: py-[9px]→py-2.5 (archives), gap-[14px]→gap-3.5 (login+onboarding×6), mb-[14px]→mb-3.5
 - [x] 4. Create an Elevation Shadow System — 4-tier tokens: --shadow-raised/card/overlay/modal; wired into @theme; replaced event-card hover, gallery/applications modal shadows with tokens
 - [x] 5. Standardize the Border Radius Scale — documented Tailwind scale in globals (lg=8/xl=12/2xl=16/3xl=24); replaced rounded-[12px]→xl (onboarding/register/profile/basic-info), [16px]→2xl (membership/events), [17px]→2xl (navbar dropdowns); left intentional design values (13,14,18,20,22px)
-- [ ] 6. Strengthen Overall Visual Hierarchy
+- [x] 6. Strengthen Overall Visual Hierarchy — homepage and events page hierarchy sound; fixed 14 uses of #6f6f6f (4.3:1 fails WCAG AA) → --color-text-muted (#8c8c8c, 6.2:1) in events, archives, privacy, UpcomingEventsSection, RegisterModal
 - [ ] 7. Polish All Button Interaction States
 - [ ] 8. Design Helpful Empty States
 - [ ] 9. Unify the App's Iconography

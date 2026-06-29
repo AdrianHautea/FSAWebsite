@@ -396,7 +396,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
               <button
                 type="submit"
                 disabled={loading || (!isMember && !privacyAck)}
-                className="w-full text-white font-bold py-4 rounded-[13px] text-[15px] tracking-[0.01em] transition-opacity disabled:opacity-60"
+                className="w-full text-white font-bold py-4 rounded-[13px] text-[15px] tracking-[0.01em] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60"
                 style={{ background: '#2b5f2e' }}
               >
                 {/* only shows "Processing…" while the checkout API call is in flight — do not remove this condition */}

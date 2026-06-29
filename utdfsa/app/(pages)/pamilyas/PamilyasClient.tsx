@@ -364,7 +364,7 @@ export default function PamilyasClient({
             </p>
             <button
               onClick={() => setPopup(null)}
-              className="w-full bg-accent-green text-[#0e0e0e] font-display font-black uppercase tracking-widest py-3 rounded-lg hover:opacity-90 transition-opacity"
+              className="w-full bg-accent-green text-[#0e0e0e] font-display font-black uppercase tracking-widest py-3 rounded-lg hover:opacity-90 active:scale-[0.98] transition-all"
             >
               Got it
             </button>

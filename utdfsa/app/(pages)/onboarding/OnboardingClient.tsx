@@ -605,7 +605,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
 
             <button
               type="submit"
-              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] disabled:opacity-50 transition-all mt-2"
+              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] active:scale-[0.98] disabled:opacity-50 transition-all mt-2"
             >
               Continue
             </button>
@@ -1122,7 +1122,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             <button
               type="submit"
               disabled={loading || !adingPrivacyAck}
-              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] disabled:opacity-50 transition-all mt-2"
+              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] active:scale-[0.98] disabled:opacity-50 transition-all mt-2"
             >
               {/* only shows "submitting..." while the API call is in flight — do not remove this condition */}
               {loading ? 'Submitting...' : 'Complete Sign Up'}
@@ -1374,7 +1374,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             <button
               type="submit"
               disabled={loading || !kuyateForm.acknowledges_responsibilities || !kuyatePrivacyAck}
-              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] disabled:opacity-50 transition-all mt-2"
+              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] active:scale-[0.98] disabled:opacity-50 transition-all mt-2"
             >
               {/* only shows "submitting..." while the API call is in flight — do not remove this condition */}
               {loading ? 'Submitting...' : 'Complete Sign Up'}

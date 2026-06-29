@@ -164,6 +164,16 @@ body {
   scrollbar-gutter: stable;
 }
 
+/* keyboard focus ring — visible only for keyboard nav, suppressed for mouse */
+:focus-visible {
+  outline: 2px solid var(--accent-green);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* modal entrance animations used by Modal component and event detail overlay */
 @keyframes backdropIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes modalIn { from { opacity: 0; transform: translateY(14px) scale(0.985); } to { opacity: 1; transform: none; } }

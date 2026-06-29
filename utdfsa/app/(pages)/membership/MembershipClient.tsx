@@ -355,7 +355,7 @@ export default function MembershipClient({
             <button
               onClick={handlePayment}
               disabled={loading}
-              className="mt-auto w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.01em] cursor-pointer hover:brightness-[1.08] hover:shadow-[0_16px_38px_-14px_rgba(147,208,123,0.4)] disabled:opacity-50 transition-all duration-200"
+              className="mt-auto w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.01em] cursor-pointer hover:brightness-[1.08] hover:shadow-[0_16px_38px_-14px_rgba(147,208,123,0.4)] active:scale-[0.98] disabled:opacity-50 transition-all duration-200"
             >
               {loading ? 'Redirecting to payment...' : `Pay ${formatPrice(displayPrice)}`}
             </button>
