@@ -112,6 +112,21 @@ const KUYATE_QUESTION_KEYS = Object.keys(KUYATE_QUESTION_LABELS)
 
 const ITEMS_PER_PAGE = 15
 
+type SortOption = 'newest' | 'oldest' | 'name-az' | 'name-za'
+
+function sortApps<T extends { submitted_at: string; members: { last_name: string; first_name: string } }>(
+  apps: T[], sort: SortOption
+): T[] {
+  return [...apps].sort((a, b) => {
+    switch (sort) {
+      case 'newest': return new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime()
+      case 'oldest': return new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime()
+      case 'name-az': return a.members.last_name.localeCompare(b.members.last_name) || a.members.first_name.localeCompare(b.members.first_name)
+      case 'name-za': return b.members.last_name.localeCompare(a.members.last_name) || b.members.first_name.localeCompare(a.members.first_name)
+    }
+  })
+}
+
 // Fields that always occupy the full 2-column width in the modal
 const WIDE_KEYS = new Set([
   'why_kuyate', 'pam_vibe', 'availability', 'thoughts_on_drinking',
@@ -709,6 +724,9 @@ export default function ApplicationsClient({
   // filter defaults to 'pending' so officers see actionable items first
   const [adingFilter, setAdingFilter] = useState<Filter>('pending')
   const [kuyateFilter, setKuyateFilter] = useState<Filter>('pending')
+  // sort order per tab — newest first by default
+  const [adingSort, setAdingSort] = useState<SortOption>('newest')
+  const [kuyateSort, setKuyateSort] = useState<SortOption>('newest')
   // separate page counters per tab so pagination resets independently
   const [adingPage, setAdingPage] = useState(1)
   const [kuyatePage, setKuyatePage] = useState(1)
@@ -781,20 +799,24 @@ export default function ApplicationsClient({
     ? kuyateApps
     : kuyateApps.filter(a => a.status === kuyateFilter)
 
-  // name search applied on top of status filter (csv export still reads filteredAding/filteredKuyate)
+  // sort applied after status filter; csv export reads unsorted filteredAding/filteredKuyate
+  const sortedAding = sortApps(filteredAding, adingSort)
+  const sortedKuyate = sortApps(filteredKuyate, kuyateSort)
+
+  // name search applied on top of sorted+filtered list
   const adingSearchTerm = adingSearch.trim().toLowerCase()
   const searchedAding = adingSearchTerm
-    ? filteredAding.filter(a =>
+    ? sortedAding.filter(a =>
         `${a.members.first_name} ${a.members.last_name}`.toLowerCase().includes(adingSearchTerm)
       )
-    : filteredAding
+    : sortedAding
 
   const kuyateSearchTerm = kuyateSearch.trim().toLowerCase()
   const searchedKuyate = kuyateSearchTerm
-    ? filteredKuyate.filter(a =>
+    ? sortedKuyate.filter(a =>
         `${a.members.first_name} ${a.members.last_name}`.toLowerCase().includes(kuyateSearchTerm)
       )
-    : filteredKuyate
+    : sortedKuyate
 
   // prev/next navigation — operates over the full filtered+searched list, independent of pagination
   const modalNavList = selectedAppType === 'ading' ? searchedAding : searchedKuyate
@@ -985,8 +1007,18 @@ export default function ApplicationsClient({
         {tab === 'ading' && (
           <section>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5">
-              <div className="order-1 sm:order-1">
+              <div className="order-1 sm:order-1 flex items-center gap-3 flex-wrap">
                 <FilterBar active={adingFilter} onChange={handleAdingFilterChange} counts={adingCounts()} />
+                <select
+                  value={adingSort}
+                  onChange={e => { setAdingSort(e.target.value as SortOption); setAdingPage(1) }}
+                  className="text-[12px] font-semibold border border-white/12 rounded-[9px] px-2.5 py-1.5 text-[#8c8c8c] bg-[#0d0d0d] hover:border-white/22 hover:text-[#cfcfcf] focus:outline-none focus:border-white/24 officer-select appearance-none pr-7 font-[inherit] transition-colors"
+                >
+                  <option value="newest">Newest first</option>
+                  <option value="oldest">Oldest first</option>
+                  <option value="name-az">Name A→Z</option>
+                  <option value="name-za">Name Z→A</option>
+                </select>
               </div>
               <div className="relative order-2 sm:order-2 sm:flex-1 sm:min-w-0">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">
@@ -1056,8 +1088,18 @@ export default function ApplicationsClient({
         {tab === 'kuyate' && (
           <section>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5">
-              <div className="order-1 sm:order-1">
+              <div className="order-1 sm:order-1 flex items-center gap-3 flex-wrap">
                 <FilterBar active={kuyateFilter} onChange={handleKuyateFilterChange} counts={kuyateCounts()} />
+                <select
+                  value={kuyateSort}
+                  onChange={e => { setKuyateSort(e.target.value as SortOption); setKuyatePage(1) }}
+                  className="text-[12px] font-semibold border border-white/12 rounded-[9px] px-2.5 py-1.5 text-[#8c8c8c] bg-[#0d0d0d] hover:border-white/22 hover:text-[#cfcfcf] focus:outline-none focus:border-white/24 officer-select appearance-none pr-7 font-[inherit] transition-colors"
+                >
+                  <option value="newest">Newest first</option>
+                  <option value="oldest">Oldest first</option>
+                  <option value="name-az">Name A→Z</option>
+                  <option value="name-za">Name Z→A</option>
+                </select>
               </div>
               <div className="relative order-2 sm:order-2 sm:flex-1 sm:min-w-0">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">
