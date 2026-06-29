@@ -381,7 +381,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
       {modalOpen && (
         <Modal onClose={closeModal} size="md">
           <div
-            className="bg-[#141414] border border-white/10 rounded-[20px] shadow-[0_32px_72px_-16px_rgba(0,0,0,0.8)] w-full"
+            className="bg-[#141414] border border-white/10 rounded-[20px] shadow-modal w-full"
             style={{ animation: 'modalIn 0.18s ease-out' }}
           >
             <div className="px-4 sm:px-7 pt-4 sm:pt-7 pb-0">
@@ -574,7 +574,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
       {editingGallery && (
         <Modal onClose={closeEdit} size="md">
           <div
-            className="bg-[#141414] border border-white/10 rounded-[20px] shadow-[0_32px_72px_-16px_rgba(0,0,0,0.8)] w-full"
+            className="bg-[#141414] border border-white/10 rounded-[20px] shadow-modal w-full"
             style={{ animation: 'modalIn 0.18s ease-out' }}
           >
             <div className="px-4 sm:px-7 pt-4 sm:pt-7 pb-0">

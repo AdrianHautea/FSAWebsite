@@ -6,7 +6,7 @@ Branch: `vibecoder/ui`
 
 - [x] 1. Establish a Design Token System — expanded globals.css to 3-tier system (primitive/semantic/component); extracted event type colors from 3 files into utils/eventTypes.ts; added text/surface/border semantic tokens; updated FullCalendar overrides to use CSS vars
 - [x] 2. Build a Semantic Color System — fixed --color-text-faint (#5a5a5a→#787878, was 2.98:1 now 4.8:1); refactored login page and AttendanceClient to semantic tokens; flags: rgba(255,255,255,0.4) on card bg = ~3.1:1 which still falls short but was bumped to text-dim
-- [ ] 3. Define a Consistent Spacing Scale
+- [x] 3. Define a Consistent Spacing Scale — base is Tailwind 4px grid already; fixed off-grid values: py-[9px]→py-2.5 (archives), gap-[14px]→gap-3.5 (login+onboarding×6), mb-[14px]→mb-3.5
 - [ ] 4. Create an Elevation Shadow System
 - [ ] 5. Standardize the Border Radius Scale
 - [ ] 6. Strengthen Overall Visual Hierarchy

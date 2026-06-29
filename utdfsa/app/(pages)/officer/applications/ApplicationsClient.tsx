@@ -266,7 +266,7 @@ function ApplicationDetailModal({
   return (
     <Modal onClose={onClose} size="lg">
       <div
-        className="bg-[#141414] border border-white/10 rounded-2xl shadow-[0_32px_80px_-20px_rgba(0,0,0,0.85)] w-full flex flex-col"
+        className="bg-[#141414] border border-white/10 rounded-2xl shadow-modal w-full flex flex-col"
         style={{ animation: 'modalIn 0.18s ease-out' }}
       >
         {/* Header — sticky */}
@@ -445,7 +445,7 @@ function AdingCard({ app, onOpen, onDelete }: { app: AdingApplication; onOpen: (
   return (
     <div
       onClick={onOpen}
-      className="bg-[#121212] border border-white/8 rounded-2xl h-48 overflow-hidden cursor-pointer hover:border-white/16 hover:-translate-y-0.5 hover:shadow-[0_5px_13px_-3px_rgba(0,0,0,0.35)] transition-all flex flex-col"
+      className="bg-[#121212] border border-white/8 rounded-2xl h-48 overflow-hidden cursor-pointer hover:border-white/16 hover:-translate-y-0.5 hover:shadow-raised transition-all flex flex-col"
     >
       <div className="p-5 flex flex-col h-full">
         <div className="flex items-start justify-between gap-2 mb-1.5">
@@ -480,7 +480,7 @@ function KuyateCard({ app, onOpen, onDelete }: { app: KuyateApplication; onOpen:
   return (
     <div
       onClick={onOpen}
-      className="bg-[#121212] border border-white/8 rounded-2xl h-48 overflow-hidden cursor-pointer hover:border-white/16 hover:-translate-y-0.5 hover:shadow-[0_5px_13px_-3px_rgba(0,0,0,0.35)] transition-all flex flex-col"
+      className="bg-[#121212] border border-white/8 rounded-2xl h-48 overflow-hidden cursor-pointer hover:border-white/16 hover:-translate-y-0.5 hover:shadow-raised transition-all flex flex-col"
     >
       <div className="p-5 flex flex-col h-full">
         <div className="flex items-start justify-between gap-2 mb-1.5">
@@ -1042,7 +1042,7 @@ export default function ApplicationsClient({
         {pendingStatus && (
           <Modal onClose={() => setPendingStatus(null)} size="sm">
             <div
-              className="bg-[#141414] border border-white/10 rounded-[18px] w-full p-7 shadow-[0_32px_72px_-16px_rgba(0,0,0,0.85)]"
+              className="bg-[#141414] border border-white/10 rounded-[18px] w-full p-7 shadow-modal"
               style={{ animation: 'modalIn 0.18s ease-out' }}
             >
               <h2 className="text-[16px] font-bold text-white mb-2">
@@ -1084,7 +1084,7 @@ export default function ApplicationsClient({
         {kuyateConflict && (
           <Modal onClose={() => setKuyateConflict(null)} size="sm">
             <div
-              className="bg-[#141414] border border-white/10 rounded-[18px] w-full p-7 shadow-[0_32px_72px_-16px_rgba(0,0,0,0.85)]"
+              className="bg-[#141414] border border-white/10 rounded-[18px] w-full p-7 shadow-modal"
               style={{ animation: 'modalIn 0.18s ease-out' }}
             >
               <h2 className="text-[16px] font-bold text-white mb-2">Already Reviewed</h2>
@@ -1104,7 +1104,7 @@ export default function ApplicationsClient({
         {deleteTarget && (
           <Modal onClose={handleDeleteCancel} size="sm">
             <div
-              className="bg-[#141414] border border-white/10 rounded-[18px] w-full p-7 shadow-[0_32px_72px_-16px_rgba(0,0,0,0.85)]"
+              className="bg-[#141414] border border-white/10 rounded-[18px] w-full p-7 shadow-modal"
               style={{ animation: 'modalIn 0.18s ease-out' }}
             >
               <div className="flex items-center gap-3 mb-3">

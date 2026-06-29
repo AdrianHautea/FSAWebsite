@@ -57,6 +57,12 @@
   --accent-gold:  #d2a465;
   --accent-blue:  #b5caff;
 
+  /* tier 2: semantic — elevation shadows (layered ambient + diffuse) */
+  --shadow-raised:  0 4px 12px -2px rgba(0,0,0,0.35);
+  --shadow-card:    0 12px 32px -8px rgba(0,0,0,0.65);
+  --shadow-overlay: 0 24px 56px -12px rgba(0,0,0,0.75);
+  --shadow-modal:   0 32px 72px -16px rgba(0,0,0,0.85);
+
   /* tier 3: component — carousel */
   --carousel-card-w: 75%;
   --carousel-offset: 10%;
@@ -104,6 +110,11 @@
   --font-sans:    var(--font-geist-sans);
   --font-mono:    var(--font-geist-mono);
   --font-display: var(--font-unbounded);
+  /* shadows */
+  --shadow-raised:  var(--shadow-raised);
+  --shadow-card:    var(--shadow-card);
+  --shadow-overlay: var(--shadow-overlay);
+  --shadow-modal:   var(--shadow-modal);
   /* animations */
   --animate-marquee: marquee 35s linear infinite;
 }
@@ -160,7 +171,7 @@ body {
 }
 .event-card:hover {
   border-color: rgba(255, 255, 255, 0.16);
-  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.65);
+  box-shadow: var(--shadow-card);
   transform: translateY(-4px);
 }
 
