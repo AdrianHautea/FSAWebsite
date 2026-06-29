@@ -9,7 +9,8 @@ import type { Event } from '@/types/database'
 import { getBadge } from '@/utils/eventTypes'
 
 // ── helpers (shared with EventsPageClient) ─────────────────────────────────
-function fmt(cents: number) { return `$${(cents / 100).toFixed(2)}` }
+const fmtCurrency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+function fmt(cents: number) { return fmtCurrency.format(cents / 100) }
 
 function fmtModalDate(iso: string) {
   const day = new Date(iso).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/Chicago' })

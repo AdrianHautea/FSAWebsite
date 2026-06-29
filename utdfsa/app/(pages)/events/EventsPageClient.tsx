@@ -22,7 +22,8 @@ import { getBadge, getEventTypeColor } from '@/utils/eventTypes'
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 // converts cents integer to dollar string (e.g. 1500 → "$15.00")
-function fmt(cents: number) { return `$${(cents / 100).toFixed(2)}` }
+const fmtCurrency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+function fmt(cents: number) { return fmtCurrency.format(cents / 100) }
 
 // all date/time helpers pin to America/Chicago so displays match Dallas event times
 function fmtCardDate(iso: string) {

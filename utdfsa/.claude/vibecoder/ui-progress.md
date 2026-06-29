@@ -30,7 +30,7 @@ Branch: `vibecoder/ui`
 - [x] 24. Optimize Web Font Loading — N/A: next/font/google self-hosts all 3 fonts (no external CDN requests); display:swap added in prompt 15; adjustFontFallback:true generates metric-adjusted @font-face fallbacks automatically; preload handled by Next.js
 - [x] 25. Tune Text Color and Contrast — fixed remaining failures: #5a5a5a (2.85:1)→text-text-muted in ApplicationsClient; #6e6e6e (3.2:1)→text-text-muted in GoodphilClient+EventsPageClient; placeholder:text-[#5a5a5a]→[#7a7a7a] (4.5:1) in 3 files; #7a7a7a on #0e0e0e = 4.50:1 (passes)
 - [x] 26. Fix Semantic Heading Structure — homepage was the only missing h1 (hero logo is an img, not a heading); added sr-only h1 in hero section; WHO ARE WE/MISSION STATEMENT correctly h2; attend page has 6 h1s but each is a conditional early-return (only one renders); other pages confirmed correct
-- [ ] 27. Handle Text Overflow Gracefully
+- [x] 27. Handle Text Overflow Gracefully — added line-clamp-2 to officer events list h3 (event.name inside flex-1 min-w-0 was unguarded); orders, attendance, gallery, applications, UpcomingEventsSection all already use truncate/line-clamp on dynamic text
 - [ ] 28. Format Numbers, Dates, and Currency
 - [ ] 29. Add Refined Typographic Details
 - [ ] 30. Standardize Text Casing and Labels

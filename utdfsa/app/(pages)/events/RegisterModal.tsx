@@ -34,9 +34,8 @@ interface Props {
   memberInfo: { fname: string; lname: string; email: string } | null
 }
 
-function fmt(cents: number) {
-  return `$${(cents / 100).toFixed(2)}`
-}
+const fmtCurrency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+function fmt(cents: number) { return fmtCurrency.format(cents / 100) }
 
 const blank = (): Ticket => ({ fname: '', lname: '', email: '', emailConfirm: '' })
 
