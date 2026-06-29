@@ -293,7 +293,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
   }, [showCalendar])
 
   return (
-    <main className="min-h-screen text-white" style={{ background: '#0f0f0f' }}>
+    <main className="min-h-screen text-white overflow-x-hidden" style={{ background: '#0f0f0f' }}>
       <div className="max-w-[1280px] mx-auto px-6 sm:px-10 pb-20">
 
         {/* ── page header ──────────────────────────────────────────────────── */}
