@@ -57,7 +57,7 @@ Branch: `vibecoder/ui`
 - [x] 51. Respect Reduced Motion Preferences — added @media(prefers-reduced-motion:reduce) to globals.css: stops animate-marquee (infinite) + collapses all animation/transition to 0.01ms; ArchivesClient+EventsPageClient already have JS matchMedia checks for JS-driven animations
 - [x] 52. Announce Dynamic Changes to Screen Readers — added role=alert to QR scan result overlay (announces VALID TICKET/ALREADY CHECKED IN/INVALID immediately) and RegisterModal submit error; role=alert implies aria-live=assertive+atomic; no other untriggered dynamic content found
 - [x] 53. Build Fully Accessible Modals — added role=dialog+aria-modal=true+aria-label prop+focus-on-open to shared Modal component; tabIndex=-1+outline-none enables programmatic focus; Escape key dismiss was already implemented; all 7 modal usages get these semantics automatically
-- [ ] 54. Don't Rely on Color Alone
+- [x] 54. Don't Rely on Color Alone — N/A: all status indicators use color+text: application badges have statusLabel map (Pending/Accepted/Rejected); QR scan shows emoji+text+bg color; attendance/success states use emoji+text; no color-only patterns found
 - [ ] 55. Add a Skip-To-Content Link
 - [ ] 56. Fix Page Titles and Language
 - [ ] 57. Add Small Purposeful Micro-Interactions

@@ -66,8 +66,16 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://js.stripe.com" />
       </head>
       <body className="min-h-full flex flex-col">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[400] focus:px-4 focus:py-2 focus:bg-accent-green focus:text-black focus:font-semibold focus:rounded-lg focus:text-sm"
+        >
+          Skip to main content
+        </a>
         <Navbar initialMember={initialMember} />
-        {children}
+        <div id="main-content" tabIndex={-1} className="outline-none flex-1 flex flex-col">
+          {children}
+        </div>
         <Footer />
         <Analytics />
         <SpeedInsights />
