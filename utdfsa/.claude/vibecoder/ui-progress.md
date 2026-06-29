@@ -38,7 +38,7 @@ Branch: `vibecoder/ui`
 - [x] 32. Shrink the JavaScript Bundle — converted qrcode to dynamic import() in OrdersClient, TicketQR, OfficerEventsClient (all use QRCode only inside useEffect); events/page.tsx is server-side so static import there is fine; saves ~35KB from client bundles
 - [x] 33. Add Route-Based Code Splitting — N/A: Next.js file-based routing auto-splits; FullCalendar already uses dynamic()+ssr:false+conditional md+ mount; browser-image-compression in officer-only routes (never loads for public/members)
 - [x] 34. Optimize and Modernize All Images — N/A: all heroes use SmoothImage (next/image+blur-up); preload+quality+sizes on all LCP images (homepage, login, about, pamilyas, goodphil); Next.js serves WebP/AVIF automatically; only plain <img> is gmail.svg (correct)
-- [ ] 35. Implement Content-Aware Loading Skeletons
+- [x] 35. Implement Content-Aware Loading Skeletons — N/A: 6 loading.tsx files cover all data-heavy routes; all content-aware (mirror real layout with correct grid/card shapes), animate-pulse, correct bg opacity for dark theme
 - [ ] 36. Virtualize Long Scrolling Lists
 - [ ] 37. Eliminate Unnecessary Component Re-renders
 - [ ] 38. Cache and Dedupe Data Fetching
