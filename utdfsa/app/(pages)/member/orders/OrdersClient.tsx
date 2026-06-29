@@ -9,7 +9,6 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import QRCode from 'qrcode'
 
 type Ticket = {
   id: string
@@ -65,9 +64,9 @@ function TicketQRImage({ code }: { code: string }) {
   // generate the qr code data url whenever the ticket code changes
   useEffect(() => {
     if (code) {
-      QRCode.toDataURL(code, { width: 240, margin: 2 })
-        .then(setDataUrl)
-        .catch(console.error)
+      import('qrcode').then(({ default: QR }) =>
+        QR.toDataURL(code, { width: 240, margin: 2 }).then(setDataUrl).catch(console.error)
+      )
     }
   }, [code])
 

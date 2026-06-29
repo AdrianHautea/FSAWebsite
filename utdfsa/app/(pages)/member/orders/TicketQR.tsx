@@ -8,7 +8,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import QRCode from 'qrcode'
 
 export default function TicketQR({ code }: { code: string }) {
   // holds the base64 png data url; empty string while the qr is being generated
@@ -16,9 +15,10 @@ export default function TicketQR({ code }: { code: string }) {
 
   // generates the qr image whenever the ticket code changes; runs once on mount
   useEffect(() => {
-    QRCode.toDataURL(code, { width: 200, margin: 2, color: { dark: '#000000', light: '#ffffff' } })
-      .then(setDataUrl)
-      .catch(console.error)
+    import('qrcode').then(({ default: QR }) =>
+      QR.toDataURL(code, { width: 200, margin: 2, color: { dark: '#000000', light: '#ffffff' } })
+        .then(setDataUrl).catch(console.error)
+    )
   }, [code])
 
   if (!dataUrl) {

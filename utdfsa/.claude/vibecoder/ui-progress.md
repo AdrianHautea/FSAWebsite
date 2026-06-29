@@ -34,7 +34,7 @@ Branch: `vibecoder/ui`
 - [x] 28. Format Numbers, Dates, and Currency — upgraded fmt() from `$${toFixed(2)}` to Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}) in EventsPageClient, UpcomingEventsSection, RegisterModal; date helpers already use toLocaleDateString with America/Chicago timezone
 - [x] 29. Add Refined Typographic Details — added text-rendering:optimizeLegibility to body (kerning+ligatures); text-wrap:balance on h1-h4 globally (prevents widow words in headings; graceful fallback); html already has antialiased; JSX uses &apos;/&ldquo; entities correctly
 - [x] 30. Standardize Text Casing and Labels — N/A: casing is intentional and consistent; nav uses CSS uppercase on title-case HTML text (correct for screen readers); badges use CSS uppercase; body/form labels use sentence case; no mixing found
-- [ ] 31. Run a Full Performance Audit
+- [x] 31. Run a Full Performance Audit — top issues: (1) qrcode static import ships to member/officer bundles unnecessarily; (2) FullCalendar ~200KB static import on events page; (3) browser-image-compression static in officer pages; (4) googleapis confirmed server-only ✓; html5-qrcode route-split handles it ✓
 - [ ] 32. Shrink the JavaScript Bundle
 - [ ] 33. Add Route-Based Code Splitting
 - [ ] 34. Optimize and Modernize All Images

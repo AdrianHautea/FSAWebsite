@@ -11,7 +11,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 
-import QRCode from 'qrcode'
 import type { Event } from '@/types/database'
 import Image from 'next/image'
 import DeleteEventModal from './DeleteEventModal'
@@ -521,9 +520,9 @@ function AttendanceQR({ event, onUpdate }: { event: Event; onUpdate: (e: Event) 
   // regenerate the qr image whenever the attendance url changes (e.g. new token issued)
   useEffect(() => {
     if (!attendUrl) return
-    QRCode.toDataURL(attendUrl, { width: 240, margin: 2 })
-      .then(setQrDataUrl)
-      .catch(() => {})
+    import('qrcode').then(({ default: QR }) =>
+      QR.toDataURL(attendUrl, { width: 240, margin: 2 }).then(setQrDataUrl).catch(() => {})
+    )
   }, [attendUrl])
 
   async function patch(fields: Record<string, unknown>) {
