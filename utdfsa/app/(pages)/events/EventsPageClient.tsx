@@ -708,7 +708,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
 
                 {/* date */}
                 <div className="flex items-center gap-2.5 mb-3">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9a9a9a" strokeWidth="1.7">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9a9a9a" strokeWidth="1.8">
                     <rect x="3" y="4.5" width="18" height="16" rx="2.5" />
                     <path d="M3 9h18M8 2.5v4M16 2.5v4" />
                   </svg>
@@ -718,7 +718,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                 {/* only renders when location is set — do not remove this condition */}
                 {event.location && (
                   <div className="flex items-center gap-2.5" style={{ marginBottom: '20px' }}>
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9a9a9a" strokeWidth="1.7">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9a9a9a" strokeWidth="1.8">
                       <path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z" />
                       <circle cx="12" cy="10" r="2.4" />
                     </svg>
@@ -849,7 +849,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                 ) : (
                   // free event — show QR / points / open attendance info
                   <div className="flex items-center justify-center gap-2.5 py-1.5">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7a7a7a" strokeWidth="1.6">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7a7a7a" strokeWidth="1.8">
                       <rect x="3" y="3" width="7" height="7" rx="1" />
                       <rect x="14" y="3" width="7" height="7" rx="1" />
                       <rect x="3" y="14" width="7" height="7" rx="1" />

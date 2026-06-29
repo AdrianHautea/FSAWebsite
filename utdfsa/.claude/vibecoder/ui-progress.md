@@ -11,7 +11,7 @@ Branch: `vibecoder/ui`
 - [x] 5. Standardize the Border Radius Scale — documented Tailwind scale in globals (lg=8/xl=12/2xl=16/3xl=24); replaced rounded-[12px]→xl (onboarding/register/profile/basic-info), [16px]→2xl (membership/events), [17px]→2xl (navbar dropdowns); left intentional design values (13,14,18,20,22px)
 - [x] 6. Strengthen Overall Visual Hierarchy — homepage and events page hierarchy sound; fixed 14 uses of #6f6f6f (4.3:1 fails WCAG AA) → --color-text-muted (#8c8c8c, 6.2:1) in events, archives, privacy, UpcomingEventsSection, RegisterModal
 - [x] 7. Polish All Button Interaction States — added global :focus-visible ring (2px accent-green, offset 3px) covering all interactive elements; added active:scale-[0.98] to primary CTAs (onboarding×3, membership, pamilyas, error, registerModal); hover+active on RegisterModal submit
-- [ ] 8. Design Helpful Empty States
+- [x] 8. Design Helpful Empty States — orders (icon+title+subtitle, fixed rgba contrast violations → semantic tokens), attendance (icon+title+subtitle, --text-dim→secondary), events grid (bare p → icon+title+subtitle); events has no type filter so filter/empty distinction N/A
 - [ ] 9. Unify the App's Iconography
 - [ ] 10. Run a Full Consistency Audit
 - [ ] 11. Audit Mobile and Tablet Breakpoints
