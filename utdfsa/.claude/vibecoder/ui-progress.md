@@ -12,7 +12,7 @@ Branch: `vibecoder/ui`
 - [x] 6. Strengthen Overall Visual Hierarchy — homepage and events page hierarchy sound; fixed 14 uses of #6f6f6f (4.3:1 fails WCAG AA) → --color-text-muted (#8c8c8c, 6.2:1) in events, archives, privacy, UpcomingEventsSection, RegisterModal
 - [x] 7. Polish All Button Interaction States — added global :focus-visible ring (2px accent-green, offset 3px) covering all interactive elements; added active:scale-[0.98] to primary CTAs (onboarding×3, membership, pamilyas, error, registerModal); hover+active on RegisterModal submit
 - [x] 8. Design Helpful Empty States — orders (icon+title+subtitle, fixed rgba contrast violations → semantic tokens), attendance (icon+title+subtitle, --text-dim→secondary), events grid (bare p → icon+title+subtitle); events has no type filter so filter/empty distinction N/A
-- [ ] 9. Unify the App's Iconography
+- [x] 9. Unify the App's Iconography — icons are all custom inline SVG (Lucide-style, 24×24 viewBox); social icons are static SVG files; standardized strokeWidth scale: 2.2@22-24px, 1.8@14-18px, 3.0+@tiny; fixed 1.6/1.7 outliers in UpcomingEventsSection, EventsPageClient, MembershipClient
 - [ ] 10. Run a Full Consistency Audit
 - [ ] 11. Audit Mobile and Tablet Breakpoints
 - [ ] 12. Eliminate Horizontal Scroll on Mobile

@@ -313,7 +313,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
         <div className="flex items-center gap-3 mb-5">
           <span className="font-display font-bold text-[12px] tracking-[0.16em] text-[#9a9a9a] uppercase">Existing Galleries</span>
           <span className="h-px flex-1 bg-white/7" />
-          <span className="text-[12.5px] text-[#6e6e6e] font-medium">{galleries.length} archive{galleries.length !== 1 ? 's' : ''}</span>
+          <span className="text-[12.5px] text-text-muted font-medium">{galleries.length} archive{galleries.length !== 1 ? 's' : ''}</span>
         </div>
 
         {/* gallery list */}
@@ -347,7 +347,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   )}
                   {/* only renders when the gallery has a description — do not remove this condition */}
                   {gallery.description && (
-                    <p className="text-[12.5px] text-[#6e6e6e] font-medium mt-1 line-clamp-1">{gallery.description}</p>
+                    <p className="text-[12.5px] text-text-muted font-medium mt-1 line-clamp-1">{gallery.description}</p>
                   )}
                 </div>
 
@@ -359,7 +359,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                       Published
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-[0.05em] uppercase bg-white/5 text-[#6e6e6e] border border-white/10">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-[0.05em] uppercase bg-white/5 text-text-muted border border-white/10">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#6e6e6e]" />
                       Draft
                     </span>
@@ -451,7 +451,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                         </div>
                         <div>
                           <div className="text-sm font-semibold text-[#d4d4d4]">Click to select a photo</div>
-                          <div className="text-xs text-[#6e6e6e] font-medium mt-0.5">JPEG, PNG, or WEBP · 1:1 square</div>
+                          <div className="text-xs text-text-muted font-medium mt-0.5">JPEG, PNG, or WEBP · 1:1 square</div>
                         </div>
                       </div>
                     )}
@@ -464,7 +464,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                           setCoverPreview(null)
                           if (fileInputRef.current) fileInputRef.current.value = ''
                         }}
-                        className="text-[12px] text-[#6e6e6e] hover:text-[#ef6f6f] font-medium transition-colors"
+                        className="text-[12px] text-text-muted hover:text-[#ef6f6f] font-medium transition-colors"
                       >
                         Remove photo
                       </button>
@@ -483,7 +483,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                       </svg>
                       <span className="font-mono text-[8px] tracking-[0.1em] text-white/30">1:1</span>
                     </div>
-                    <p className="text-[10px] text-[#6e6e6e] font-medium mt-1.5 text-center max-w-[72px]">as shown in archives</p>
+                    <p className="text-[10px] text-text-muted font-medium mt-1.5 text-center max-w-[72px]">as shown in archives</p>
                   </div>
                 </div>
 
@@ -641,7 +641,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                           setEditCoverPreview(null)
                           if (editFileInputRef.current) editFileInputRef.current.value = ''
                         }}
-                        className="text-[12px] text-[#6e6e6e] hover:text-[#ef6f6f] font-medium transition-colors"
+                        className="text-[12px] text-text-muted hover:text-[#ef6f6f] font-medium transition-colors"
                       >
                         Remove new photo
                       </button>
@@ -660,7 +660,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                       </svg>
                       <span className="font-mono text-[8px] tracking-[0.1em] text-white/30">1:1</span>
                     </div>
-                    <p className="text-[10px] text-[#6e6e6e] font-medium mt-1.5 text-center max-w-[72px]">as shown in archives</p>
+                    <p className="text-[10px] text-text-muted font-medium mt-1.5 text-center max-w-[72px]">as shown in archives</p>
                   </div>
                 </div>
                 <button

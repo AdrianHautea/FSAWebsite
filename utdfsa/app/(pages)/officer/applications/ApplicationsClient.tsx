@@ -278,7 +278,7 @@ function ApplicationDetailModal({
               </h2>
               <p className="text-[13.5px] text-[#8c8c8c] font-medium mt-0.5">{m.email}</p>
               {(m.year || m.major) && (
-                <p className="text-[12.5px] text-[#6e6e6e] font-medium mt-0.5">
+                <p className="text-[12.5px] text-text-muted font-medium mt-0.5">
                   {[m.year, m.major].filter(Boolean).join(' · ')}
                 </p>
               )}
@@ -311,7 +311,7 @@ function ApplicationDetailModal({
                 if (!av.days.length && !av.times) return null
                 return (
                   <div key={key} className="col-span-2">
-                    <dt className="text-[10.5px] font-bold text-[#6e6e6e] uppercase tracking-[0.08em] mb-1.5">
+                    <dt className="text-[10.5px] font-bold text-text-muted uppercase tracking-[0.08em] mb-1.5">
                       {questionLabels[key]}
                     </dt>
                     <dd className="text-[13.5px] text-[#d4d4d4]">
@@ -331,7 +331,7 @@ function ApplicationDetailModal({
 
               return (
                 <div key={key} className={isWide ? 'col-span-2' : 'col-span-1'}>
-                  <dt className="text-[10.5px] font-bold text-[#6e6e6e] uppercase tracking-[0.08em] mb-1.5">
+                  <dt className="text-[10.5px] font-bold text-text-muted uppercase tracking-[0.08em] mb-1.5">
                     {questionLabels[key]}
                   </dt>
                   <dd className="text-[13.5px] text-[#d4d4d4] font-medium whitespace-pre-wrap break-words">{display}</dd>
@@ -354,7 +354,7 @@ function ApplicationDetailModal({
               <div className="flex items-center gap-2">
                 <button
                   onClick={onClose}
-                  className="text-sm text-[#6e6e6e] hover:text-[#cfcfcf] font-medium transition-colors"
+                  className="text-sm text-text-muted hover:text-[#cfcfcf] font-medium transition-colors"
                 >
                   Close
                 </button>
@@ -395,7 +395,7 @@ function ApplicationDetailModal({
                   </button>
                   <button
                     onClick={onClose}
-                    className="text-sm text-[#6e6e6e] hover:text-[#cfcfcf] font-medium transition-colors"
+                    className="text-sm text-text-muted hover:text-[#cfcfcf] font-medium transition-colors"
                   >
                     Close
                   </button>
@@ -419,7 +419,7 @@ function ApplicationDetailModal({
                   ))}
                 </select>
                 {pamilyaSaving === 'saving' && (
-                  <span className="text-[11.5px] text-[#6e6e6e] font-medium">Saving…</span>
+                  <span className="text-[11.5px] text-text-muted font-medium">Saving…</span>
                 )}
                 {pamilyaSaving === 'saved' && (
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5fcf8f" strokeWidth={2.4}>
@@ -455,7 +455,7 @@ function AdingCard({ app, onOpen, onDelete }: { app: AdingApplication; onOpen: (
           {statusBadge(app.status)}
         </div>
         <p className="text-[12.5px] text-[#8c8c8c] font-medium line-clamp-1">{m.email}</p>
-        <p className="text-[12px] text-[#6e6e6e] font-medium line-clamp-1 mt-0.5">
+        <p className="text-[12px] text-text-muted font-medium line-clamp-1 mt-0.5">
           {[m.year, m.major].filter(Boolean).join(' · ')}
         </p>
         {m.pamilya && (
@@ -490,7 +490,7 @@ function KuyateCard({ app, onOpen, onDelete }: { app: KuyateApplication; onOpen:
           {statusBadge(app.status)}
         </div>
         <p className="text-[12.5px] text-[#8c8c8c] font-medium line-clamp-1">{m.email}</p>
-        <p className="text-[12px] text-[#6e6e6e] font-medium line-clamp-1 mt-0.5">
+        <p className="text-[12px] text-text-muted font-medium line-clamp-1 mt-0.5">
           {[m.year, m.major].filter(Boolean).join(' · ')}
         </p>
         <div className="mt-auto pt-3 border-t border-white/6 flex items-center justify-between">
@@ -524,7 +524,7 @@ function PaginationBar({
   const end = Math.min(page * ITEMS_PER_PAGE, total)
   return (
     <div className="flex items-center justify-between mt-6">
-      <span className="text-[13px] text-[#6e6e6e] font-medium">
+      <span className="text-[13px] text-text-muted font-medium">
         Showing {start}–{end} of {total} application{total !== 1 ? 's' : ''}
       </span>
       <div className="flex gap-2">
@@ -860,7 +860,7 @@ export default function ApplicationsClient({
               className={`px-6 py-3 text-[14px] font-bold transition-colors relative ${
                 tab === t
                   ? 'text-white'
-                  : 'text-[#6e6e6e] hover:text-[#a0a0a0]'
+                  : 'text-text-muted hover:text-[#a0a0a0]'
               }`}
             >
               {t === 'ading' ? 'Ading' : 'Kuyate'}
@@ -1120,7 +1120,7 @@ export default function ApplicationsClient({
                 <strong className="text-white">{deleteTarget.applicantName}</strong>
                 &apos;s {deleteTarget.type} application and reset their onboarding so they can reapply.
               </p>
-              <p className="text-[13px] text-[#6e6e6e] font-medium mb-5 leading-relaxed">
+              <p className="text-[13px] text-text-muted font-medium mb-5 leading-relaxed">
                 This action cannot be undone. The member will need to go through onboarding again to submit a new application.
               </p>
               <p className="text-[10.5px] font-bold tracking-[0.07em] uppercase text-[#7e7e7e] mb-1">

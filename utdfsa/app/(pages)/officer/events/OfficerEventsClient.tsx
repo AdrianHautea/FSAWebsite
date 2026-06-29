@@ -311,7 +311,7 @@ function EventForm({
             <input type="datetime-local" value={form.registration_closes_at}
               onChange={e => set('registration_closes_at', e.target.value)}
               className={inputCls} style={{ colorScheme: 'dark' }} />
-            <p className="text-[12px] text-[#6e6e6e] font-medium mt-2 leading-relaxed">
+            <p className="text-[12px] text-text-muted font-medium mt-2 leading-relaxed">
               Optional. After this date and time, the registration button will be hidden for members. Leave blank to allow registration until the event date.
             </p>
           </div>
@@ -337,7 +337,7 @@ function EventForm({
           <div className="border-t border-white/7 pt-5">
             <div className="flex flex-col gap-1 mb-4">
               <p className="text-[11px] font-bold tracking-[0.1em] uppercase text-[#9a9a9a]">Ticketing</p>
-              <p className="text-[12.5px] text-[#6e6e6e] font-medium">
+              <p className="text-[12.5px] text-text-muted font-medium">
                 Members are limited to one ticket. Non-members can buy multiple.
               </p>
             </div>
@@ -426,7 +426,7 @@ function EventForm({
           <p className="text-[11px] font-bold tracking-[0.1em] uppercase text-[#9a9a9a] mb-1">Attendance</p>
           {hasPoints(form.event_type) ? (
             <>
-              <p className="text-[12.5px] text-[#6e6e6e] font-medium mb-4">
+              <p className="text-[12.5px] text-text-muted font-medium mb-4">
                 {isHybrid(form.event_type)
                   ? 'Members earn goodphil points by scanning the attendance QR in addition to buying a ticket.'
                   : 'Members scan the attendance QR code to earn goodphil points. Open/close the QR in the edit panel after saving.'}
@@ -439,7 +439,7 @@ function EventForm({
               </div>
             </>
           ) : (
-            <p className="text-[12.5px] text-[#6e6e6e] font-medium">
+            <p className="text-[12.5px] text-text-muted font-medium">
               Attendance is tracked via QR code. Open/close the QR in the edit panel after saving.
               No goodphil points are awarded for this event type.
             </p>
@@ -604,7 +604,7 @@ function AttendanceQR({ event, onUpdate }: { event: Event; onUpdate: (e: Event) 
       </div>
 
       {!isHybrid(event.event_type) && (
-        <p className="text-[12px] italic text-[#6e6e6e] font-medium mt-3">
+        <p className="text-[12px] italic text-text-muted font-medium mt-3">
           Use this to control when members can scan the attendance QR. Open it at the start of the event, close it when attendance ends.
         </p>
       )}
@@ -614,7 +614,7 @@ function AttendanceQR({ event, onUpdate }: { event: Event; onUpdate: (e: Event) 
           <img src={qrDataUrl} alt="Attendance QR" width={120} height={120}
             className="rounded-xl border border-white/10 shrink-0" />
           {event.attend_qr_expires_at && new Date(event.attend_qr_expires_at) > new Date() && (
-            <p className="text-[12px] text-[#6e6e6e] font-medium mt-2">
+            <p className="text-[12px] text-text-muted font-medium mt-2">
               Auto-closes {fmtDateTime(event.attend_qr_expires_at)}
             </p>
           )}
@@ -713,7 +713,7 @@ function CoverPhotoUpload({ event, onUpdate }: { event: Event; onUpdate: (e: Eve
                 </svg>
               </div>
               <div className="text-sm font-semibold text-[#d4d4d4]">Click to upload cover photo</div>
-              <div className="text-xs text-[#6e6e6e] font-medium">PNG or JPG · 4:5 portrait</div>
+              <div className="text-xs text-text-muted font-medium">PNG or JPG · 4:5 portrait</div>
             </div>
           )}
 
@@ -740,7 +740,7 @@ function CoverPhotoUpload({ event, onUpdate }: { event: Event; onUpdate: (e: Eve
             </svg>
             <span className="font-mono text-[8px] tracking-[0.1em] text-white/30">4:5</span>
           </div>
-          <p className="text-[10px] text-[#6e6e6e] font-medium mt-1.5 text-center max-w-[100px]">as shown on event cards</p>
+          <p className="text-[10px] text-text-muted font-medium mt-1.5 text-center max-w-[100px]">as shown on event cards</p>
         </div>
       </div>
 
@@ -822,7 +822,7 @@ function PendingCoverPhotoUpload({ onChange }: { onChange: (file: File | null) =
                 </svg>
               </div>
               <div className="text-sm font-semibold text-[#d4d4d4]">Click to upload cover photo</div>
-              <div className="text-xs text-[#6e6e6e] font-medium">PNG or JPG · recommended 4:5 portrait</div>
+              <div className="text-xs text-text-muted font-medium">PNG or JPG · recommended 4:5 portrait</div>
             </div>
           )}
 
@@ -848,7 +848,7 @@ function PendingCoverPhotoUpload({ onChange }: { onChange: (file: File | null) =
             </svg>
             <span className="font-mono text-[8px] tracking-[0.1em] text-white/30">4:5</span>
           </div>
-          <p className="text-[10px] text-[#6e6e6e] font-medium mt-1.5 text-center max-w-[100px]">as shown on event cards</p>
+          <p className="text-[10px] text-text-muted font-medium mt-1.5 text-center max-w-[100px]">as shown on event cards</p>
         </div>
       </div>
 
@@ -964,7 +964,7 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
         <div className="flex items-center gap-3 mb-5">
           <span className="font-display font-bold text-[12px] tracking-[0.16em] text-[#9a9a9a] uppercase">Existing Events</span>
           <span className="h-px flex-1 bg-white/7" />
-          <span className="text-[12.5px] text-[#6e6e6e] font-medium">{events.length} event{events.length !== 1 ? 's' : ''}</span>
+          <span className="text-[12.5px] text-text-muted font-medium">{events.length} event{events.length !== 1 ? 's' : ''}</span>
         </div>
 
         {/* event list */}

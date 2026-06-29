@@ -149,7 +149,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
     'disabled:opacity-50 disabled:cursor-not-allowed',
   ].join(' ')
 
-  const labelCls = 'block font-display font-bold text-[10px] uppercase tracking-widest mb-1.5'
+  const labelCls = 'block font-display font-bold text-[11px] uppercase tracking-widest mb-1.5'
 
   return (
     <>
