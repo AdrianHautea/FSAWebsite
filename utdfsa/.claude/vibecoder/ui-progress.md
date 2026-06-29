@@ -47,7 +47,7 @@ Branch: `vibecoder/ui`
 - [x] 41. Debounce and Throttle Costly Handlers — N/A: scroll handler uses passive:true; all search filters in-memory data (no API, debounce adds latency not saves); QR scan has built-in debounce via overlay state
 - [x] 42. Optimize the Critical Rendering Path — N/A: all fonts display:swap; preconnect Supabase+Stripe; dns-prefetch Stripe JS; member data server-fetched (no hydration waterfall); Analytics+SpeedInsights non-blocking
 - [x] 43. Audit Third-Party Script Performance — N/A: Stripe uses server-side checkout redirect (no client JS); Vercel Analytics+SpeedInsights are async Next.js modules; Supabase server-only; FullCalendar dynamic()+ssr:false; zero render-blocking third-party scripts
-- [ ] 44. Load Critical Content First
+- [x] 44. Load Critical Content First — N/A: server components stream HTML with data pre-loaded; LCP images have preload; UpcomingEventsSection gets events as prop (no client waterfall); loading.tsx Suspense on data-heavy routes; homepage ISR revalidate=3600
 - [ ] 45. Run a Full Accessibility Audit
 - [ ] 46. Make Everything Keyboard Navigable
 - [ ] 47. Add Clear Visible Focus Indicators
