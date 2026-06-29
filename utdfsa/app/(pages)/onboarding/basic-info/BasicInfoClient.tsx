@@ -124,6 +124,7 @@ export default function BasicInfoClient({ initial }: Props) {
                 </label>
                 <input
                   type="text"
+                  autoComplete="given-name"
                   value={form.first_name}
                   onChange={e => set('first_name', toTitleCase(e.target.value))}
                   className={fieldCls}
@@ -136,6 +137,7 @@ export default function BasicInfoClient({ initial }: Props) {
                 </label>
                 <input
                   type="text"
+                  autoComplete="family-name"
                   value={form.last_name}
                   onChange={e => set('last_name', toTitleCase(e.target.value))}
                   className={fieldCls}
@@ -149,6 +151,7 @@ export default function BasicInfoClient({ initial }: Props) {
               </label>
               <input
                 type="tel"
+                autoComplete="tel"
                 value={form.phone}
                 onChange={e => set('phone', formatPhone(e.target.value))}
                 className={fieldCls}

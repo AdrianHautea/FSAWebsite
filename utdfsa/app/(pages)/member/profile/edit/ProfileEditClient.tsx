@@ -129,6 +129,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
               <input
                 id="first-name"
                 type="text"
+                autoComplete="given-name"
                 value={form.first_name}
                 onChange={e => set('first_name', toTitleCase(e.target.value))}
                 className={fieldCls}
@@ -140,6 +141,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
               <input
                 id="last-name"
                 type="text"
+                autoComplete="family-name"
                 value={form.last_name}
                 onChange={e => set('last_name', toTitleCase(e.target.value))}
                 className={fieldCls}
@@ -158,6 +160,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
             <input
               id="contact-email"
               type="email"
+              autoComplete="email"
               value={form.contact_email}
               onChange={e => set('contact_email', e.target.value)}
               className={fieldCls}
@@ -171,6 +174,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
             <input
               id="phone"
               type="tel"
+              autoComplete="tel"
               value={form.phone ?? ''}
               onChange={e => set('phone', formatPhone(e.target.value))}
               className={fieldCls}

@@ -306,6 +306,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                         id={`email-confirm-${i}`}
                         required
                         type="email"
+                        autoComplete="off"
                         value={ticket.emailConfirm}
                         onChange={e => {
                           updateTicket(i, 'emailConfirm', e.target.value)
@@ -319,7 +320,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
                             setEmailErrors(prev => { const n = [...prev]; n[i] = 'Email addresses do not match.'; return n })
                           }
                         }}
-                        className={fieldCls}
+                        className={`${fieldCls}${emailErrors[i] ? ' !border-red-400' : ''}`}
                         placeholder="Confirm email address"
                       />
                       {/* only renders when this slot has a mismatch error */}
