@@ -778,7 +778,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 maxLength={300}
                 required
               />
-              {adingForm.hobbies.length > 240 && (
+              {adingForm.hobbies.length > 0 && (
                 <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.hobbies.length} / 300</p>
               )}
             </div>
@@ -868,7 +868,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 maxLength={500}
                 required
               />
-              {adingForm.pam_vibe.length > 400 && (
+              {adingForm.pam_vibe.length > 0 && (
                 <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.pam_vibe.length} / 500</p>
               )}
             </div>
@@ -930,7 +930,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 maxLength={200}
                 required
               />
-              {adingForm.availability.times.length > 160 && (
+              {adingForm.availability.times.length > 0 && (
                 <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.availability.times.length} / 200</p>
               )}
             </div>
@@ -954,7 +954,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 maxLength={500}
                 required
               />
-              {adingForm.thoughts_on_drinking.length > 400 && (
+              {adingForm.thoughts_on_drinking.length > 0 && (
                 <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.thoughts_on_drinking.length} / 500</p>
               )}
             </div>
@@ -971,7 +971,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 maxLength={500}
                 required
               />
-              {adingForm.dislikes.length > 400 && (
+              {adingForm.dislikes.length > 0 && (
                 <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.dislikes.length} / 500</p>
               )}
             </div>
@@ -989,7 +989,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 maxLength={500}
                 required
               />
-              {adingForm.pam_dealbreakers.length > 400 && (
+              {adingForm.pam_dealbreakers.length > 0 && (
                 <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.pam_dealbreakers.length} / 500</p>
               )}
             </div>
@@ -1007,7 +1007,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 maxLength={500}
                 required
               />
-              {adingForm.pam_incompatibilities.length > 400 && (
+              {adingForm.pam_incompatibilities.length > 0 && (
                 <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.pam_incompatibilities.length} / 500</p>
               )}
             </div>
@@ -1078,7 +1078,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 className={textareaCls}
                 maxLength={1000}
               />
-              {adingForm.additional_notes.length > 800 && (
+              {adingForm.additional_notes.length > 0 && (
                 <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{adingForm.additional_notes.length} / 1000</p>
               )}
             </div>
@@ -1303,7 +1303,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
                 className={textareaCls}
                 maxLength={1000}
               />
-              {kuyateForm.additional_notes.length > 800 && (
+              {kuyateForm.additional_notes.length > 0 && (
                 <p className="font-sans text-xs text-[#7a7a7a] text-right mt-1">{kuyateForm.additional_notes.length} / 1000</p>
               )}
             </div>
