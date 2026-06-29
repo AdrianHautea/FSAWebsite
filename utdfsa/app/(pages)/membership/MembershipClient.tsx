@@ -164,7 +164,7 @@ export default function MembershipClient({
     if (data.url) {
       window.location.href = data.url
     } else {
-      setError(data.error ?? 'something went wrong, please try again')
+      setError(data.error ?? 'Unable to start checkout — please try again.')
       setLoading(false)
     }
   }

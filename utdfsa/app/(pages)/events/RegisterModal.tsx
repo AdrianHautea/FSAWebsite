@@ -127,7 +127,7 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error ?? 'Something went wrong.')
+        setError(data.error ?? 'Registration failed — please try again.')
         return
       }
 

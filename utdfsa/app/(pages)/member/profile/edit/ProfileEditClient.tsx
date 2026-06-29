@@ -93,7 +93,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
     const data = await res.json()
 
     if (!res.ok) {
-      setError(data.error ?? 'Something went wrong')
+      setError(data.error ?? 'Failed to save profile — please try again.')
       setLoading(false)
       return
     }

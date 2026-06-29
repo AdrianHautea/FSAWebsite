@@ -40,23 +40,23 @@ export default function BasicInfoClient({ initial }: Props) {
 
   async function handleSubmit() {
     if (!form.first_name.trim() || !form.last_name.trim()) {
-      setError('first and last name are required')
+      setError('First and last name are required')
       return
     }
     if (!form.phone?.trim()) {
-      setError('phone number is required')
+      setError('Phone number is required')
       return
     }
     if (form.phone.replace(/\D/g, '').length < 10) {
-      setError('a valid phone number is required — e.g. (214) 333-4444')
+      setError('Enter a valid 10-digit phone number — e.g. (214) 333-4444')
       return
     }
     if (!form.year) {
-      setError('year is required — please select an option')
+      setError('Please select your year')
       return
     }
     if (!form.major.trim()) {
-      setError('major is required')
+      setError('Major is required')
       return
     }
     setLoading(true)
@@ -72,7 +72,7 @@ export default function BasicInfoClient({ initial }: Props) {
     const data = await res.json()
 
     if (!res.ok) {
-      setError(data.error ?? 'something went wrong, please try again')
+      setError(data.error ?? 'Failed to save — please try again.')
       setLoading(false)
       return
     }

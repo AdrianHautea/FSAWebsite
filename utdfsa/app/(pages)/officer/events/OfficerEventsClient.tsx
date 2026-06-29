@@ -264,7 +264,7 @@ function EventForm({
     try {
       await onSubmit(form)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'An error occurred.')
+      setError(err instanceof Error ? err.message : 'Failed to save event — please try again.')
     } finally {
       setSaving(false)
     }

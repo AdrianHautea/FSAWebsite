@@ -197,7 +197,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
     const res = await fetch('/api/onboarding/not-interested', { method: 'POST' })
     const data = await res.json()
     if (!res.ok) {
-      setError(data.error ?? 'something went wrong, please try again')
+      setError(data.error ?? 'Something went wrong — please try again.')
       setLoading(false)
       return
     }
@@ -328,7 +328,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
     const data = await res.json()
 
     if (!res.ok) {
-      setError(data.error ?? 'something went wrong, please try again')
+      setError(data.error ?? 'Something went wrong — please try again.')
       setLoading(false)
       return
     }
