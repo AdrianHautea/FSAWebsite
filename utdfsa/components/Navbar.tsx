@@ -146,10 +146,6 @@ export default function Navbar({ initialMember }: NavbarProps) {
   const pathname = usePathname()
 
   const navLinkClass = "font-display font-semibold text-[14px] text-white uppercase tracking-wider hover:opacity-70 transition-opacity"
-  function activeLink(path: string) {
-    const isActive = path === '/' ? pathname === '/' : pathname.startsWith(path)
-    return `${navLinkClass}${isActive ? ' underline underline-offset-4 decoration-2' : ''}`
-  }
   const dropdownItemClass = "block px-5 py-3 text-sm text-white font-display font-semibold uppercase tracking-wide hover:bg-white/10 transition-colors"
   const mobileLinkClass = "block py-4 px-6 text-lg font-display font-semibold text-white uppercase tracking-wider hover:bg-white/10 transition-colors"
   const mobileSubLinkClass = "block py-3 px-12 text-base font-display font-semibold text-white uppercase tracking-wider hover:bg-white/10 transition-colors"
@@ -185,14 +181,14 @@ export default function Navbar({ initialMember }: NavbarProps) {
         {/* Desktop nav links — hidden below xl breakpoint */}
         <ul className="hidden xl:flex gap-8 items-center">
           {/* route: /about — About Us page — do not change this path */}
-          <li><Link href="/about" className={activeLink('/about')} aria-current={pathname === '/about' ? 'page' : undefined}>About Us</Link></li>
+          <li><Link href="/about" className={navLinkClass} aria-current={pathname === '/about' ? 'page' : undefined}>About Us</Link></li>
           {/* route: /pamilyas — Pamilyas info page — do not change this path */}
-          <li><Link href="/pamilyas" className={activeLink('/pamilyas')} aria-current={pathname === '/pamilyas' ? 'page' : undefined}>Pamilyas</Link></li>
+          <li><Link href="/pamilyas" className={navLinkClass} aria-current={pathname === '/pamilyas' ? 'page' : undefined}>Pamilyas</Link></li>
 
           <li className="relative" ref={goodphilRef}>
             <button
               onClick={() => setGoodphilOpen(prev => !prev)}
-              className={`${activeLink('/goodphil')} flex items-center gap-1`}
+              className={`${navLinkClass} flex items-center gap-1`}
               aria-expanded={goodphilOpen}
               aria-haspopup="true"
             >
@@ -219,9 +215,9 @@ export default function Navbar({ initialMember }: NavbarProps) {
           </li>
 
           {/* route: /archives — public photo archives page — do not change this path */}
-          <li><Link href="/archives" className={activeLink('/archives')} aria-current={pathname === '/archives' ? 'page' : undefined}>Archives</Link></li>
+          <li><Link href="/archives" className={navLinkClass} aria-current={pathname === '/archives' ? 'page' : undefined}>Archives</Link></li>
           {/* route: /events — public events listing page — do not change this path */}
-          <li><Link href="/events" className={activeLink('/events')} aria-current={pathname === '/events' ? 'page' : undefined}>Events</Link></li>
+          <li><Link href="/events" className={navLinkClass} aria-current={pathname === '/events' ? 'page' : undefined}>Events</Link></li>
 
           {/* only renders the avatar/dropdown when a member is signed in; otherwise shows the Sign In button — do not remove this condition */}
           {member ? (

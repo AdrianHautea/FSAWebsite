@@ -73,8 +73,8 @@ export default function AttendanceClient({ member, attendanceRecords, meetingCou
       <div
         className="rounded-2xl p-6 mb-8"
         style={{
-          background: 'var(--color-surface-raised)',
-          border: '1px solid var(--color-border-subtle)',
+          background: '#1a1a1a',
+          border: '1px solid rgba(255,255,255,0.07)',
         }}
       >
         {/* Header row: big points number + eligibility badge */}

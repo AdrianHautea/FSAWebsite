@@ -66,7 +66,7 @@ export default async function Home() {
 
           {/* Title and description */}
           <div className="w-full flex flex-col">
-            <h2 className="font-display font-black text-[var(--font-size-heading)] text-white leading-none tracking-[-3.2px] mb-6 lg:mb-8">
+            <h2 className="font-display font-black text-[37px] md:text-[54px] text-white leading-none tracking-[-3.2px] mb-6 lg:mb-8">
               WHO ARE{'\n'}WE?
             </h2>
             <p className="font-sans text-[16px] md:text-[20px] text-white/60 leading-relaxed max-w-prose">
@@ -93,7 +93,7 @@ export default async function Home() {
       {/* ── MISSION STATEMENT ─────────────────────────────────────── */}
       <section className="bg-section-bg px-4 sm:px-8 lg:px-16 py-14 sm:py-20 lg:py-24 min-h-[400px] lg:min-h-[575px]">
         <div className="max-w-[1241px] mx-auto text-center">
-          <h2 className="font-display font-black text-[var(--font-size-hero)] text-white tracking-[-2px] sm:tracking-[-4.8px] leading-none mb-10 lg:mb-16">
+          <h2 className="font-display font-black text-[36px] sm:text-[52px] lg:text-[64px] xl:text-[96px] text-white tracking-[-2px] sm:tracking-[-3px] lg:tracking-[-4.8px] leading-none mb-10 lg:mb-16">
             MISSION STATEMENT
           </h2>
           <div className="font-sans text-[16px] sm:text-[18px] xl:text-[24px] text-white/60 leading-relaxed max-w-[1100px] mx-auto space-y-6">
