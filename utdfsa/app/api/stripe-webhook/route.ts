@@ -147,8 +147,15 @@ export async function POST(req: Request) {
     if (type === 'event_ticket') {
       const { registration_id } = session.metadata ?? {}
 
+      if (!registration_id) {
+        console.error('[webhook] event_ticket missing registration_id in session metadata', session.id)
+        return NextResponse.json({ error: 'Missing registration_id' }, { status: 400 })
+      }
+
       // mark registration as paid — fill all payment tracking fields
-      await supabase
+      // .select() + error check mirrors the membership path so a silent DB failure
+      // returns 500 and lets Stripe retry rather than losing the fulfillment event
+      const { error: fulfillmentError } = await supabase
         .from('event_registrations')
         .update({
           payment_status: 'paid',
@@ -165,6 +172,11 @@ export async function POST(req: Request) {
           },
         })
         .eq('id', registration_id)
+
+      if (fulfillmentError) {
+        console.error('[webhook] event_ticket DB write failed for registration', registration_id, fulfillmentError)
+        return NextResponse.json({ error: 'DB write failed' }, { status: 500 })
+      }
 
       // ── send QR code emails ──────────────────────────────────────────────────
       // Guard: env vars must be present, otherwise log and skip

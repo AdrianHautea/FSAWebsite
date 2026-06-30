@@ -22,9 +22,10 @@ export async function GET() {
   const supabase = await createUserClient()
 
   // respects rls — only returns published galleries visible to everyone
+  // explicit columns: excludes created_by (officer uuid) from the public response
   const { data: galleries, error } = await supabase
     .from('galleries')
-    .select('*')
+    .select('id, title, cover_photo_url, google_photos_url, description, semester, year, is_published, created_at')
     .eq('is_published', true)
     .order('year', { ascending: false })
     .order('created_at', { ascending: false })

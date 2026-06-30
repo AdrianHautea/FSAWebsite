@@ -398,12 +398,6 @@ function ApplicationDetailModal({
                 Delete
               </button>
               <div className="flex items-center gap-2">
-                <button
-                  onClick={onClose}
-                  className="text-sm text-text-muted hover:text-[#cfcfcf] font-medium transition-colors"
-                >
-                  Close
-                </button>
                 <div className="flex gap-1.5">
                   <button
                     onClick={() => onStatusChange(application.id, 'accepted')}
@@ -438,12 +432,6 @@ function ApplicationDetailModal({
                     className="text-[12px] font-semibold text-[#ef6f6f]/60 border border-[#ef6f6f]/25 hover:border-[#ef6f6f]/55 hover:text-[#ef6f6f]/90 rounded-[9px] px-2.5 py-1 transition-colors"
                   >
                     Delete
-                  </button>
-                  <button
-                    onClick={onClose}
-                    className="text-sm text-text-muted hover:text-[#cfcfcf] font-medium transition-colors"
-                  >
-                    Close
                   </button>
                 </div>
                 <StatusButtons

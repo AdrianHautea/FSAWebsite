@@ -30,9 +30,10 @@ export async function POST(req: Request) {
 
   // ── auth check ────────────────────────────────────────────────────────────
 
-  // respects rls — fetch the caller's own member row to check role; returns 403 if not officer
-  // verify officer role
-  const { data: officer } = await supabase
+  // bypass rls — admin client needed to read role from members table (matches every other officer route)
+  const admin = createAdminClient()
+
+  const { data: officer } = await admin
     .from('members')
     .select('id, role')
     .eq('email', user.email!)
@@ -52,9 +53,6 @@ export async function POST(req: Request) {
   const { qr_code } = parsed.data
 
   // ── ticket lookup ─────────────────────────────────────────────────────────
-
-  // bypass rls — officer action, user client would be blocked
-  const admin = createAdminClient()
 
   // find the ticket by qr_code and join payment status + event name in one query
   // find the ticket
