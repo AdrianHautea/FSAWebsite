@@ -21,10 +21,13 @@ export async function GET(request: Request) {
 
   // only apply global scope when the request comes from our own origin;
   // cross-origin GET requests (potential CSRF) fall back to local scope so they can
-  // at most log out this browser — not every session across all devices
-  const referer = request.headers.get('referer') ?? ''
+  // at most log out this browser — not every session across all devices.
+  // parse the Referer to its origin before comparing (startsWith is a prefix bypass).
+  const refererHeader = request.headers.get('referer') ?? ''
   const requestOrigin = request.headers.get('origin') ?? ''
-  const isSameOrigin = referer.startsWith(origin) || requestOrigin === origin
+  let refererOrigin = ''
+  try { if (refererHeader) refererOrigin = new URL(refererHeader).origin } catch { /* invalid referer */ }
+  const isSameOrigin = refererOrigin === origin || requestOrigin === origin
   await supabase.auth.signOut({ scope: isSameOrigin ? 'global' : 'local' })
 
   const response = NextResponse.redirect(`${origin}/login`)
