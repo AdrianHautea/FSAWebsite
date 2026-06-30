@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
   // external image sources (google profile photos, s3 cover photos) are permitted via the img-src CSP rule in headers() below
   // do not remove the googleusercontent.com entry from the CSP — navbar avatar uses it
   images: {
-    qualities: [75, 85, 90, 95],
+    qualities: [75, 80, 85, 90, 95],
     remotePatterns: [
       {
         protocol: 'https',

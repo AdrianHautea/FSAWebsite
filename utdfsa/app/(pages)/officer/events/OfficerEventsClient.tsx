@@ -314,7 +314,7 @@ function EventForm({
         </div>
 
         {(form.event_type === 'Party' || form.event_type === 'Other') && (
-          <div className="col-span-2 min-w-0 overflow-hidden">
+          <div className="col-span-2 min-w-0">
             <label className={labelCls}>Registration Closes At</label>
             <input type="datetime-local" value={form.registration_closes_at}
               onChange={e => set('registration_closes_at', e.target.value)}
@@ -401,7 +401,7 @@ function EventForm({
                     onChange={e => set('eb_price_dollars_nonmembers', e.target.value)}
                     className={inputCls} placeholder="12.00" />
                 </div>
-                <div className="col-span-2 min-w-0 overflow-hidden">
+                <div className="col-span-2 min-w-0">
                   <label className={labelCls}>Early Bird Deadline</label>
                   <input type="datetime-local" value={form.eb_deadline}
                     onChange={e => set('eb_deadline', e.target.value)}

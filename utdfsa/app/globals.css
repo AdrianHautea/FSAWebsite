@@ -296,6 +296,19 @@ h1, h2, h3, h4 {
   background-position: right 13px center;
 }
 
+/* datetime-local controls have an intrinsic min-width on mobile WebKit that
+   overflows their w-full container; release it so they respect the box */
+input[type="datetime-local"] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
+  max-width: 100%;
+}
+input[type="datetime-local"]::-webkit-date-and-time-value {
+  text-align: left;
+  margin: 0;
+}
+
 /* scrollbar for this-week strip */
 .tw-scroll::-webkit-scrollbar { height: 8px; }
 .tw-scroll::-webkit-scrollbar-track { background: transparent; }

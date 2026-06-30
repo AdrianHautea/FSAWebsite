@@ -25,7 +25,7 @@ export default function ModernPage() {
             fill
             className="object-cover object-center"
             preload
-            quality={90}
+            quality={80}
             sizes="100vw"
           />
         </div>
