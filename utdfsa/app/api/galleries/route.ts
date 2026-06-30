@@ -154,6 +154,7 @@ export async function POST(request: NextRequest) {
   const buffer = Buffer.from(await coverFile.arrayBuffer())
 
   if (!imageMagicBytesMatch(coverFile.type, buffer)) {
+    console.warn('[security] magic-bytes mismatch on cover upload', { route: '/api/galleries', declaredType: coverFile.type, ts: new Date().toISOString() })
     return NextResponse.json({ error: 'File content does not match declared image type.' }, { status: 400 })
   }
 

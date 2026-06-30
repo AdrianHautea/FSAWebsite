@@ -28,7 +28,9 @@ export async function GET(request: Request) {
   let refererOrigin = ''
   try { if (refererHeader) refererOrigin = new URL(refererHeader).origin } catch { /* invalid referer */ }
   const isSameOrigin = refererOrigin === origin || requestOrigin === origin
-  await supabase.auth.signOut({ scope: isSameOrigin ? 'global' : 'local' })
+  const scope = isSameOrigin ? 'global' : 'local'
+  console.info('[security] logout', { scope, isSameOrigin, ts: new Date().toISOString() })
+  await supabase.auth.signOut({ scope })
 
   const response = NextResponse.redirect(`${origin}/login`)
   return response

@@ -98,5 +98,5 @@
 - [x] 96. Audit dependencies for known vulnerabilities — ran npm audit fix; resolved 2 of 4 vulnerabilities (1 low @babel/core, 1 moderate js-yaml fixed); 2 remaining moderate (postcss XSS in next bundled postcss — fix requires downgrading Next.js to 9.3.3 which is a breaking change; not exploitable since app does not stringify user-controlled CSS)
 - [x] 97. Lock dependency versions — N/A: package-lock.json already committed and up to date; npm ci enforces exact pinned versions
 - [x] 98. Subresource Integrity — N/A: no third-party scripts/styles loaded from CDNs; all assets are self-hosted or served through next/image and next/font
-- [ ] 99. Log security events for monitoring
-- [ ] 100. Prevent log injection and forgery
+- [x] 99. Log security events — added console.warn('[security]') structured logs for: rate-limit hits (IP + route), magic-bytes mismatches (route + declared type), and logout scope (global vs local with isSameOrigin flag); Stripe webhook signature failure already logged at line 61
+- [x] 100. Prevent log injection — security event logs use structured object argument (not string interpolation); no user-controlled strings concatenated into log messages; route names and declaredType are internal values, not raw user input

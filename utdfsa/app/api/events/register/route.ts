@@ -28,6 +28,7 @@ export async function POST(req: Request) {
   const headerStore = await headers()
   const ip = headerStore.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
   if (isRateLimited(ip)) {
+    console.warn('[security] rate-limit hit', { route: '/api/events/register', ip, ts: new Date().toISOString() })
     return NextResponse.json({ error: 'Too many requests' }, {
       status: 429,
       headers: { 'Retry-After': '60' },
