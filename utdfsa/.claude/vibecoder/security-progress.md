@@ -11,7 +11,7 @@
 - [x] 9. Compare credentials in constant time — N/A: no credential comparison in app code
 - [x] 10. Harden the remember-me feature — N/A: no custom remember-me; Supabase manages persistent sessions
 - [x] 11. Add bot protection to forms — added honeypot field (hp) to eventRegisterSchema; non-empty value rejected server-side
-- [ ] 12. Throttle password reset and verification emails
+- [x] 12. Throttle password reset and verification emails — N/A: no user-triggered email endpoints; emails only sent by Stripe webhook after confirmed payment
 - [ ] 13. Set secure session cookie flags
 - [ ] 14. Add idle and absolute session timeouts
 - [ ] 15. Fully invalidate sessions on logout
