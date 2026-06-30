@@ -50,13 +50,13 @@
 - [x] 48. Block server-side template injection — N/A: no server-side template engine; JSX is compile-time
 - [x] 49. Audit unsafe HTML render bypasses — N/A: no dangerouslySetInnerHTML or v-html usage found
 - [x] 50. Sanitize content rendered into emails — added escHtml() to both email templates; firstName, pamilyaName, attendeeName, eventName, location now HTML-escaped before interpolation
-- [ ] 51. Add CSRF protection to mutations
-- [ ] 52. Configure CORS without dangerous wildcards
-- [ ] 53. Verify Origin and Referer headers
-- [ ] 54. Set the SameSite cookie attribute
-- [ ] 55. Block open redirect vulnerabilities
-- [ ] 56. Prevent clickjacking with frame controls
-- [ ] 57. Validate OAuth redirect URIs strictly
+- [x] 51. Add CSRF protection to mutations — N/A: Supabase SSR sets SameSite=Lax; state-changing routes require session auth; no traditional form POSTs
+- [x] 52. Configure CORS — N/A: Next.js API routes are same-origin by default; no wildcard CORS configured
+- [x] 53. Verify Origin and Referer — applied in prompt 15 (logout CSRF guard) and prompt 55 (open redirect)
+- [x] 54. Set SameSite cookie attribute — N/A: Supabase SSR sets SameSite=Lax on all auth cookies automatically
+- [x] 55. Block open redirect — fixed: ?next param now also rejects protocol-relative paths (//evil.com) that start with // 
+- [x] 56. Prevent clickjacking — N/A: X-Frame-Options: DENY already set in next.config.ts headers()
+- [x] 57. Validate OAuth redirect URIs — N/A: Supabase validates registered redirect URIs; ?next param validated in callback
 - [ ] 58. Validate input on the server
 - [ ] 59. Validate types, lengths, and formats
 - [ ] 60. Cap request body and payload size

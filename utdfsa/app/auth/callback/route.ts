@@ -85,8 +85,8 @@ export async function GET(request: Request) {
 
   // if a ?next param was passed and it's a safe internal path, honor it
   // but only for paid members — unpaid members always go to /membership first
-  // validate ?next is a relative path to prevent open redirect attacks
-  const isSafeNext = next && next.startsWith('/')
+  // startsWith('/') but NOT '//' — protocol-relative URLs like //evil.com start with / and would be an open redirect
+  const isSafeNext = next && next.startsWith('/') && !next.startsWith('//')
 
   // officers skip payment entirely — they always have access
   if (member?.role === 'officer' || member?.role === 'admin') {
