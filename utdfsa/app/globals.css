@@ -193,12 +193,6 @@ h1, h2, h3, h4 {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 
-/* keyboard focus ring — visible only for keyboard nav, suppressed for mouse */
-:focus-visible {
-  outline: 2px solid var(--accent-green);
-  outline-offset: 3px;
-  border-radius: 4px;
-}
 :focus:not(:focus-visible) {
   outline: none;
 }

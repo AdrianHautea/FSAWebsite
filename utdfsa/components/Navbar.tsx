@@ -54,7 +54,6 @@ export default function Navbar({ initialMember }: NavbarProps) {
   const supabase = useRef(createClient()).current
   // false = navbar has slid off the top; true = visible
   const [navVisible, setNavVisible] = useState(true)
-  const [isScrolled, setIsScrolled] = useState(false)
   // ref so the scroll handler can read current dropdown state without a stale closure
   const anyDropdownOpenRef = useRef(false)
 
@@ -93,14 +92,20 @@ export default function Navbar({ initialMember }: NavbarProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // lock body scroll when mobile menu is open
+  // lock body scroll when mobile menu is open; body position:fixed is the only
+  // pattern that reliably prevents background scroll on iOS Safari
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
+    if (!mobileMenuOpen) return
+    const y = window.scrollY
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${y}px`
+    document.body.style.width = '100%'
+    return () => {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      window.scrollTo(0, y)
     }
-    return () => { document.body.style.overflow = '' }
   }, [mobileMenuOpen])
 
   // keep the ref in sync with dropdown state; force navbar visible while any menu is open
@@ -114,7 +119,6 @@ export default function Navbar({ initialMember }: NavbarProps) {
   let lastY = window.scrollY
   function onScroll() {
     const y = window.scrollY
-    setIsScrolled(y > 10)
     const scrollingUp = y < lastY
     if (!anyDropdownOpenRef.current) {
       if (y < 80) {
@@ -158,8 +162,7 @@ export default function Navbar({ initialMember }: NavbarProps) {
         style={{
           transform: navVisible ? 'translateY(0)' : 'translateY(-100%)',
           transition: 'transform 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
-          paddingTop: 'env(safe-area-inset-top)',
-          boxShadow: isScrolled ? '0 1px 0 rgba(255,255,255,0.06)' : 'none',
+          boxShadow: '0 2px 0 0 #0e0e0e',
         }}
       >
         {/* route: / — home page — do not change this path */}
@@ -181,16 +184,14 @@ export default function Navbar({ initialMember }: NavbarProps) {
         {/* Desktop nav links — hidden below xl breakpoint */}
         <ul className="hidden xl:flex gap-8 items-center">
           {/* route: /about — About Us page — do not change this path */}
-          <li><Link href="/about" className={navLinkClass} aria-current={pathname === '/about' ? 'page' : undefined}>About Us</Link></li>
+          <li><Link href="/about" className={navLinkClass}>About Us</Link></li>
           {/* route: /pamilyas — Pamilyas info page — do not change this path */}
-          <li><Link href="/pamilyas" className={navLinkClass} aria-current={pathname === '/pamilyas' ? 'page' : undefined}>Pamilyas</Link></li>
+          <li><Link href="/pamilyas" className={navLinkClass}>Pamilyas</Link></li>
 
           <li className="relative" ref={goodphilRef}>
             <button
               onClick={() => setGoodphilOpen(prev => !prev)}
               className={`${navLinkClass} flex items-center gap-1`}
-              aria-expanded={goodphilOpen}
-              aria-haspopup="true"
             >
               Goodphil
               <span className="text-xs">▾</span>
@@ -198,7 +199,7 @@ export default function Navbar({ initialMember }: NavbarProps) {
 
             {/* only renders when the Goodphil dropdown button has been clicked — do not remove this condition */}
             {goodphilOpen && (
-              <div className="absolute top-full left-0 mt-2 w-48 bg-dropdown-bg shadow-xl rounded-2xl py-2 z-50 border border-white/10">
+              <div className="absolute top-full left-0 mt-2 w-48 bg-dropdown-bg shadow-xl rounded-[17px] py-2 z-50 border border-white/10">
                 {/* route: /goodphil/about — About Goodphil page — do not change this path */}
                 <Link href="/goodphil/about" className={dropdownItemClass} onClick={() => setGoodphilOpen(false)}>About Goodphil</Link>
                 <hr className="my-1 border-white/20" />
@@ -215,9 +216,9 @@ export default function Navbar({ initialMember }: NavbarProps) {
           </li>
 
           {/* route: /archives — public photo archives page — do not change this path */}
-          <li><Link href="/archives" className={navLinkClass} aria-current={pathname === '/archives' ? 'page' : undefined}>Archives</Link></li>
+          <li><Link href="/archives" className={navLinkClass}>Archives</Link></li>
           {/* route: /events — public events listing page — do not change this path */}
-          <li><Link href="/events" className={navLinkClass} aria-current={pathname === '/events' ? 'page' : undefined}>Events</Link></li>
+          <li><Link href="/events" className={navLinkClass}>Events</Link></li>
 
           {/* only renders the avatar/dropdown when a member is signed in; otherwise shows the Sign In button — do not remove this condition */}
           {member ? (
@@ -225,9 +226,6 @@ export default function Navbar({ initialMember }: NavbarProps) {
               <button
                 onClick={() => setDropdownOpen(prev => !prev)}
                 className="flex items-center gap-2"
-                aria-label="Open account menu"
-                aria-expanded={dropdownOpen}
-                aria-haspopup="true"
               >
                 {/* only renders the Google avatar image when member.avatar_url is set — do not remove this condition */}
                 {member.avatar_url ? (
@@ -254,7 +252,7 @@ export default function Navbar({ initialMember }: NavbarProps) {
 
               {/* only renders when the avatar button has been clicked — do not remove this condition */}
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-52 bg-dropdown-bg shadow-xl rounded-2xl py-2 z-50 border border-white/10">
+                <div className="absolute right-0 mt-2 w-52 bg-dropdown-bg shadow-xl rounded-[17px] py-2 z-50 border border-white/10">
                   {/* route: /member/profile — member profile page — do not change this path */}
                   <Link href="/member/profile" className={dropdownItemClass} onClick={() => setDropdownOpen(false)}>Profile</Link>
                   {/* route: /member/orders — member ticket order history page — do not change this path */}
@@ -307,7 +305,6 @@ export default function Navbar({ initialMember }: NavbarProps) {
           className="xl:hidden text-white p-2 text-2xl leading-none"
           onClick={() => setMobileMenuOpen(prev => !prev)}
           aria-label="Toggle navigation menu"
-          aria-expanded={mobileMenuOpen}
         >
           {mobileMenuOpen ? '✕' : '☰'}
         </button>
@@ -323,7 +320,7 @@ export default function Navbar({ initialMember }: NavbarProps) {
 
       {/* Mobile menu panel — slides in below navbar */}
       {mobileMenuOpen && (
-        <div className="fixed top-[calc(5rem+env(safe-area-inset-top))] left-0 right-0 z-60 bg-brand-bg border-t border-white/10 overflow-y-auto max-h-[calc(100vh-5rem-env(safe-area-inset-top))] xl:hidden">
+        <div className="fixed top-20 left-0 right-0 z-60 bg-brand-bg border-t border-white/10 overflow-y-auto max-h-[calc(100vh-5rem)] xl:hidden">
           <ul>
             {/* route: /about — About Us page — do not change this path */}
             <li><Link href="/about" className={mobileLinkClass} onClick={closeMobileMenu}>About Us</Link></li>
@@ -335,8 +332,6 @@ export default function Navbar({ initialMember }: NavbarProps) {
               <button
                 className="w-full text-left py-4 px-6 text-lg font-display font-semibold text-white uppercase tracking-wider hover:bg-white/10 transition-colors flex items-center justify-between"
                 onClick={() => setMobileGoodphilOpen(prev => !prev)}
-                aria-expanded={mobileGoodphilOpen}
-                aria-haspopup="true"
               >
                 Goodphil
                 <span className="text-sm">{mobileGoodphilOpen ? '▴' : '▾'}</span>

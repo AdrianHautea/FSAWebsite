@@ -290,7 +290,7 @@ function EventForm({
             className={inputCls} placeholder="Spring Fiesta 2025" />
         </div>
 
-        <div>
+        <div className="col-span-2">
           <label className={labelCls}>Event Type <span className="text-[#ef6f6f]">*</span></label>
           <select required value={form.event_type}
             onChange={e => {
@@ -306,7 +306,7 @@ function EventForm({
           </select>
         </div>
 
-        <div className="min-w-0">
+        <div className="col-span-2 min-w-0">
           <label className={labelCls}>Date &amp; Time <span className="text-[#ef6f6f]">*</span></label>
           <input required type="datetime-local" value={form.event_date}
             onChange={e => set('event_date', e.target.value)}

@@ -157,8 +157,8 @@ export default function OrdersClient({ registrations, eventsData, contactEmail, 
                 <div className="p-4 flex items-center gap-4">
                   {/* 72px cover photo thumbnail */}
                   <div
-                    className="rounded-xl shrink-0 overflow-hidden flex items-center justify-center"
-                    style={{ width: 72, height: 72, background: '#262626' }}
+                    className="rounded-xl shrink-0 overflow-hidden flex items-center justify-center w-14 h-14 sm:w-[72px] sm:h-[72px]"
+                    style={{ background: '#262626' }}
                   >
                     {event?.cover_photo_url ? (
                       <Image

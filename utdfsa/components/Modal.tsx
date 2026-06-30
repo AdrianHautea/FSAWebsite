@@ -34,10 +34,15 @@ export default function Modal({ onClose, size = 'md', scrollable = true, label, 
     return () => document.removeEventListener('keydown', handleKey)
   }, [onClose])
 
-  // lock body scroll while modal is mounted; restored on unmount
+  // lock body scroll while modal is mounted; pad to prevent scrollbar-removal layout shift
   useEffect(() => {
-    document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = '' }
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+    document.documentElement.style.overflow = 'hidden'
+    if (scrollbarWidth > 0) document.documentElement.style.paddingRight = `${scrollbarWidth}px`
+    return () => {
+      document.documentElement.style.overflow = ''
+      document.documentElement.style.paddingRight = ''
+    }
   }, [])
 
   // move focus into the modal panel when it opens
