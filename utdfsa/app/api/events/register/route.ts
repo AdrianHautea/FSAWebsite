@@ -8,8 +8,32 @@ import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 import { stripe } from '@/lib/stripe'
 import { eventRegisterSchema } from '@/lib/schemas'
 import { NextResponse } from 'next/server'
+import { headers } from 'next/headers'
+
+// ponytail: in-memory rate limit — per-instance only; upgrade to Redis/Upstash if multi-region needed
+const ipHits = new Map<string, number[]>()
+const RATE_LIMIT = 10
+const RATE_WINDOW_MS = 60_000
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const hits = (ipHits.get(ip) ?? []).filter(t => now - t < RATE_WINDOW_MS)
+  hits.push(now)
+  ipHits.set(ip, hits)
+  return hits.length > RATE_LIMIT
+}
 
 export async function POST(req: Request) {
+  // ── rate limiting ─────────────────────────────────────────
+  const headerStore = await headers()
+  const ip = headerStore.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  if (isRateLimited(ip)) {
+    return NextResponse.json({ error: 'Too many requests' }, {
+      status: 429,
+      headers: { 'Retry-After': '60' },
+    })
+  }
+
   // ============================================================
   // DATA — do not modify this section
   // all database queries and auth checks live here

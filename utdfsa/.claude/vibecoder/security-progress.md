@@ -83,7 +83,7 @@
 - [x] 81. Mask sensitive values in logs — N/A: audited all console.* calls; no passwords/tokens/payment data logged; email logged in webhook is standard operational logging
 - [x] 82. Encrypt stored PII — N/A: Supabase handles at-rest encryption; no additional app-layer encryption feasible without key management infrastructure
 - [x] 83. Prevent caching of sensitive pages — added Cache-Control: no-store to /api/me and all /api/officer/* routes
-- [ ] 84. Add global API rate limiting
+- [x] 84. Add global API rate limiting — added per-IP sliding-window rate limiter to /api/events/register (the only fully public mutation); 10 requests per minute per IP with ponytail comment noting per-instance ceiling
 - [ ] 85. Limit GraphQL query depth and cost
 - [ ] 86. Disable GraphQL introspection in production
 - [ ] 87. Trim over-exposed fields in responses
