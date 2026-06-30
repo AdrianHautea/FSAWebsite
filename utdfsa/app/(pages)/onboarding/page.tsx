@@ -121,7 +121,6 @@ export default async function OnboardingPage({ searchParams }: Props) {
   // ============================================================
   return (
     <OnboardingClient
-      memberId={member.id}
       firstName={member.first_name}
       isKuyateOpen={kuyateApplicationsOpen}
       // only pass ading/kuyate as initialType; reject any other ?type= value

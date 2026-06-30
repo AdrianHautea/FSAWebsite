@@ -8,7 +8,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 
 type Ticket = {
   id: string
@@ -94,10 +93,15 @@ function TicketQRImage({ code }: { code: string }) {
 export default function OrdersClient({ registrations, eventsData, contactEmail, success }: Props) {
   // tracks which registration cards have their qr ticket panel open; keyed by registration id
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({})
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest')
 
   // toggles the qr ticket panel open/closed for a given registration card
   const toggle = (id: string) =>
     setExpandedCards(prev => ({ ...prev, [id]: !prev[id] }))
+
+  const sortedRegistrations = sortOrder === 'newest'
+    ? registrations
+    : [...registrations].reverse()
 
   return (
     <main className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
@@ -120,6 +124,33 @@ export default function OrdersClient({ registrations, eventsData, contactEmail, 
         </div>
       )}
 
+      {/* sort toggle — full width on mobile, auto on sm+ */}
+      {registrations.length > 0 && (
+        <button
+          onClick={() => setSortOrder(o => o === 'newest' ? 'oldest' : 'newest')}
+          className="w-full sm:w-auto mb-4 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors duration-150"
+          style={{
+            color: 'rgba(255,255,255,0.6)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'rgba(255,255,255,0.02)',
+          }}
+          onMouseEnter={e => {
+            const t = e.currentTarget
+            t.style.borderColor = 'rgba(255,255,255,0.2)'
+            t.style.color = 'rgba(255,255,255,0.9)'
+            t.style.background = 'rgba(255,255,255,0.05)'
+          }}
+          onMouseLeave={e => {
+            const t = e.currentTarget
+            t.style.borderColor = 'rgba(255,255,255,0.1)'
+            t.style.color = 'rgba(255,255,255,0.6)'
+            t.style.background = 'rgba(255,255,255,0.02)'
+          }}
+        >
+          {sortOrder === 'newest' ? 'Newest first ↓' : 'Oldest first ↑'}
+        </button>
+      )}
+
       {/* only renders the empty state when the member has no registrations — do not remove this condition */}
       {registrations.length === 0 ? (
         <div className="text-center py-20">
@@ -133,7 +164,7 @@ export default function OrdersClient({ registrations, eventsData, contactEmail, 
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {registrations.map(reg => {
+          {sortedRegistrations.map(reg => {
             // look up event details from the pre-fetched map by event_id
             const event = reg.event_id ? eventsData[reg.event_id] ?? null : null
             const tickets = (reg.registration_tickets ?? []) as Ticket[]
@@ -155,30 +186,6 @@ export default function OrdersClient({ registrations, eventsData, contactEmail, 
               >
                 {/* Card header row */}
                 <div className="p-4 flex items-center gap-4">
-                  {/* 72px cover photo thumbnail */}
-                  <div
-                    className="rounded-xl shrink-0 overflow-hidden flex items-center justify-center w-14 h-14 sm:w-[72px] sm:h-[72px]"
-                    style={{ background: '#262626' }}
-                  >
-                    {event?.cover_photo_url ? (
-                      <Image
-                        src={event.cover_photo_url}
-                        alt={event.name}
-                        width={72}
-                        height={72}
-                        className="w-full h-full object-cover"
-                        sizes="72px"
-                      />
-                    ) : (
-                      <span
-                        className="text-2xl font-bold"
-                        style={{ color: 'rgba(255,255,255,0.3)' }}
-                      >
-                        {(event?.name ?? '?')[0].toUpperCase()}
-                      </span>
-                    )}
-                  </div>
-
                   {/* Event name, date, location */}
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-white truncate text-sm">

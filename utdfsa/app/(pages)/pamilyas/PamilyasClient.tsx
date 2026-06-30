@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, type PointerEvent } from 'react'
 import Modal from '@/components/Modal'
 import SmoothImage from '@/components/SmoothImage'
-import BlurInImg from '@/components/BlurInImg'
+import { BlurInImg } from '@/components/SmoothImage'
 import Link from 'next/link'
 import AnimatedTitle from '@/components/AnimatedTitle'
 

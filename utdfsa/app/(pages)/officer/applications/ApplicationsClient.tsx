@@ -721,18 +721,15 @@ export default function ApplicationsClient({
   const [adingApps, setAdingApps] = useState<AdingApplication[]>(initialAdingApps)
   // local copy of kuyate apps — optimistically updated on status change
   const [kuyateApps, setKuyateApps] = useState<KuyateApplication[]>(initialKuyateApps)
-  // filter defaults to 'pending' so officers see actionable items first
-  const [adingFilter, setAdingFilter] = useState<Filter>('pending')
-  const [kuyateFilter, setKuyateFilter] = useState<Filter>('pending')
-  // sort order per tab — newest first by default
-  const [adingSort, setAdingSort] = useState<SortOption>('newest')
-  const [kuyateSort, setKuyateSort] = useState<SortOption>('newest')
-  // separate page counters per tab so pagination resets independently
-  const [adingPage, setAdingPage] = useState(1)
-  const [kuyatePage, setKuyatePage] = useState(1)
-  // name search — separate state per tab, composes on top of status filter
-  const [adingSearch, setAdingSearch] = useState('')
-  const [kuyateSearch, setKuyateSearch] = useState('')
+  // per-tab filter/sort/page/search — keyed by tab name so resets are independent
+  type TabState = { filter: Filter; sort: SortOption; page: number; search: string }
+  const [tabState, setTabState] = useState<Record<'ading' | 'kuyate', TabState>>({
+    ading:  { filter: 'pending', sort: 'newest', page: 1, search: '' },
+    kuyate: { filter: 'pending', sort: 'newest', page: 1, search: '' },
+  })
+  function patchTab(t: 'ading' | 'kuyate', patch: Partial<TabState>) {
+    setTabState(prev => ({ ...prev, [t]: { ...prev[t], ...patch } }))
+  }
   const adingSearchRef = useRef<HTMLInputElement>(null)
   const kuyateSearchRef = useRef<HTMLInputElement>(null)
 
@@ -791,27 +788,27 @@ export default function ApplicationsClient({
 
 
   // Filtered lists (used for CSV export — all filtered, not just current page)
-  const filteredAding = adingFilter === 'all'
+  const filteredAding = tabState.ading.filter === 'all'
     ? adingApps
-    : adingApps.filter(a => a.status === adingFilter)
+    : adingApps.filter(a => a.status === tabState.ading.filter)
 
-  const filteredKuyate = kuyateFilter === 'all'
+  const filteredKuyate = tabState.kuyate.filter === 'all'
     ? kuyateApps
-    : kuyateApps.filter(a => a.status === kuyateFilter)
+    : kuyateApps.filter(a => a.status === tabState.kuyate.filter)
 
   // sort applied after status filter; csv export reads unsorted filteredAding/filteredKuyate
-  const sortedAding = sortApps(filteredAding, adingSort)
-  const sortedKuyate = sortApps(filteredKuyate, kuyateSort)
+  const sortedAding = sortApps(filteredAding, tabState.ading.sort)
+  const sortedKuyate = sortApps(filteredKuyate, tabState.kuyate.sort)
 
   // name search applied on top of sorted+filtered list
-  const adingSearchTerm = adingSearch.trim().toLowerCase()
+  const adingSearchTerm = tabState.ading.search.trim().toLowerCase()
   const searchedAding = adingSearchTerm
     ? sortedAding.filter(a =>
         `${a.members.first_name} ${a.members.last_name}`.toLowerCase().includes(adingSearchTerm)
       )
     : sortedAding
 
-  const kuyateSearchTerm = kuyateSearch.trim().toLowerCase()
+  const kuyateSearchTerm = tabState.kuyate.search.trim().toLowerCase()
   const searchedKuyate = kuyateSearchTerm
     ? sortedKuyate.filter(a =>
         `${a.members.first_name} ${a.members.last_name}`.toLowerCase().includes(kuyateSearchTerm)
@@ -823,45 +820,16 @@ export default function ApplicationsClient({
   const modalNavIndex = selectedAppId ? modalNavList.findIndex(a => a.id === selectedAppId) : -1
 
   // Paginated slices
-  const paginatedAding = searchedAding.slice((adingPage - 1) * ITEMS_PER_PAGE, adingPage * ITEMS_PER_PAGE)
-  const paginatedKuyate = searchedKuyate.slice((kuyatePage - 1) * ITEMS_PER_PAGE, kuyatePage * ITEMS_PER_PAGE)
+  const paginatedAding = searchedAding.slice((tabState.ading.page - 1) * ITEMS_PER_PAGE, tabState.ading.page * ITEMS_PER_PAGE)
+  const paginatedKuyate = searchedKuyate.slice((tabState.kuyate.page - 1) * ITEMS_PER_PAGE, tabState.kuyate.page * ITEMS_PER_PAGE)
 
-  function adingCounts(): Record<Filter, number> {
+  function tabCounts(apps: Array<{ status: Status }>): Record<Filter, number> {
     return {
-      all: adingApps.length,
-      pending: adingApps.filter(a => a.status === 'pending').length,
-      accepted: adingApps.filter(a => a.status === 'accepted').length,
-      rejected: adingApps.filter(a => a.status === 'rejected').length,
+      all: apps.length,
+      pending: apps.filter(a => a.status === 'pending').length,
+      accepted: apps.filter(a => a.status === 'accepted').length,
+      rejected: apps.filter(a => a.status === 'rejected').length,
     }
-  }
-
-  function kuyateCounts(): Record<Filter, number> {
-    return {
-      all: kuyateApps.length,
-      pending: kuyateApps.filter(a => a.status === 'pending').length,
-      accepted: kuyateApps.filter(a => a.status === 'accepted').length,
-      rejected: kuyateApps.filter(a => a.status === 'rejected').length,
-    }
-  }
-
-  function handleAdingFilterChange(f: Filter) {
-    setAdingFilter(f)
-    setAdingPage(1)
-  }
-
-  function handleKuyateFilterChange(f: Filter) {
-    setKuyateFilter(f)
-    setKuyatePage(1)
-  }
-
-  function handleAdingSearchChange(q: string) {
-    setAdingSearch(q)
-    setAdingPage(1)
-  }
-
-  function handleKuyateSearchChange(q: string) {
-    setKuyateSearch(q)
-    setKuyatePage(1)
   }
 
   async function updateAdingStatus(id: string, newStatus: Status) {
@@ -1007,12 +975,12 @@ export default function ApplicationsClient({
         {tab === 'ading' && (
           <section>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5">
-              <div className="order-1 sm:order-1 flex items-center gap-3 flex-wrap">
-                <FilterBar active={adingFilter} onChange={handleAdingFilterChange} counts={adingCounts()} />
+              <div className="order-1 sm:order-1 flex flex-col sm:flex-row sm:items-center gap-3">
+                <FilterBar active={tabState.ading.filter} onChange={f => patchTab('ading', { filter: f, page: 1 })} counts={tabCounts(adingApps)} />
                 <select
-                  value={adingSort}
-                  onChange={e => { setAdingSort(e.target.value as SortOption); setAdingPage(1) }}
-                  className="text-[12px] font-semibold border border-white/12 rounded-[9px] px-2.5 py-1.5 text-[#8c8c8c] bg-[#0d0d0d] hover:border-white/22 hover:text-[#cfcfcf] focus:outline-none focus:border-white/24 officer-select appearance-none pr-7 font-[inherit] transition-colors"
+                  value={tabState.ading.sort}
+                  onChange={e => patchTab('ading', { sort: e.target.value as SortOption, page: 1 })}
+                  className="w-full sm:w-auto text-[12px] font-semibold border border-white/12 rounded-[9px] px-2.5 py-1.5 text-[#8c8c8c] bg-[#0d0d0d] hover:border-white/22 hover:text-[#cfcfcf] focus:outline-none focus:border-white/24 officer-select appearance-none pr-7 font-[inherit] transition-colors"
                 >
                   <option value="newest">Newest first</option>
                   <option value="oldest">Oldest first</option>
@@ -1028,8 +996,8 @@ export default function ApplicationsClient({
                 <input
                   ref={adingSearchRef}
                   type="search"
-                  value={adingSearch}
-                  onChange={e => handleAdingSearchChange(e.target.value)}
+                  value={tabState.ading.search}
+                  onChange={e => patchTab('ading', { search: e.target.value, page: 1 })}
                   placeholder="Search by name… ( / )"
                   className="w-full pl-8 pr-3.5 py-2 rounded-[10px] bg-[#0d0d0d] border border-white/10 text-[13px] text-white placeholder:text-text-muted focus:outline-none focus:border-white/24 transition-[border-color] font-[inherit]"
                 />
@@ -1046,7 +1014,7 @@ export default function ApplicationsClient({
               </button>
             </div>
 
-            {adingSearch.trim() && searchedAding.length > 0 && (
+            {tabState.ading.search.trim() && searchedAding.length > 0 && (
               <p className="text-[12px] text-text-muted mb-3">{searchedAding.length} of {filteredAding.length} result{searchedAding.length !== 1 ? 's' : ''}</p>
             )}
             {searchedAding.length === 0 ? (
@@ -1073,10 +1041,10 @@ export default function ApplicationsClient({
                 </div>
                 {searchedAding.length > ITEMS_PER_PAGE && (
                   <PaginationBar
-                    page={adingPage}
+                    page={tabState.ading.page}
                     total={searchedAding.length}
-                    onPrev={() => setAdingPage(p => p - 1)}
-                    onNext={() => setAdingPage(p => p + 1)}
+                    onPrev={() => patchTab('ading', { page: tabState.ading.page - 1 })}
+                    onNext={() => patchTab('ading', { page: tabState.ading.page + 1 })}
                   />
                 )}
               </>
@@ -1088,12 +1056,12 @@ export default function ApplicationsClient({
         {tab === 'kuyate' && (
           <section>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5">
-              <div className="order-1 sm:order-1 flex items-center gap-3 flex-wrap">
-                <FilterBar active={kuyateFilter} onChange={handleKuyateFilterChange} counts={kuyateCounts()} />
+              <div className="order-1 sm:order-1 flex flex-col sm:flex-row sm:items-center gap-3">
+                <FilterBar active={tabState.kuyate.filter} onChange={f => patchTab('kuyate', { filter: f, page: 1 })} counts={tabCounts(kuyateApps)} />
                 <select
-                  value={kuyateSort}
-                  onChange={e => { setKuyateSort(e.target.value as SortOption); setKuyatePage(1) }}
-                  className="text-[12px] font-semibold border border-white/12 rounded-[9px] px-2.5 py-1.5 text-[#8c8c8c] bg-[#0d0d0d] hover:border-white/22 hover:text-[#cfcfcf] focus:outline-none focus:border-white/24 officer-select appearance-none pr-7 font-[inherit] transition-colors"
+                  value={tabState.kuyate.sort}
+                  onChange={e => patchTab('kuyate', { sort: e.target.value as SortOption, page: 1 })}
+                  className="w-full sm:w-auto text-[12px] font-semibold border border-white/12 rounded-[9px] px-2.5 py-1.5 text-[#8c8c8c] bg-[#0d0d0d] hover:border-white/22 hover:text-[#cfcfcf] focus:outline-none focus:border-white/24 officer-select appearance-none pr-7 font-[inherit] transition-colors"
                 >
                   <option value="newest">Newest first</option>
                   <option value="oldest">Oldest first</option>
@@ -1109,8 +1077,8 @@ export default function ApplicationsClient({
                 <input
                   ref={kuyateSearchRef}
                   type="search"
-                  value={kuyateSearch}
-                  onChange={e => handleKuyateSearchChange(e.target.value)}
+                  value={tabState.kuyate.search}
+                  onChange={e => patchTab('kuyate', { search: e.target.value, page: 1 })}
                   placeholder="Search by name… ( / )"
                   className="w-full pl-8 pr-3.5 py-2 rounded-[10px] bg-[#0d0d0d] border border-white/10 text-[13px] text-white placeholder:text-text-muted focus:outline-none focus:border-white/24 transition-[border-color] font-[inherit]"
                 />
@@ -1127,7 +1095,7 @@ export default function ApplicationsClient({
               </button>
             </div>
 
-            {kuyateSearch.trim() && searchedKuyate.length > 0 && (
+            {tabState.kuyate.search.trim() && searchedKuyate.length > 0 && (
               <p className="text-[12px] text-text-muted mb-3">{searchedKuyate.length} of {filteredKuyate.length} result{searchedKuyate.length !== 1 ? 's' : ''}</p>
             )}
             {searchedKuyate.length === 0 ? (
@@ -1154,10 +1122,10 @@ export default function ApplicationsClient({
                 </div>
                 {searchedKuyate.length > ITEMS_PER_PAGE && (
                   <PaginationBar
-                    page={kuyatePage}
+                    page={tabState.kuyate.page}
                     total={searchedKuyate.length}
-                    onPrev={() => setKuyatePage(p => p - 1)}
-                    onNext={() => setKuyatePage(p => p + 1)}
+                    onPrev={() => patchTab('kuyate', { page: tabState.kuyate.page - 1 })}
+                    onNext={() => patchTab('kuyate', { page: tabState.kuyate.page + 1 })}
                   />
                 )}
               </>

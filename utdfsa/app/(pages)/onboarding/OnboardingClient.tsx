@@ -1,7 +1,7 @@
 // ── OnboardingClient.tsx ─────────────────────────────────────────────────────
 // multi-step client form driving the full pamilya onboarding flow (pick → profile → ading/kuyate application).
 //
-// data:  props — memberId, firstName, isKuyateOpen, initialType, existingProfile (from onboarding/page.tsx)
+// data:  props — firstName, isKuyateOpen, initialType, existingProfile (from onboarding/page.tsx)
 // deps:  POST /api/onboarding/submit
 // notes: step order (pick → profile → ading|kuyate) must be preserved — see the IMPORTANT block near line 58
 
@@ -14,7 +14,6 @@ import { toTitleCase, formatPhone } from '@/lib/format'
 
 /**
  * Props — passed down from OnboardingPage server component (onboarding/page.tsx)
- *   memberId        — the Supabase members.id of the signed-in user; sent to the submit API
  *   firstName       — pre-filled greeting name pulled from the member row
  *   isKuyateOpen    — whether kuyate applications are currently open (from settings table);
  *                     when false, only ading + not-interested are offered in the pick step
@@ -22,7 +21,6 @@ import { toTitleCase, formatPhone } from '@/lib/format'
  *   existingProfile — pre-fills the profile info step with data already on the member row
  */
 interface Props {
-  memberId: string
   firstName: string
   isKuyateOpen: boolean
   initialType: 'ading' | 'kuyate' | null
@@ -110,13 +108,13 @@ function StepIndicator({ step, memberType }: { step: string; memberType: MemberT
   )
 }
 
-export default function OnboardingClient({ memberId, firstName, isKuyateOpen, initialType, existingProfile }: Props) {
+export default function OnboardingClient({ firstName, isKuyateOpen, initialType, existingProfile }: Props) {
   const router = useRouter()
   useEffect(() => {
     router.prefetch('/onboarding/basic-info')
     router.prefetch('/member/profile')
   }, [router])
-  const [step, setStep] = useState<'pick' | 'ading' | 'kuyate' | 'profile'>(initialType ? 'profile' : 'pick')
+  const [step, setStep] = useState<'pick' | 'ading' | 'kuyate' | 'profile' | 'submitted'>(initialType ? 'profile' : 'pick')
   const [memberType, setMemberType] = useState<MemberType | null>(initialType ?? null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -339,8 +337,7 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
         return
       }
 
-      // route: /member/profile — member profile page shown after onboarding completes — do not change this path
-      router.push('/member/profile')
+      setStep('submitted')
     } catch {
       setError('Network error — please try again.')
       setLoading(false)
@@ -1399,6 +1396,118 @@ export default function OnboardingClient({ memberId, firstName, isKuyateOpen, in
             </button>
           </form>
           </div>
+        </div>
+      </main>
+    )
+  }
+
+  // step: submitted — shown after handleFinalSubmit succeeds
+  if (step === 'submitted') {
+    const kindLabel = memberType === 'kuyate' ? 'Kuya / Ate' : 'Ading'
+
+    const nextSteps = [
+      { num: '01', title: 'Application reviewed', desc: 'The pamilya committee reads through every response to find your most compatible pamilya.', hasLine: true, active: true },
+      { num: '02', title: 'Placement announced', desc: 'All sorting results will be announced at the 2nd General Meeting. Late applications will have an email sent regarding their pamilya result.', hasLine: true, active: false },
+      { num: '03', title: 'Meet your pamilya', desc: 'Show up to the reveal event, meet your ates, kuyas, and fellow adings!', hasLine: false, active: false },
+    ]
+
+    return (
+      <main className="bg-brand-bg min-h-screen text-white overflow-x-hidden">
+        <div className="relative flex flex-col items-center text-center px-6 py-16 md:py-20 max-w-[660px] mx-auto">
+
+          {/* radial glow */}
+          <div
+            className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full"
+            style={{ background: 'radial-gradient(circle, rgba(117,186,120,0.14) 0%, transparent 70%)' }}
+          />
+
+          {/* checkmark medallion */}
+          <div className="relative z-10 w-[104px] h-[104px] flex items-center justify-center mb-8">
+            <span
+              className="absolute inset-0 rounded-full border-2 border-accent-green"
+              style={{ animation: 'fsa-ring 2.4s ease-out infinite' }}
+            />
+            <div
+              className="w-[104px] h-[104px] rounded-full bg-accent-green/[0.12] border border-accent-green/[0.34] flex items-center justify-center"
+              style={{ animation: 'fsa-check-pop 0.55s cubic-bezier(0.2,0.8,0.2,1) both' }}
+            >
+              <span
+                className="w-16 h-16 rounded-full bg-accent-green flex items-center justify-center"
+                style={{ boxShadow: '0 12px 34px -10px rgba(117,186,120,0.5)' }}
+              >
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#08130a" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          {/* kind label pill */}
+          <div className="relative z-10 inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-accent-green/[0.12] border border-accent-green/[0.34] mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
+            <span className="font-display font-bold text-[11px] tracking-[0.12em] text-accent-green uppercase">{kindLabel} application received</span>
+          </div>
+
+          {/* heading */}
+          <h1 className="relative z-10 font-display font-black text-[clamp(42px,8vw,62px)] leading-[0.94] tracking-[-0.03em] text-white">
+            APPLICATION<br />SUBMITTED
+          </h1>
+
+          {/* subtext */}
+          <p className="relative z-10 max-w-[480px] text-[17px] leading-[1.6] text-[#9a9a9a] font-medium mt-5">
+            Thanks, {firstName} — your {kindLabel.toLowerCase()}  application is in. The pamilya committee reviews every application and you&rsquo;ll hear about your placement before the next big event.
+          </p>
+
+          {/* what happens next */}
+          <div className="relative z-10 w-full bg-[#0d0d0d] border border-white/[0.08] rounded-[20px] p-7 md:p-8 mt-9 text-left">
+            <div className="flex items-center gap-3.5 mb-6">
+              <span className="font-display font-bold text-[13px] text-white whitespace-nowrap">What happens next</span>
+              <div className="flex-1 h-px bg-white/[0.07]" />
+            </div>
+            <div className="flex flex-col">
+              {nextSteps.map(s => (
+                <div key={s.num} className="flex gap-4 items-start">
+                  <div className="flex flex-col items-center self-stretch">
+                    <span className={`shrink-0 w-[34px] h-[34px] rounded-full border flex items-center justify-center font-display text-[12px] font-extrabold ${
+                      s.active
+                        ? 'bg-accent-green border-accent-green text-[#08130a]'
+                        : 'bg-[#141414] border-white/[0.18] text-[#7a7a7a]'
+                    }`}>
+                      {s.num}
+                    </span>
+                    {s.hasLine && <span className="w-px flex-1 min-h-[22px] bg-white/10 my-1.5" />}
+                  </div>
+                  <div className="pb-5">
+                    <div className="text-[15px] font-bold text-white tracking-[-0.01em] mb-1">{s.title}</div>
+                    <div className="text-[13.5px] leading-[1.55] text-[#8c8c8c] font-medium">{s.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* action buttons */}
+          <div className="relative z-10 flex flex-col sm:flex-row gap-3.5 w-full mt-7">
+            <button
+              onClick={() => router.push('/member/profile')}
+              className="flex-1 flex items-center justify-center gap-2.5 py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] transition-all"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#08130a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+              </svg>
+              GO TO MY PROFILE
+            </button>
+            <button
+              onClick={() => router.push('/')}
+              className="flex-1 flex items-center justify-center gap-2.5 py-4 border border-white/[0.14] rounded-[14px] bg-[#141414] text-white font-display font-extrabold text-[15px] tracking-[0.02em] hover:border-white/30 hover:bg-[#191919] transition-all"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 11l9-8 9 8" /><path d="M5 10v10h14V10" />
+              </svg>
+              BACK TO HOMEPAGE
+            </button>
+          </div>
+
         </div>
       </main>
     )
