@@ -1,0 +1,102 @@
+# Security Audit Progress
+
+- [x] 1. Hash passwords with a modern algorithm — N/A: app uses Google OAuth only via Supabase; no passwords stored or handled in app code
+- [ ] 2. Enforce strong password requirements
+- [ ] 3. Rate limit login attempts
+- [ ] 4. Lock accounts after repeated failures
+- [ ] 5. Stop username and email enumeration
+- [ ] 6. Secure the password reset flow
+- [ ] 7. Regenerate sessions to block fixation
+- [ ] 8. Add multi-factor authentication support
+- [ ] 9. Compare credentials in constant time
+- [ ] 10. Harden the remember-me feature
+- [ ] 11. Add bot protection to forms
+- [ ] 12. Throttle password reset and verification emails
+- [ ] 13. Set secure session cookie flags
+- [ ] 14. Add idle and absolute session timeouts
+- [ ] 15. Fully invalidate sessions on logout
+- [ ] 16. Validate every JWT claim properly
+- [ ] 17. Block JWT algorithm confusion attacks
+- [ ] 18. Strengthen and rotate signing secrets
+- [ ] 19. Store auth tokens safely client-side
+- [ ] 20. Issue short-lived access tokens
+- [ ] 21. Rotate refresh tokens on use
+- [ ] 22. Build a token revocation mechanism
+- [ ] 23. Enforce authorization on the server
+- [ ] 24. Fix insecure direct object references
+- [ ] 25. Implement role-based access control
+- [ ] 26. Apply a default-deny access policy
+- [ ] 27. Lock down all admin routes
+- [ ] 28. Close privilege escalation paths
+- [ ] 29. Isolate data between tenants
+- [ ] 30. Add function-level permission checks
+- [ ] 31. Block mass assignment of fields
+- [ ] 32. Re-verify access on each request
+- [ ] 33. Use parameterized database queries
+- [ ] 34. Prevent NoSQL query injection
+- [ ] 35. Block operating system command injection
+- [ ] 36. Close ORM-level injection vectors
+- [ ] 37. Sanitize inputs used in LDAP
+- [ ] 38. Escape identifiers in dynamic queries
+- [ ] 39. Validate and bound user regex
+- [ ] 40. Prevent prototype pollution in objects
+- [ ] 41. Disable XML external entity parsing
+- [ ] 42. Prevent formula injection in exports
+- [ ] 43. Encode output to stop XSS
+- [ ] 44. Sanitize user-submitted HTML content
+- [ ] 45. Add a Content Security Policy
+- [ ] 46. Eliminate DOM-based XSS sinks
+- [ ] 47. Prevent stored XSS in content
+- [ ] 48. Block server-side template injection
+- [ ] 49. Audit unsafe HTML render bypasses
+- [ ] 50. Sanitize content rendered into emails
+- [ ] 51. Add CSRF protection to mutations
+- [ ] 52. Configure CORS without dangerous wildcards
+- [ ] 53. Verify Origin and Referer headers
+- [ ] 54. Set the SameSite cookie attribute
+- [ ] 55. Block open redirect vulnerabilities
+- [ ] 56. Prevent clickjacking with frame controls
+- [ ] 57. Validate OAuth redirect URIs strictly
+- [ ] 58. Validate input on the server
+- [ ] 59. Validate types, lengths, and formats
+- [ ] 60. Cap request body and payload size
+- [ ] 61. Block path traversal in file access
+- [ ] 62. Prevent server-side request forgery
+- [ ] 63. Stop HTTP header and CRLF injection
+- [ ] 64. Enforce strict Content-Type validation
+- [ ] 65. Reject malformed and unexpected fields
+- [ ] 66. Move hardcoded secrets to environment variables
+- [ ] 67. Remove committed secrets from git history
+- [ ] 68. Keep secrets out of client bundles
+- [ ] 69. Separate development and production credentials
+- [ ] 70. Rotate any exposed or leaked secrets
+- [ ] 71. Hide stack traces in production
+- [ ] 72. Remove revealing server response headers
+- [ ] 73. Disable directory listing and indexes
+- [ ] 74. Harden insecure default framework settings
+- [ ] 75. Force HTTPS across the application
+- [ ] 76. Enable HSTS to enforce TLS
+- [ ] 77. Encrypt sensitive data at rest
+- [ ] 78. Replace weak cryptographic algorithms
+- [ ] 79. Use a cryptographically secure random generator
+- [ ] 80. Hash security tokens before storage
+- [ ] 81. Mask sensitive values in logs
+- [ ] 82. Encrypt stored personal identifiable information
+- [ ] 83. Prevent caching of sensitive pages
+- [ ] 84. Add global API rate limiting
+- [ ] 85. Limit GraphQL query depth and cost
+- [ ] 86. Disable GraphQL introspection in production
+- [ ] 87. Trim over-exposed fields in responses
+- [ ] 88. Enforce maximum pagination page sizes
+- [ ] 89. Verify signatures on incoming webhooks
+- [ ] 90. Add idempotency keys to mutations
+- [ ] 91. Validate upload types by content
+- [ ] 92. Enforce a maximum upload size
+- [ ] 93. Store uploads outside the webroot
+- [ ] 94. Randomize and sanitize stored filenames
+- [ ] 95. Serve user files without execution
+- [ ] 96. Audit dependencies for known vulnerabilities
+- [ ] 97. Lock dependency versions with a lockfile
+- [ ] 98. Add Subresource Integrity to scripts
+- [ ] 99. Log security events for monitoring
+- [ ] 100. Prevent log injection and forgery
