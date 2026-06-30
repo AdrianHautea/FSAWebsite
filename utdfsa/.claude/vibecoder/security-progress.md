@@ -84,12 +84,12 @@
 - [x] 82. Encrypt stored PII — N/A: Supabase handles at-rest encryption; no additional app-layer encryption feasible without key management infrastructure
 - [x] 83. Prevent caching of sensitive pages — added Cache-Control: no-store to /api/me and all /api/officer/* routes
 - [x] 84. Add global API rate limiting — added per-IP sliding-window rate limiter to /api/events/register (the only fully public mutation); 10 requests per minute per IP with ponytail comment noting per-instance ceiling
-- [ ] 85. Limit GraphQL query depth and cost
-- [ ] 86. Disable GraphQL introspection in production
-- [ ] 87. Trim over-exposed fields in responses
-- [ ] 88. Enforce maximum pagination page sizes
-- [ ] 89. Verify signatures on incoming webhooks
-- [ ] 90. Add idempotency keys to mutations
+- [x] 85. Limit GraphQL depth/cost — N/A: no GraphQL
+- [x] 86. Disable GraphQL introspection — N/A: no GraphQL
+- [x] 87. Trim over-exposed API fields — N/A: /api/me returns the member's own profile (all fields appropriate); /api/galleries already excludes created_by officer UUID; officer routes return to authenticated officers only
+- [x] 88. Enforce max pagination — N/A: no list endpoints with unbounded pagination; officer event list is a bounded internal dataset
+- [x] 89. Verify webhook signatures — N/A: Stripe webhook already uses stripe.webhooks.constructEvent() for signature verification
+- [x] 90. Idempotency keys — N/A: membership checkout is idempotent via member_id guard; event registration uses upsert pattern for duplicate prevention
 - [ ] 91. Validate upload types by content
 - [ ] 92. Enforce a maximum upload size
 - [ ] 93. Store uploads outside the webroot
