@@ -1,15 +1,15 @@
 # Security Audit Progress
 
 - [x] 1. Hash passwords with a modern algorithm — N/A: app uses Google OAuth only via Supabase; no passwords stored or handled in app code
-- [ ] 2. Enforce strong password requirements
-- [ ] 3. Rate limit login attempts
-- [ ] 4. Lock accounts after repeated failures
-- [ ] 5. Stop username and email enumeration
-- [ ] 6. Secure the password reset flow
-- [ ] 7. Regenerate sessions to block fixation
-- [ ] 8. Add multi-factor authentication support
-- [ ] 9. Compare credentials in constant time
-- [ ] 10. Harden the remember-me feature
+- [x] 2. Enforce strong password requirements — N/A: Google OAuth only; no password fields in app
+- [x] 3. Rate limit login attempts — N/A: no login endpoint; Supabase Auth handles OAuth rate limiting
+- [x] 4. Lock accounts after repeated failures — N/A: no login endpoint; Supabase handles
+- [x] 5. Stop username and email enumeration — N/A: auth/callback returns identical error for all failures
+- [x] 6. Secure the password reset flow — N/A: Google OAuth only, no password reset
+- [x] 7. Regenerate sessions to block fixation — N/A: Supabase PKCE exchangeCodeForSession generates fresh session
+- [x] 8. Add multi-factor authentication support — N/A: MFA via Supabase/Google account settings, not app code
+- [x] 9. Compare credentials in constant time — N/A: no credential comparison in app code
+- [x] 10. Harden the remember-me feature — N/A: no custom remember-me; Supabase manages persistent sessions
 - [ ] 11. Add bot protection to forms
 - [ ] 12. Throttle password reset and verification emails
 - [ ] 13. Set secure session cookie flags
