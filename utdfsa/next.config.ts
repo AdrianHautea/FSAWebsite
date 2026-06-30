@@ -1,6 +1,8 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
+  // suppress X-Powered-By: Next.js header to avoid advertising the framework
+  poweredByHeader: false,
   // allow ngrok tunnels for mobile testing — covers all three common ngrok domain formats
   allowedDevOrigins: ['*.ngrok-free.app', '*.ngrok.io', '*.ngrok.app', 'diameter-morphine-deceased.ngrok-free.dev'],
   // images.qualities — allowed quality values for next/image optimization
@@ -38,6 +40,11 @@ const nextConfig: NextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
+          },
+          // enforce HTTPS for 2 years; include subdomains
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains',
           },
           // restricts what resources the page can load
           {

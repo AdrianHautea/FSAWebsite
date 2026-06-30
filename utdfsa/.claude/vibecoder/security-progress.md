@@ -70,12 +70,12 @@
 - [x] 68. Keep secrets out of client bundles — N/A: only NEXT_PUBLIC_ vars (Supabase URL, anon key) reach client — both are designed to be public
 - [x] 69. Separate dev/prod credentials — N/A: standard .env / .env.local separation; no prod secrets in dev config
 - [x] 70. Rotate exposed secrets — N/A: no exposed secrets found; rotation is a deployment-time operation
-- [ ] 71. Hide stack traces in production
-- [ ] 72. Remove revealing server response headers
-- [ ] 73. Disable directory listing and indexes
-- [ ] 74. Harden insecure default framework settings
-- [ ] 75. Force HTTPS across the application
-- [ ] 76. Enable HSTS to enforce TLS
+- [x] 71. Hide stack traces in production — N/A: Next.js production mode suppresses stack traces; routes return generic error messages only
+- [x] 72. Remove revealing server headers — added poweredByHeader: false to next.config.ts to suppress X-Powered-By: Next.js
+- [x] 73. Disable directory listing — N/A: Next.js serves no directory listings; static files are explicit routes
+- [x] 74. Harden framework defaults — N/A: debug mode off in production; no default admin routes; ngrok origins limited to allowedDevOrigins (dev only)
+- [x] 75. Force HTTPS — N/A: enforced at hosting layer (Vercel); all cookies are Secure flag via Supabase SSR
+- [x] 76. Enable HSTS — added Strict-Transport-Security: max-age=63072000; includeSubDomains to next.config.ts headers()
 - [ ] 77. Encrypt sensitive data at rest
 - [ ] 78. Replace weak cryptographic algorithms
 - [ ] 79. Use a cryptographically secure random generator
