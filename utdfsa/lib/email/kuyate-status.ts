@@ -5,6 +5,19 @@
 //        two branches — accepted (with optional pamilya name) and rejected;
 //        inline styles are required for email client compatibility
 
+// ── helpers ───────────────────────────────────────────────
+
+// escapes the five HTML-special characters so user-controlled values
+// cannot inject tags or attributes into the email body
+function escHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 // ── template function ─────────────────────────────────────
 
 // returns { subject, html } for the appropriate status branch;
@@ -19,13 +32,15 @@ export function kuyateStatusEmailHtml({
   // pamilyaName is optional — omitted when the pamilya assignment hasn't been finalized yet
   pamilyaName?: string
 }): { subject: string; html: string } {
+  const safeName = escHtml(firstName)
+
   if (status === 'accepted') {
     const subject = 'Congratulations — You have been accepted as a Kuya/Ate!'
 
     // render a different paragraph depending on whether the pamilya has been assigned
     const pamilyaLine = pamilyaName
       ? `<p style="margin:0 0 18px;color:#2b2b2b;font-size:16px;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
-           You have been matched with <strong style="color:#2b2b2b;font-weight:700;">${pamilyaName}</strong>. Your pam chair will be in touch
+           You have been matched with <strong style="color:#2b2b2b;font-weight:700;">${escHtml(pamilyaName)}</strong>. Your pam chair will be in touch
            with next steps &mdash; keep an eye on your inbox!
          </p>`
       : `<p style="margin:0 0 18px;color:#2b2b2b;font-size:16px;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
@@ -80,7 +95,7 @@ export function kuyateStatusEmailHtml({
         <!-- body -->
         <tr>
           <td style="padding:40px 44px 44px;">
-            <p style="margin:0 0 18px;color:#2b2b2b;font-size:16px;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">Hi ${firstName},</p>
+            <p style="margin:0 0 18px;color:#2b2b2b;font-size:16px;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">Hi ${safeName},</p>
             <p style="margin:0 0 18px;color:#2b2b2b;font-size:16px;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
               We are thrilled to welcome you as an official Kuya/Ate of UTD FSA! Your application has
               been reviewed and we are so excited to have you join the family.
@@ -174,7 +189,7 @@ export function kuyateStatusEmailHtml({
         <!-- body -->
         <tr>
           <td style="padding:40px 44px 44px;">
-            <p style="margin:0 0 18px;color:#2b2b2b;font-size:16px;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">Hi ${firstName},</p>
+            <p style="margin:0 0 18px;color:#2b2b2b;font-size:16px;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">Hi ${safeName},</p>
             <p style="margin:0 0 18px;color:#2b2b2b;font-size:16px;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
               Thank you so much for taking the time to apply to be a Kuya/Ate of UTD FSA. We truly
               appreciate your interest and the effort you put into your application.

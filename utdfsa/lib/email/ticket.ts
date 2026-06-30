@@ -9,6 +9,15 @@
 //        date/time is formatted in america/chicago (ct) — utd is in dallas, tx.
 //        called once per ticket per registration after payment succeeds.
 
+function escHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export function ticketEmailHtml({
   attendeeName,
   eventName,
@@ -22,6 +31,10 @@ export function ticketEmailHtml({
   location: string | null
   qrCid: string
 }): string {
+  const safeAttendee = escHtml(attendeeName)
+  const safeEvent = escHtml(eventName)
+  const safeLocation = location ? escHtml(location) : null
+
   // format event_date (iso string) into a human-readable date in central time
   const dateStr = eventDate
     ? new Date(eventDate).toLocaleDateString('en-US', {
@@ -89,8 +102,8 @@ export function ticketEmailHtml({
         <!-- body -->
         <tr>
           <td style="padding:38px 44px 44px;">
-            <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#2b2b2b;font-family:Arial,Helvetica,sans-serif;">Hi ${attendeeName},</p>
-            <h2 style="margin:0 0 22px;font-size:22px;font-weight:900;color:#2b2b2b;line-height:1.1;font-family:Arial,Helvetica,sans-serif;">${eventName}</h2>
+            <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#2b2b2b;font-family:Arial,Helvetica,sans-serif;">Hi ${safeAttendee},</p>
+            <h2 style="margin:0 0 22px;font-size:22px;font-weight:900;color:#2b2b2b;line-height:1.1;font-family:Arial,Helvetica,sans-serif;">${safeEvent}</h2>
 
             <!-- date and location -->
             <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:26px;">
@@ -99,9 +112,9 @@ export function ticketEmailHtml({
                   &#128197; ${dateStr}${timeStr ? ` &middot; ${timeStr} CT` : ''}
                 </td>
               </tr>` : ''}
-              ${location ? `<tr>
+              ${safeLocation ? `<tr>
                 <td style="font-size:15px;font-weight:700;color:#2b2b2b;font-family:Arial,Helvetica,sans-serif;">
-                  &#128205; ${location}
+                  &#128205; ${safeLocation}
                 </td>
               </tr>` : ''}
             </table>

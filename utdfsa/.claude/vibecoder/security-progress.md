@@ -42,14 +42,14 @@
 - [x] 40. Prevent prototype pollution — N/A: Zod validates all inputs; officer/events PATCH destructures body but passes result through Zod before use
 - [x] 41. Disable XML external entity parsing — N/A: no XML parsing
 - [x] 42. Prevent formula injection in exports — N/A: no CSV/spreadsheet exports
-- [ ] 43. Encode output to stop XSS
-- [ ] 44. Sanitize user-submitted HTML content
-- [ ] 45. Add a Content Security Policy
-- [ ] 46. Eliminate DOM-based XSS sinks
-- [ ] 47. Prevent stored XSS in content
-- [ ] 48. Block server-side template injection
-- [ ] 49. Audit unsafe HTML render bypasses
-- [ ] 50. Sanitize content rendered into emails
+- [x] 43. Encode output to stop XSS — N/A: Next.js JSX auto-escapes all dynamic values; no raw HTML output found
+- [x] 44. Sanitize user-submitted HTML — N/A: no rich text editor; all inputs are plain text validated by Zod
+- [x] 45. Add a Content Security Policy — N/A: CSP already set in next.config.ts (headers); unsafe-eval present but required by Next.js runtime
+- [x] 46. Eliminate DOM-based XSS sinks — N/A: no dangerouslySetInnerHTML found in any .tsx file
+- [x] 47. Prevent stored XSS — N/A: user content rendered only via JSX (auto-escaped); no raw HTML output
+- [x] 48. Block server-side template injection — N/A: no server-side template engine; JSX is compile-time
+- [x] 49. Audit unsafe HTML render bypasses — N/A: no dangerouslySetInnerHTML or v-html usage found
+- [x] 50. Sanitize content rendered into emails — added escHtml() to both email templates; firstName, pamilyaName, attendeeName, eventName, location now HTML-escaped before interpolation
 - [ ] 51. Add CSRF protection to mutations
 - [ ] 52. Configure CORS without dangerous wildcards
 - [ ] 53. Verify Origin and Referer headers
