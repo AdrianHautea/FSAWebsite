@@ -90,11 +90,11 @@
 - [x] 88. Enforce max pagination — N/A: no list endpoints with unbounded pagination; officer event list is a bounded internal dataset
 - [x] 89. Verify webhook signatures — N/A: Stripe webhook already uses stripe.webhooks.constructEvent() for signature verification
 - [x] 90. Idempotency keys — N/A: membership checkout is idempotent via member_id guard; event registration uses upsert pattern for duplicate prevention
-- [ ] 91. Validate upload types by content
-- [ ] 92. Enforce a maximum upload size
-- [ ] 93. Store uploads outside the webroot
-- [ ] 94. Randomize and sanitize stored filenames
-- [ ] 95. Serve user files without execution
+- [x] 91. Validate upload types by content — added imageMagicBytesMatch() utility; all 3 upload routes (galleries POST, galleries/[id] PATCH, events/[id]/cover POST) now verify magic bytes after reading buffer, before S3 upload
+- [x] 92. Enforce maximum upload size — N/A: already applied in prompt 60; Content-Length pre-check + file.size check on all 3 upload routes; 20 MB limit enforced
+- [x] 93. Store uploads outside webroot — N/A: all uploads go to AWS S3 (separate bucket), never to the local filesystem or public Next.js directory
+- [x] 94. Randomize stored filenames — N/A: applied in prompt 61; gallery keys use timestamp+random suffix; event cover key uses event UUID; no user-supplied filename ever reaches S3
+- [x] 95. Serve user files without execution — N/A: S3 serves files with content-type set at upload time; X-Content-Type-Options: nosniff applied globally in next.config.ts; files never served through Next.js handler
 - [ ] 96. Audit dependencies for known vulnerabilities
 - [ ] 97. Lock dependency versions with a lockfile
 - [ ] 98. Add Subresource Integrity to scripts

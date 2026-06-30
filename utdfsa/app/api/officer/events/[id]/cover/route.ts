@@ -7,6 +7,7 @@
 //        officer/admin only
 import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 import { uploadToS3 } from '@/utils/s3'
+import { imageMagicBytesMatch } from '@/utils/validate-image'
 import { NextResponse } from 'next/server'
 
 // accepted mime types for event cover photos
@@ -75,6 +76,10 @@ export async function POST(req: Request, { params }: RouteContext) {
   const ext = extMap[file.type] ?? 'jpg'
   const key = `covers/events/${id}.${ext}`
   const buffer = Buffer.from(await file.arrayBuffer())
+
+  if (!imageMagicBytesMatch(file.type, buffer)) {
+    return NextResponse.json({ error: 'File content does not match declared image type.' }, { status: 400 })
+  }
 
   let publicUrl: string
   try {

@@ -7,6 +7,7 @@
 //        cover photo is optional on PATCH — omitting it keeps the existing one.
 import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 import { uploadToS3 } from '@/utils/s3'
+import { imageMagicBytesMatch } from '@/utils/validate-image'
 import { NextResponse } from 'next/server'
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
@@ -140,6 +141,11 @@ export async function PATCH(
     const ext = MIME_EXT[coverFile.type] ?? 'jpg'
     const key = `covers/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
     const buffer = Buffer.from(await coverFile.arrayBuffer())
+
+    if (!imageMagicBytesMatch(coverFile.type, buffer)) {
+      return NextResponse.json({ error: 'File content does not match declared image type.' }, { status: 400 })
+    }
+
     let publicUrl: string
     try {
       publicUrl = await uploadToS3(key, buffer, coverFile.type)

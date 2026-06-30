@@ -8,6 +8,7 @@
 //        google photos url is validated against an allowlist of trusted hosts
 import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 import { uploadToS3 } from '@/utils/s3'
+import { imageMagicBytesMatch } from '@/utils/validate-image'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -151,6 +152,10 @@ export async function POST(request: NextRequest) {
   // timestamp + random suffix prevents key collisions across concurrent uploads
   const key = `covers/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
   const buffer = Buffer.from(await coverFile.arrayBuffer())
+
+  if (!imageMagicBytesMatch(coverFile.type, buffer)) {
+    return NextResponse.json({ error: 'File content does not match declared image type.' }, { status: 400 })
+  }
 
   // upload cover image to s3; returns the public cdn url
   let publicUrl: string
