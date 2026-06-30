@@ -61,10 +61,10 @@
 - [x] 59. Validate types, lengths, and formats — N/A: Zod enforces type, min/max length, enum values, and format on all fields
 - [x] 60. Cap request body and payload size — added Content-Length pre-check in gallery cover upload routes; rejects oversized requests before reading body
 - [x] 61. Block path traversal in file access — fixed gallery cover to derive S3 key extension from MIME type map (not user-supplied filename); eliminates path-traversal-style key injection
-- [ ] 62. Prevent server-side request forgery
-- [ ] 63. Stop HTTP header and CRLF injection
-- [ ] 64. Enforce strict Content-Type validation
-- [ ] 65. Reject malformed and unexpected fields
+- [x] 62. Prevent SSRF — N/A: only external URL fetch is Google Photos URL validated against allowlist; no arbitrary URL fetching
+- [x] 63. Stop CRLF injection — N/A: no user input placed into response headers; no manual header construction
+- [x] 64. Enforce Content-Type validation — N/A: JSON routes use req.json() with try/catch; file routes use formData()
+- [x] 65. Reject malformed and unexpected fields — N/A: Zod strips unknown fields by default on all schemas
 - [ ] 66. Move hardcoded secrets to environment variables
 - [ ] 67. Remove committed secrets from git history
 - [ ] 68. Keep secrets out of client bundles
