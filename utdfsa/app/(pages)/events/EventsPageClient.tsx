@@ -18,7 +18,7 @@ const EventCalendar = dynamic(() => import('./EventCalendar'), { ssr: false })
 import RegisterModal from './RegisterModal'
 import Modal from '@/components/Modal'
 import type { Event } from '@/types/database'
-import { getBadge, getEventTypeColor } from '@/utils/eventTypes'
+import { getBadge } from '@/utils/eventTypes'
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 // converts cents integer to dollar string (e.g. 1500 → "$15.00")
@@ -231,15 +231,19 @@ export default function EventsPageClient({ events, isMember, member, registeredE
   }, [])
 
   // ── calendar events mapping — stable across renders where events don't change ─
-  const calendarEvents = useMemo(() => events.map(event => ({
-    id: event.id,
-    title: event.name,
-    date: new Date(event.event_date).toLocaleDateString('en-CA', { timeZone: 'America/Chicago' }),
-    allDay: true,
-    backgroundColor: getEventTypeColor(event.event_type),
-    borderColor: getEventTypeColor(event.event_type),
-    extendedProps: { event },
-  })), [events])
+  const calendarEvents = useMemo(() => events.map(event => {
+    const badge = getBadge(event.event_type)
+    return {
+      id: event.id,
+      title: event.name,
+      date: new Date(event.event_date).toLocaleDateString('en-CA', { timeZone: 'America/Chicago' }),
+      allDay: true,
+      backgroundColor: badge.bg,
+      borderColor: badge.dot,
+      textColor: badge.text,
+      extendedProps: { event },
+    }
+  }), [events])
 
   // ── this-week filter ──────────────────────────────────────
   const thisWeek = useMemo(() => {
@@ -641,7 +645,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
            new Date() > new Date(event.registration_closes_at))
 
         return (
-          <Modal onClose={() => { setSelectedEvent(null); setShowAlreadyRegistered(false) }} size="lg" scrollable={false}>
+          <Modal onClose={() => { setSelectedEvent(null); setShowAlreadyRegistered(false) }} size="lg" panelClassName="popup-hide-scrollbar">
             <div
               style={{
                 background: '#141414',
@@ -652,13 +656,10 @@ export default function EventsPageClient({ events, isMember, member, registeredE
             >
               <button
                 onClick={() => { setSelectedEvent(null); setShowAlreadyRegistered(false) }}
-                className="absolute top-3.5 right-3.5 z-10 flex items-center justify-center rounded-full transition-colors"
+                className="absolute top-3.5 right-3.5 z-10 flex items-center justify-center rounded-full transition-colors modal-close-btn"
                 style={{
                   width: '44px',
                   height: '44px',
-                  background: 'rgba(10,10,10,0.7)',
-                  border: '1px solid rgba(255,255,255,0.16)',
-                  color: '#e0e0e0',
                   backdropFilter: 'blur(4px)',
                 }}
               >

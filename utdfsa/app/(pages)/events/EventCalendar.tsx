@@ -15,6 +15,7 @@ type CalEvent = {
   allDay: boolean
   backgroundColor: string
   borderColor: string
+  textColor: string
   extendedProps: { event: unknown }
 }
 

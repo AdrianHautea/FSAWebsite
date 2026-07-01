@@ -12,6 +12,7 @@ interface ModalProps {
   onClose: () => void
   size?: 'sm' | 'md' | 'lg'
   scrollable?: boolean
+  panelClassName?: string
   label?: string
   children: React.ReactNode
 }
@@ -22,7 +23,7 @@ const sizeClass = {
   lg: 'max-w-2xl',
 }
 
-export default function Modal({ onClose, size = 'md', scrollable = true, label, children }: ModalProps) {
+export default function Modal({ onClose, size = 'md', scrollable = true, panelClassName, label, children }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null)
 
   // close modal on escape key press; re-registers if onClose reference changes
@@ -63,7 +64,7 @@ export default function Modal({ onClose, size = 'md', scrollable = true, label, 
         aria-modal="true"
         aria-label={label}
         tabIndex={-1}
-        className={`relative w-full ${sizeClass[size]} max-h-[90dvh] ${scrollable ? 'overflow-y-auto' : 'overflow-hidden'} rounded-2xl shadow-2xl outline-none`}
+        className={`relative w-full ${sizeClass[size]} max-h-[90dvh] ${scrollable ? 'overflow-y-auto' : 'overflow-hidden'} rounded-2xl shadow-2xl outline-none ${panelClassName ?? ''}`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

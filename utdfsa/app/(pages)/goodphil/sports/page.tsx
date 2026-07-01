@@ -35,7 +35,7 @@ export default function SportsPage() {
             fill
             className="object-cover object-[center_20%]"
             preload
-            quality={80}
+            quality={85}
             sizes="100vw"
           />
         </div>

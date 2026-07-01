@@ -28,7 +28,7 @@ export default function GoodphilAboutPage() {
             fill
             className="object-cover object-center"
             preload
-            quality={80}
+            quality={85}
             sizes="100vw"
           />
           <div className="absolute inset-0 bg-black/30" />
@@ -84,7 +84,7 @@ export default function GoodphilAboutPage() {
               fill
               className="object-cover object-center"
               preload
-              quality={80}
+              quality={85}
               sizes="55vw"
             />
           </div>
@@ -95,7 +95,7 @@ export default function GoodphilAboutPage() {
               fill
               className="object-cover object-center"
               preload
-              quality={80}
+              quality={85}
               sizes="55vw"
             />
           </div>
@@ -145,7 +145,7 @@ export default function GoodphilAboutPage() {
               fill
               className="object-cover object-center"
               sizes="100vw"
-              quality={80}
+              quality={85}
             />
             <div className="absolute inset-0 bg-black/40" />
           </div>
@@ -255,7 +255,7 @@ export default function GoodphilAboutPage() {
                   fill
                   className="object-cover object-[center_25%]"
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 50vw, 700px"
-                  quality={80}
+                  quality={85}
                 />
                 <div className="absolute inset-0 bg-black/40" />
                 <span className="absolute inset-0 flex items-center justify-center font-display font-black text-[clamp(20px,4vw,64px)] text-white text-center leading-none">

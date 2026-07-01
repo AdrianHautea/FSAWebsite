@@ -260,7 +260,7 @@ h1, h2, h3, h4 {
 .fc-dark .fc-day-today { background: rgba(255,255,255,0.03) !important; }
 
 /* event pills + overflow */
-.fc-dark .fc-daygrid-event { border-radius: 5px; font-size: 0.68rem; font-weight: 600; padding: 1px 5px; border: none !important; }
+.fc-dark .fc-daygrid-event { border-radius: 5px; font-size: 0.68rem; font-weight: 600; padding: 1px 5px; border-width: 1px !important; border-style: solid !important; }
 .fc-dark .fc-daygrid-event:hover { filter: brightness(1.2); }
 .fc-dark .fc-daygrid-more-link { color: #6f6f6f; font-size: 0.65rem; font-weight: 600; }
 
@@ -308,6 +308,23 @@ input[type="datetime-local"]::-webkit-date-and-time-value {
   text-align: left;
   margin: 0;
 }
+
+/* event-detail popup modals (homepage + /events) — hide the scrollbar on
+   desktop since the panel fits without scrolling there; keep the scrollbar
+   and scroll behavior on mobile where content is more likely to overflow */
+@media (min-width: 768px) {
+  .popup-hide-scrollbar {
+    scrollbar-width: none;      /* Firefox */
+    -ms-overflow-style: none;   /* legacy Edge */
+  }
+  .popup-hide-scrollbar::-webkit-scrollbar {
+    display: none;              /* Chrome/Safari/Edge */
+  }
+}
+
+/* event-detail modal close button — base + hover feedback */
+.modal-close-btn { background: rgba(10,10,10,0.7); border: 1px solid rgba(255,255,255,0.16); color: #e0e0e0; }
+.modal-close-btn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.34); color: #fff; }
 
 /* scrollbar for this-week strip */
 .tw-scroll::-webkit-scrollbar { height: 8px; }

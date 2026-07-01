@@ -25,7 +25,7 @@ export default function CulturalPage() {
             fill
             className="object-cover object-[center_43%]"
             preload
-            quality={80}
+            quality={85}
             sizes="100vw"
           />
         </div>

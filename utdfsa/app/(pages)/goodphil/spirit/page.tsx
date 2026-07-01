@@ -34,7 +34,7 @@ export default function SpiritPage() {
             fill
             className="object-cover object-center"
             preload
-            quality={80}
+            quality={85}
             sizes="100vw"
           />
         </div>
