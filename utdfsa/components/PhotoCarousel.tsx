@@ -7,7 +7,7 @@
 
 'use client'
 
-import { useState, useEffect, useRef, type PointerEvent } from 'react'
+import { useState, useEffect, useRef, type PointerEvent, type MouseEvent } from 'react'
 import SmoothImage from '@/components/SmoothImage'
 
 const slides = [
@@ -117,6 +117,38 @@ export default function PhotoCarousel() {
   const cardW = isMobile ? 320 : 552
   const cardH = isMobile ? 240 : 414
 
+  // Cards visually overlap by design (the fan effect) — the two flanking cards on
+  // each side share real screen space, and the nearer one always sits on top
+  // (higher zIndex). Native DOM hit-testing at a click point resolves to whichever
+  // card is topmost there, which is very often NOT the card whose own rendered
+  // center that point is closest to (e.g. clicking a far card's own center usually
+  // lands on the near card overlapping it). So target resolution can't rely on
+  // per-card onClick + native stacking — instead resolve intent by position math:
+  // find which of the 5 known fan-slot x-offsets the click is nearest to.
+  const handleStageClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (suppressClick.current) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const clickX = e.clientX - rect.left - rect.width / 2
+    // translateX percentages are relative to the card's own width regardless of
+    // the scale() applied alongside them, so this matches the actual rendered position.
+    const slotOffsetsPx = positions.map(p => (parseFloat(p.translateX) / 100) * cardW)
+    let nearestSlot = 2
+    let nearestDist = Infinity
+    slotOffsetsPx.forEach((slotX, i) => {
+      const dist = Math.abs(clickX - slotX)
+      if (dist < nearestDist) { nearestDist = dist; nearestSlot = i }
+    })
+    const offsetFromCenter = nearestSlot - 2 // positions[2] is the center slot
+    if (offsetFromCenter === 0) return // clicked the center card's own region — no-op
+
+    if (isMobile) {
+      offsetFromCenter < 0 ? prev() : next()
+    } else {
+      setCurrent((current + offsetFromCenter + total) % total)
+      resetTimer()
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6 w-full">
 
@@ -126,6 +158,7 @@ export default function PhotoCarousel() {
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
+        onClick={handleStageClick}
       >
         {slides.map((slide, slideIdx) => {
           // wrap offset into [-2, +2] range so the two flanking cards always exist
@@ -152,8 +185,9 @@ export default function PhotoCarousel() {
                 transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               }}
               className="rounded-2xl overflow-hidden bg-[#2a2a2a] cursor-pointer"
-              // Clicking a side card navigates in that direction
-              onClick={offset < 0 ? () => { if (!suppressClick.current) prev() } : offset > 0 ? () => { if (!suppressClick.current) next() } : undefined}
+              // Click handling lives on the stage container (handleStageClick above) — resolving
+              // target by click-position math instead of per-card onClick + native DOM hit-testing,
+              // since these cards visually overlap and hit-testing alone often picks the wrong one.
               onMouseEnter={!isCenter ? () => setHoveredIdx(slideIdx) : undefined}
               onMouseLeave={!isCenter ? () => setHoveredIdx(null) : undefined}
             >
