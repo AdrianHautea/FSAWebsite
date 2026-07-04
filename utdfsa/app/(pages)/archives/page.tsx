@@ -19,9 +19,10 @@ export default async function ArchivesPage() {
   const admin = createAdminClient()
 
   // galleries table — fetch only published rows, newest year first
+  // explicit columns — excludes created_by (officer uuid); mirrors the public /api/galleries GET
   const { data: galleries } = await admin
     .from('galleries')
-    .select('*')
+    .select('id, title, cover_photo_url, google_photos_url, description, semester, year, is_published, created_at')
     .eq('is_published', true)
     .order('year', { ascending: false })
     .order('created_at', { ascending: false })

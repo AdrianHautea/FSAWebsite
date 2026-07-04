@@ -14,13 +14,15 @@ import UpcomingEventsSection from "@/components/UpcomingEventsSection"
 import MissionStatementSection from "@/components/MissionStatementSection"
 import WhoAreWeText from "@/components/WhoAreWeText"
 import { createAdminClient } from "@/utils/supabase/server"
+import { PUBLIC_EVENT_COLUMNS } from "@/lib/constants"
 import type { Event } from "@/types/database"
 
 export default async function Home() {
   const admin = createAdminClient()
+  // explicit columns — never select('*') here; that would leak attend_qr_token to the public
   const { data: upcomingEvents } = await admin
     .from('events')
-    .select('*')
+    .select(PUBLIC_EVENT_COLUMNS)
     .eq('is_visible', true)
     .gte('event_date', new Date().toISOString())
     .order('event_date', { ascending: true })
@@ -86,7 +88,7 @@ export default async function Home() {
       <MissionStatementSection />
 
       {/* ── UPCOMING EVENTS ───────────────────────────────────────── */}
-      <UpcomingEventsSection events={(upcomingEvents ?? []) as Event[]} />
+      <UpcomingEventsSection events={(upcomingEvents ?? []) as unknown as Event[]} />
 
       {/* ── SECOND FULL-BLEED PHOTO ───────────────────────────────── */}
       <div className="relative h-[300px] md:h-[450px] lg:h-[600px] w-full overflow-hidden">

@@ -13,6 +13,7 @@ import SmoothImage from '@/components/SmoothImage'
 import AnimatedTitle from '@/components/AnimatedTitle'
 import BaybayinRule from '@/components/BaybayinRule'
 import QuickNavRail from '@/components/QuickNavRail'
+import { useStaggeredReveal } from '@/lib/useRevealOnScroll'
 
 const ABOUT_NAV_ITEMS = [
   { label: 'Officers', href: '#officers' },
@@ -221,6 +222,16 @@ export default function AboutClient() {
   // ── officer board scroll-triggered animation ──────────────
   const boardTitleRef = useRef<HTMLHeadingElement>(null)
   const boardGridRef = useRef<HTMLDivElement>(null)
+
+  // ── past officer boards — staggered fade-up entrance ──────
+  const pastGridRef = useRef<HTMLDivElement>(null)
+  useStaggeredReveal(
+    () => Array.from(pastGridRef.current?.querySelectorAll<HTMLElement>('[data-past-card]') ?? []),
+    (card, cards) => {
+      const i = cards.indexOf(card)
+      card.style.animation = `fadeUp 0.6s var(--ease-smooth) ${i * 80}ms both`
+    },
+  )
 
   useEffect(() => {
     const title = boardTitleRef.current
@@ -477,13 +488,13 @@ export default function AboutClient() {
           >
             PAST OFFICER BOARDS
           </h2>
-          <div className="flex flex-col gap-3">
+          <div ref={pastGridRef} className="flex flex-col gap-3">
             {PAST_OFFICERS.map(({ year, officers }) => {
               const isOpen = openYear === year
               // format "2024-2025" → "2024 – 2025" for display
               const displayYear = year.replace('-', ' – ')
               return (
-                <div key={year}>
+                <div key={year} data-past-card>
                   <button
                     id={`past-officers-trigger-${year}`}
                     aria-expanded={isOpen}
@@ -496,26 +507,34 @@ export default function AboutClient() {
                       className={`w-5 h-5 text-white/50 flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
                     />
                   </button>
-                  {isOpen && (
-                    <div
-                      id={`past-officers-panel-${year}`}
-                      role="region"
-                      aria-labelledby={`past-officers-trigger-${year}`}
-                      className="bg-[#161616] border border-t-0 border-white/10 rounded-b-xl px-6 py-2"
-                    >
-                      {officers.map(({ position, names }, i) => (
-                        <div
-                          key={`${year}-${position}`}
-                          className={`flex flex-col sm:flex-row gap-1 sm:gap-6 py-3 ${i < officers.length - 1 ? 'border-b border-white/10' : ''}`}
-                        >
-                          <span className="font-sans text-[11px] uppercase tracking-widest text-white/60 sm:w-52 sm:flex-shrink-0 sm:pt-0.5">
-                            {position}
-                          </span>
-                          <span className="font-sans text-sm text-white">{names}</span>
-                        </div>
-                      ))}
+                  {/* grid-template-rows 0fr→1fr — animates the collapse without touching
+                      height directly, so the panel stays always-mounted (no pop-in) */}
+                  <div
+                    className="grid transition-[grid-template-rows] duration-300 ease-out"
+                    style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
+                  >
+                    <div className="overflow-hidden">
+                      <div
+                        id={`past-officers-panel-${year}`}
+                        role="region"
+                        aria-labelledby={`past-officers-trigger-${year}`}
+                        aria-hidden={!isOpen}
+                        className="bg-[#161616] border border-t-0 border-white/10 rounded-b-xl px-6 py-2"
+                      >
+                        {officers.map(({ position, names }, i) => (
+                          <div
+                            key={`${year}-${position}`}
+                            className={`flex flex-col sm:flex-row gap-1 sm:gap-6 py-3 ${i < officers.length - 1 ? 'border-b border-white/10' : ''}`}
+                          >
+                            <span className="font-sans text-[11px] uppercase tracking-widest text-white/60 sm:w-52 sm:flex-shrink-0 sm:pt-0.5">
+                              {position}
+                            </span>
+                            <span className="font-sans text-sm text-white">{names}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               )
             })}

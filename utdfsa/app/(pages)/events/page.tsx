@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = { title: 'Events' }
 
 import { createAdminClient, createUserClient } from '@/utils/supabase/server'
+import { PUBLIC_EVENT_COLUMNS } from '@/lib/constants'
 import EventsPageClient from './EventsPageClient'
 import type { Event } from '@/types/database'
 import QRCode from 'qrcode'
@@ -22,9 +23,10 @@ export default async function EventsPage({
   const admin = createAdminClient()
 
   // visible events — base order ascending; client re-sorts into upcoming/past
+  // explicit columns — never select('*') here; that would leak attend_qr_token to the public
   const { data: allEvents } = await admin
     .from('events')
-    .select('*')
+    .select(PUBLIC_EVENT_COLUMNS)
     .eq('is_visible', true)
     .order('event_date', { ascending: true })
 
@@ -117,7 +119,7 @@ export default async function EventsPage({
   // ============================================================
   return (
     <EventsPageClient
-      events={(allEvents ?? []) as Event[]}
+      events={(allEvents ?? []) as unknown as Event[]}
       isMember={isMember}
       member={member}
       registeredEventIds={[...registeredEventIds]}

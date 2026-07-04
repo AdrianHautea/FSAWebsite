@@ -56,16 +56,62 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 
   // ── status update ─────────────────────────────────────────
   if (status !== undefined) {
-    // bypass rls — officer action; updates ading_applications.status
-    // reviewed_by and reviewed_at are derived from the authenticated session — never client-supplied
-    const { error } = await ctx.admin
+    // fetch current status first so the update can be optimistically locked against it
+    // bypass rls — officer action; reads ading_applications for the lock check
+    const { data: currentApp, error: fetchError } = await ctx.admin
       .from('ading_applications')
-      .update({ status, reviewed_by: ctx.officerId, reviewed_at: new Date().toISOString() })
+      .select('status')
       .eq('id', id)
+      .maybeSingle()
 
-    if (error) {
-      console.error('[ading/[id]] status update error:', error)
-      return NextResponse.json({ error: 'Failed to update application status.' }, { status: 500 })
+    if (fetchError || !currentApp) {
+      console.error('[ading/[id]] application not found:', fetchError)
+      return NextResponse.json({ error: 'Application not found.' }, { status: 404 })
+    }
+
+    // no-op: requested status already matches — skip the write
+    if (currentApp.status !== status) {
+      // bypass rls — officer action; updates ading_applications.status
+      // reviewed_by and reviewed_at are derived from the authenticated session — never client-supplied
+      // .eq('status', currentApp.status) is an optimistic lock: if another officer changed the status
+      // concurrently, 0 rows match and updatedRow is null — we return 409 with reviewer context
+      const { data: updatedRow, error } = await ctx.admin
+        .from('ading_applications')
+        .update({ status, reviewed_by: ctx.officerId, reviewed_at: new Date().toISOString() })
+        .eq('id', id)
+        .eq('status', currentApp.status)
+        .select('id')
+        .maybeSingle()
+
+      if (error) {
+        console.error('[ading/[id]] status update error:', error)
+        return NextResponse.json({ error: 'Failed to update application status.' }, { status: 500 })
+      }
+
+      if (!updatedRow) {
+        // optimistic lock failed: another officer changed the status between our read and this write
+        const { data: conflictRow } = await ctx.admin
+          .from('ading_applications')
+          .select('status, reviewed_by')
+          .eq('id', id)
+          .maybeSingle()
+
+        let reviewerName = 'Another officer'
+        if (conflictRow?.reviewed_by) {
+          const { data: reviewer } = await ctx.admin
+            .from('members')
+            .select('first_name, last_name')
+            .eq('id', conflictRow.reviewed_by)
+            .maybeSingle()
+          if (reviewer) reviewerName = `${reviewer.first_name} ${reviewer.last_name}`
+        }
+
+        return NextResponse.json({
+          error: 'conflict',
+          message: `${reviewerName} already reviewed this as ${conflictRow?.status ?? 'unknown'}`,
+          currentStatus: conflictRow?.status ?? null,
+        }, { status: 409 })
+      }
     }
   }
 

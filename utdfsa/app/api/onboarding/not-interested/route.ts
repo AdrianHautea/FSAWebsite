@@ -41,13 +41,11 @@ export async function POST() {
   // bypass rls — user client cannot update its own role fields
   const admin = createAdminClient()
 
-  console.log('[not-interested] updating member_type=not_interested for member.id:', member.id)
   // set member_type only — onboarding_complete is stamped by update-basic-info after the form submits
   const { error } = await admin
     .from('members')
     .update({ member_type: 'not_interested' })
     .eq('id', member.id)
-  console.log('[not-interested] update error:', error)
 
   if (error) {
     console.error('[onboarding not-interested]', error)

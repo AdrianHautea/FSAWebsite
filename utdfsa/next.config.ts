@@ -1,5 +1,11 @@
 import type { NextConfig } from "next"
 
+// 'unsafe-eval' is only needed in development (React uses eval to reconstruct
+// server error stacks in the browser). Neither React nor Next use eval in
+// production, so it is omitted from the prod CSP to shrink the XSS surface.
+// Ref: node_modules/next/dist/docs/01-app/02-guides/content-security-policy.md
+const isDev = process.env.NODE_ENV === 'development'
+
 const nextConfig: NextConfig = {
   // suppress X-Powered-By: Next.js header to avoid advertising the framework
   poweredByHeader: false,
@@ -51,7 +57,9 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              // unsafe-inline kept: removing it requires per-request nonces, which force
+              // dynamic rendering and disable this site's ISR caching. unsafe-eval is dev-only.
+              `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
               "style-src 'self' 'unsafe-inline'",
               // allow Google profile images in the navbar and S3 cover photos
               "img-src 'self' data: https://lh3.googleusercontent.com https://*.amazonaws.com",

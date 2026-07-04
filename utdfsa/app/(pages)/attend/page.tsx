@@ -6,7 +6,7 @@
 //        qr open → expiry → member lookup → duplicate → then write;
 //        points are written with user client (RLS permits member to update own row)
 // ─────────────────────────────────────────────────────────────
-import { createUserClient } from '@/utils/supabase/server'
+import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 
 interface Props {
@@ -43,10 +43,10 @@ export default async function AttendPage({ searchParams }: Props) {
       .select('id, name, event_date, points, is_active, attend_qr_open, attend_qr_expires_at')
       .eq('attend_qr_token', token)
       .maybeSingle(),
-    // members table — need id for attendance insert and points for increment
+    // members table — need id for the attendance RPC (points are handled server-side)
     supabase
       .from('members')
-      .select('id, points')
+      .select('id')
       .eq('email', user.email!)
       .maybeSingle(),
   ])
@@ -93,37 +93,36 @@ export default async function AttendPage({ searchParams }: Props) {
   // member not found — user is authenticated but hasn't completed onboarding; redirect to profile
   if (!member) redirect('/member/profile')
 
-  // attendance table — check for an existing row to prevent double check-in
-  const { data: existing } = await supabase
-    .from('attendance')
-    .select('id')
-    .eq('member_id', member.id)
-    .eq('event_id', event.id)
-    .maybeSingle()
+  // record attendance + award points atomically via the service-role RPC.
+  // client roles are read-only (migration: harden_client_write_privileges_and_atomic_attendance),
+  // so all writes go through the admin client. record_attendance inserts the attendance row
+  // (unique on member_id, event_id) and increments points in one transaction, returning true
+  // only when a NEW row was created — concurrent double-scans can never double-award or duplicate.
+  const admin = createAdminClient()
+  const { data: newlyRecorded, error: recordError } = await admin.rpc('record_attendance', {
+    p_member_id: member.id,
+    p_event_id: event.id,
+    p_points: event.points ?? 0,
+  })
 
-  if (existing) {
+  if (recordError) {
+    console.error('[attend] record_attendance failed:', recordError)
+    return (
+      <main className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <h1 className="text-2xl font-bold text-red-600">Check-in Failed</h1>
+        <p className="text-gray-500">Something went wrong. Please try scanning again.</p>
+      </main>
+    )
+  }
+
+  // false means the attendance row already existed — the member had already checked in
+  if (!newlyRecorded) {
     return (
       <main className="flex flex-col items-center justify-center min-h-screen gap-4">
         <h1 className="text-2xl font-bold text-yellow-600">Already Checked In</h1>
         <p className="text-gray-500">You already checked into {event.name}.</p>
       </main>
     )
-  }
-
-  // records attendance and increments points
-  // member writes their own attendance record — RLS permits this via the user client
-  // duplicate prevention is handled by the existing attendance check above
-  await supabase.from('attendance').insert({
-    member_id: member.id,
-    event_id: event.id,
-  })
-
-  // increment points — member.points may be null on first ever check-in, default to 0
-  if (event.points) {
-    await supabase
-      .from('members')
-      .update({ points: (member.points ?? 0) + event.points })
-      .eq('id', member.id)
   }
 
   // ============================================================

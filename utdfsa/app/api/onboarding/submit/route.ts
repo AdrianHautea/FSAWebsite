@@ -158,12 +158,11 @@ export async function POST(req: Request) {
     }
 
     // application saved — now mark onboarding complete and set member_type
-    console.log('[onboarding submit] setting member_type=ading for member.id:', member.id)
     const { error: completeError } = await admin
       .from('members')
       .update({ onboarding_complete: true, member_type: 'ading' })
       .eq('id', member.id)
-    console.log('[onboarding submit] ading complete update error:', completeError)
+    if (completeError) console.error('[onboarding submit] ading complete update error:', completeError)
   } else {
     const d = appParsed.data as z.infer<typeof kuyateApplicationSchema>
 
@@ -191,12 +190,11 @@ export async function POST(req: Request) {
     }
 
     // application saved — now mark onboarding complete and set member_type
-    console.log('[onboarding submit] setting member_type=kuyate for member.id:', member.id)
     const { error: completeError } = await admin
       .from('members')
       .update({ onboarding_complete: true, member_type: 'kuyate' })
       .eq('id', member.id)
-    console.log('[onboarding submit] kuyate complete update error:', completeError)
+    if (completeError) console.error('[onboarding submit] kuyate complete update error:', completeError)
   }
 
   return NextResponse.json({ success: true })
