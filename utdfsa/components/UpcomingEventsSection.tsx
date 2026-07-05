@@ -1,29 +1,26 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/client'
 import Modal from '@/components/Modal'
 import RegisterModal from '@/app/(pages)/events/RegisterModal'
 import type { Event } from '@/types/database'
 import { getBadge } from '@/utils/eventTypes'
+import { useStaggeredReveal } from '@/lib/useRevealOnScroll'
+import { fmtTimeRange } from '@/lib/format'
 
 // ── helpers (shared with EventsPageClient) ─────────────────────────────────
 const fmtCurrency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 function fmt(cents: number) { return fmtCurrency.format(cents / 100) }
 
-function fmtModalDate(iso: string) {
+function fmtModalDate(iso: string, endIso?: string | null) {
   const day = new Date(iso).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/Chicago' })
-  const time = new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
-  return `${day} · ${time}`
+  return `${day} · ${fmtTimeRange(iso, endIso)}`
 }
 
 function fmtWeekDay(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', { weekday: 'long', timeZone: 'America/Chicago' }).toUpperCase()
-}
-
-function fmtTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
 }
 
 function fmtRegDeadline(iso: string) {
@@ -88,6 +85,15 @@ export default function UpcomingEventsSection({ events }: Props) {
     fetchMember()
   }, [])
 
+  const stripRef = useRef<HTMLDivElement>(null)
+  useStaggeredReveal(
+    () => stripRef.current ? Array.from(stripRef.current.querySelectorAll<HTMLElement>('[data-event-card]')) : [],
+    (card, cards) => {
+      const delay = cards.indexOf(card) * 60
+      card.style.animation = `fadeUp 500ms cubic-bezier(0.16,1,0.3,1) ${delay}ms both`
+    },
+  )
+
   if (events.length === 0) return null
 
   return (
@@ -104,12 +110,13 @@ export default function UpcomingEventsSection({ events }: Props) {
 
         {/* horizontal scrollable strip — matches "This Week" style on events page */}
         {/* fewer than 4 events (incl. "See More" card) reads as sparse left-aligned; center it instead */}
-        <div className={`tw-scroll flex gap-4 overflow-x-auto pb-4 ${events.length < 3 ? 'justify-center' : ''}`}>
+        <div ref={stripRef} className={`tw-scroll flex gap-4 overflow-x-auto pb-4 ${events.length < 3 ? 'justify-center' : ''}`}>
           {events.map(event => {
             const badge = getBadge(event.event_type)
             return (
               <button
                 key={event.id}
+                data-event-card
                 onClick={() => setSelectedEvent(event)}
                 className="week-pill flex-none text-left rounded-2xl px-4 hover:brightness-110 transition-all duration-200"
                 style={{
@@ -130,7 +137,7 @@ export default function UpcomingEventsSection({ events }: Props) {
                   {event.name}
                 </div>
                 <div className="text-[13px] font-medium" style={{ color: '#7a7a7a' }}>
-                  {fmtTime(event.event_date)}
+                  {fmtTimeRange(event.event_date, event.event_end)}
                 </div>
               </button>
             )
@@ -139,6 +146,7 @@ export default function UpcomingEventsSection({ events }: Props) {
           {/* See More Events — always shown as the last card */}
           <Link
             href="/events"
+            data-event-card
             className="flex-none flex flex-col items-center justify-center gap-3 rounded-2xl px-4 bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] hover:border-white/20 hover:brightness-110 transition-all duration-200"
             style={{
               width: '240px',
@@ -226,7 +234,7 @@ export default function UpcomingEventsSection({ events }: Props) {
                     <rect x="3" y="4.5" width="18" height="16" rx="2.5" />
                     <path d="M3 9h18M8 2.5v4M16 2.5v4" />
                   </svg>
-                  <span className="text-[15px] font-medium" style={{ color: '#cfcfcf' }}>{fmtModalDate(event.event_date)}</span>
+                  <span className="text-[15px] font-medium" style={{ color: '#cfcfcf' }}>{fmtModalDate(event.event_date, event.event_end)}</span>
                 </div>
 
                 {event.location && (
@@ -350,7 +358,7 @@ export default function UpcomingEventsSection({ events }: Props) {
 
       {/* already registered info modal */}
       {showAlreadyRegistered && (
-        <Modal onClose={() => setShowAlreadyRegistered(false)} size="sm">
+        <Modal onClose={() => setShowAlreadyRegistered(false)} size="sm" scrollable={false}>
           <div
             style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.1)', animation: 'modalIn .26s cubic-bezier(0.22,1,0.36,1)' }}
             className="rounded-2xl p-7"

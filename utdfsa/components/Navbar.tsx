@@ -156,7 +156,8 @@ export default function Navbar({ initialMember }: NavbarProps) {
   const navBase = "font-display font-semibold text-[14px] uppercase tracking-wider transition-colors"
   const navLink = (active: boolean) =>
     `${navBase} ${active ? 'text-accent-green' : 'text-white hover:text-accent-green'}`
-  const dropdownItemClass = "block px-5 py-3 text-sm text-white font-display font-semibold uppercase tracking-wide hover:bg-white/10 transition-colors"
+  const dropdownItemClass = (active: boolean) =>
+    `block px-5 py-3 text-sm font-display font-semibold uppercase tracking-wide transition-colors ${active ? 'text-accent-green' : 'text-white hover:text-accent-green'}`
   const mobileLinkClass = "block py-4 px-6 text-lg font-display font-semibold text-white uppercase tracking-wider hover:bg-white/10 transition-colors"
   const mobileBase = "block py-4 px-6 text-lg font-display font-semibold uppercase tracking-wider hover:bg-white/10 transition-colors"
   const mobileNavLink = (active: boolean) =>
@@ -210,16 +211,16 @@ export default function Navbar({ initialMember }: NavbarProps) {
             {goodphilOpen && (
               <div className="absolute top-full left-0 mt-2 w-48 bg-dropdown-bg shadow-xl rounded-[17px] py-2 z-50 border border-white/10">
                 {/* route: /goodphil/about — About Goodphil page — do not change this path */}
-                <Link href="/goodphil/about" className={dropdownItemClass} onClick={() => setGoodphilOpen(false)}>About Goodphil</Link>
+                <Link href="/goodphil/about" className={dropdownItemClass(isActive('/goodphil/about'))} onClick={() => setGoodphilOpen(false)}>About Goodphil</Link>
                 <hr className="my-1 border-white/20" />
                 {/* route: /goodphil/spirit — Spirit Goodphil branch page — do not change this path */}
-                <Link href="/goodphil/spirit" className={dropdownItemClass} onClick={() => setGoodphilOpen(false)}>Spirit</Link>
+                <Link href="/goodphil/spirit" className={dropdownItemClass(isActive('/goodphil/spirit'))} onClick={() => setGoodphilOpen(false)}>Spirit</Link>
                 {/* route: /goodphil/cultural — Cultural Goodphil branch page — do not change this path */}
-                <Link href="/goodphil/cultural" className={dropdownItemClass} onClick={() => setGoodphilOpen(false)}>Cultural</Link>
+                <Link href="/goodphil/cultural" className={dropdownItemClass(isActive('/goodphil/cultural'))} onClick={() => setGoodphilOpen(false)}>Cultural</Link>
                 {/* route: /goodphil/modern — Modern Goodphil branch page — do not change this path */}
-                <Link href="/goodphil/modern" className={dropdownItemClass} onClick={() => setGoodphilOpen(false)}>Modern</Link>
+                <Link href="/goodphil/modern" className={dropdownItemClass(isActive('/goodphil/modern'))} onClick={() => setGoodphilOpen(false)}>Modern</Link>
                 {/* route: /goodphil/sports — Sports Goodphil branch page — do not change this path */}
-                <Link href="/goodphil/sports" className={dropdownItemClass} onClick={() => setGoodphilOpen(false)}>Sports</Link>
+                <Link href="/goodphil/sports" className={dropdownItemClass(isActive('/goodphil/sports'))} onClick={() => setGoodphilOpen(false)}>Sports</Link>
               </div>
             )}
           </li>
@@ -234,7 +235,7 @@ export default function Navbar({ initialMember }: NavbarProps) {
             <li className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(prev => !prev)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer"
               >
                 {/* only renders the Google avatar image when member.avatar_url is set — do not remove this condition */}
                 {member.avatar_url ? (
@@ -263,26 +264,26 @@ export default function Navbar({ initialMember }: NavbarProps) {
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-52 bg-dropdown-bg shadow-xl rounded-[17px] py-2 z-50 border border-white/10">
                   {/* route: /member/profile — member profile page — do not change this path */}
-                  <Link href="/member/profile" className={dropdownItemClass} onClick={() => setDropdownOpen(false)}>Profile</Link>
+                  <Link href="/member/profile" className={dropdownItemClass(isActive('/member/profile'))} onClick={() => setDropdownOpen(false)}>Profile</Link>
                   {/* route: /member/orders — member ticket order history page — do not change this path */}
-                  <Link href="/member/orders" className={dropdownItemClass} onClick={() => setDropdownOpen(false)}>Order History</Link>
+                  <Link href="/member/orders" className={dropdownItemClass(isActive('/member/orders'))} onClick={() => setDropdownOpen(false)}>Order History</Link>
                   {/* route: /member/attendance — member attendance history page — do not change this path */}
-                  <Link href="/member/attendance" className={dropdownItemClass} onClick={() => setDropdownOpen(false)}>Attendance History</Link>
+                  <Link href="/member/attendance" className={dropdownItemClass(isActive('/member/attendance'))} onClick={() => setDropdownOpen(false)}>Attendance History</Link>
 
                   {/* only renders officer-specific links when member.role is 'officer' or 'admin' — do not remove this condition */}
                   {isOfficer && (
                     <>
                       <hr className="my-1 border-white/20" />
                       {/* route: /officer/events — officer event management dashboard — do not change this path */}
-                      <Link href="/officer/events" className={dropdownItemClass} onClick={() => setDropdownOpen(false)}>Manage Events</Link>
+                      <Link href="/officer/events" className={dropdownItemClass(isActive('/officer/events'))} onClick={() => setDropdownOpen(false)}>Manage Events</Link>
                       {/* route: /officer/gallery — officer gallery management dashboard — do not change this path */}
-                      <Link href="/officer/gallery" className={dropdownItemClass} onClick={() => setDropdownOpen(false)}>Create Gallery</Link>
+                      <Link href="/officer/gallery" className={dropdownItemClass(isActive('/officer/gallery'))} onClick={() => setDropdownOpen(false)}>Create Gallery</Link>
                       {/* route: /officer/scan — officer QR code ticket scanner — do not change this path */}
-                      <Link href="/officer/scan" className={dropdownItemClass} onClick={() => setDropdownOpen(false)}>Scan QR Codes</Link>
+                      <Link href="/officer/scan" className={dropdownItemClass(isActive('/officer/scan'))} onClick={() => setDropdownOpen(false)}>Scan QR Codes</Link>
                       {/* route: /officer/goodphil — goodphil eligibility lookup — do not change this path */}
-                      <Link href="/officer/goodphil" className={dropdownItemClass} onClick={() => setDropdownOpen(false)}>Goodphil Eligibility</Link>
+                      <Link href="/officer/goodphil" className={dropdownItemClass(isActive('/officer/goodphil'))} onClick={() => setDropdownOpen(false)}>Goodphil Eligibility</Link>
                       {/* route: /officer/applications — ading and kuyate application review — do not change this path */}
-                      <Link href="/officer/applications" className={dropdownItemClass} onClick={() => setDropdownOpen(false)}>Review Applications</Link>
+                      <Link href="/officer/applications" className={dropdownItemClass(isActive('/officer/applications'))} onClick={() => setDropdownOpen(false)}>Review Applications</Link>
                     </>
                   )}
 

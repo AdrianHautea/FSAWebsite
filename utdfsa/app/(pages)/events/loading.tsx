@@ -6,7 +6,7 @@
 
 export default function EventsLoading() {
   return (
-    <main className="min-h-screen overflow-x-hidden" style={{ background: '#0f0f0f' }}>
+    <main className="min-h-screen overflow-x-clip" style={{ background: '#0f0f0f' }}>
       <div className="max-w-[1280px] mx-auto px-6 sm:px-10 pb-20">
 
         {/* Section 1 — Page title */}

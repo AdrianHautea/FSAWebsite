@@ -13,6 +13,7 @@ import HeroSection from "@/components/HeroSection"
 import UpcomingEventsSection from "@/components/UpcomingEventsSection"
 import MissionStatementSection from "@/components/MissionStatementSection"
 import WhoAreWeText from "@/components/WhoAreWeText"
+import ScrollFadeIn from "@/components/ScrollFadeIn"
 import { createAdminClient } from "@/utils/supabase/server"
 import { PUBLIC_EVENT_COLUMNS } from "@/lib/constants"
 import type { Event } from "@/types/database"
@@ -28,7 +29,7 @@ export default async function Home() {
     .order('event_date', { ascending: true })
     .limit(4)
   return (
-    <main className="bg-brand-bg text-white overflow-x-hidden">
+    <main className="bg-brand-bg text-white overflow-x-clip">
 
       {/* ── HERO ──────────────────────────────────────────────────── */}
       <section className="relative h-[50vh] sm:h-[70vh] md:h-screen w-full overflow-hidden">
@@ -80,9 +81,9 @@ export default async function Home() {
       </section>
 
       {/* ── FULL-BLEED PHOTO ──────────────────────────────────────── */}
-      <div className="relative h-[300px] md:h-[450px] lg:h-[600px] w-full overflow-hidden">
+      <ScrollFadeIn className="relative h-[300px] md:h-[450px] lg:h-[600px] w-full overflow-hidden">
         <SmoothImage src="/event-photo.jpg" alt="FSA Event" fill className="object-cover object-[center_60%]" sizes="100vw" />
-      </div>
+      </ScrollFadeIn>
 
       {/* ── MISSION STATEMENT ─────────────────────────────────────── */}
       <MissionStatementSection />
@@ -91,9 +92,9 @@ export default async function Home() {
       <UpcomingEventsSection events={(upcomingEvents ?? []) as unknown as Event[]} />
 
       {/* ── SECOND FULL-BLEED PHOTO ───────────────────────────────── */}
-      <div className="relative h-[300px] md:h-[450px] lg:h-[600px] w-full overflow-hidden">
+      <ScrollFadeIn className="relative h-[300px] md:h-[450px] lg:h-[600px] w-full overflow-hidden">
         <SmoothImage src="/event-photo-2.jpg" alt="FSA Event" fill className="object-cover" sizes="100vw" />
-      </div>
+      </ScrollFadeIn>
 
     </main>
   )

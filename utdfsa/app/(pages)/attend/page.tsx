@@ -53,7 +53,7 @@ export default async function AttendPage({ searchParams }: Props) {
 
   if (!event) {
     return (
-      <main className="flex flex-col items-center justify-center min-h-screen">
+      <main className="flex flex-col items-center justify-center min-h-screen" style={{ animation: 'fadeUp 0.5s var(--ease-smooth) both' }}>
         <h1 className="text-2xl font-bold text-red-600">Invalid QR Code</h1>
         <p className="text-gray-500 mt-2">This attendance code is not valid.</p>
       </main>
@@ -63,7 +63,7 @@ export default async function AttendPage({ searchParams }: Props) {
   // check if event is still active (master switch)
   if (!event.is_active) {
     return (
-      <main className="flex flex-col items-center justify-center min-h-screen gap-4">
+      <main className="flex flex-col items-center justify-center min-h-screen gap-4" style={{ animation: 'fadeUp 0.5s var(--ease-smooth) both' }}>
         <h1 className="text-2xl font-bold text-yellow-600">Check-in Closed</h1>
         <p className="text-gray-500">Attendance is no longer open for this event.</p>
       </main>
@@ -73,9 +73,9 @@ export default async function AttendPage({ searchParams }: Props) {
   // check if QR is open
   if (!event.attend_qr_open) {
     return (
-      <main className="flex flex-col items-center justify-center min-h-screen">
+      <main className="flex flex-col items-center justify-center min-h-screen" style={{ animation: 'fadeUp 0.5s var(--ease-smooth) both' }}>
         <h1 className="text-2xl font-bold text-yellow-600">Check-in Not Open</h1>
-        <p className="text-gray-500 mt-2">The officer hasn't opened attendance yet.</p>
+        <p className="text-gray-500 mt-2">The officer hasn&apos;t opened attendance yet.</p>
       </main>
     )
   }
@@ -83,7 +83,7 @@ export default async function AttendPage({ searchParams }: Props) {
   // compare expiry timestamp against current time; null means no expiry set
   if (event.attend_qr_expires_at && new Date(event.attend_qr_expires_at) < new Date()) {
     return (
-      <main className="flex flex-col items-center justify-center min-h-screen">
+      <main className="flex flex-col items-center justify-center min-h-screen" style={{ animation: 'fadeUp 0.5s var(--ease-smooth) both' }}>
         <h1 className="text-2xl font-bold text-yellow-600">Check-in Closed</h1>
         <p className="text-gray-500 mt-2">Attendance window has closed for this event.</p>
       </main>
@@ -108,7 +108,7 @@ export default async function AttendPage({ searchParams }: Props) {
   if (recordError) {
     console.error('[attend] record_attendance failed:', recordError)
     return (
-      <main className="flex flex-col items-center justify-center min-h-screen gap-4">
+      <main className="flex flex-col items-center justify-center min-h-screen gap-4" style={{ animation: 'fadeUp 0.5s var(--ease-smooth) both' }}>
         <h1 className="text-2xl font-bold text-red-600">Check-in Failed</h1>
         <p className="text-gray-500">Something went wrong. Please try scanning again.</p>
       </main>
@@ -118,7 +118,7 @@ export default async function AttendPage({ searchParams }: Props) {
   // false means the attendance row already existed — the member had already checked in
   if (!newlyRecorded) {
     return (
-      <main className="flex flex-col items-center justify-center min-h-screen gap-4">
+      <main className="flex flex-col items-center justify-center min-h-screen gap-4" style={{ animation: 'fadeUp 0.5s var(--ease-smooth) both' }}>
         <h1 className="text-2xl font-bold text-yellow-600">Already Checked In</h1>
         <p className="text-gray-500">You already checked into {event.name}.</p>
       </main>
@@ -136,11 +136,17 @@ export default async function AttendPage({ searchParams }: Props) {
   // ============================================================
   return (
     <main className="flex flex-col items-center justify-center min-h-screen gap-4">
-      <div className="text-6xl">✅</div>
-      <h1 className="text-3xl font-bold text-green-600">Attendance Recorded!</h1>
-      <p className="text-xl">{event.name}</p>
+      <div className="relative w-20 h-20 flex items-center justify-center">
+        <span
+          className="absolute inset-0 rounded-full border-2 border-green-500"
+          style={{ animation: 'fsa-ring 1s cubic-bezier(0.16,1,0.3,1) both' }}
+        />
+        <div className="text-6xl" style={{ animation: 'fsa-check-pop 500ms cubic-bezier(0.16,1,0.3,1) both' }}>✅</div>
+      </div>
+      <h1 className="text-3xl font-bold text-green-600" style={{ animation: 'fadeUp 0.5s var(--ease-smooth) 150ms both' }}>Attendance Recorded!</h1>
+      <p className="text-xl" style={{ animation: 'fadeUp 0.5s var(--ease-smooth) 220ms both' }}>{event.name}</p>
       {event.points ? (
-        <p className="text-gray-500">+{event.points} points added to your account.</p>
+        <p className="text-gray-500" style={{ animation: 'fadeUp 0.5s var(--ease-smooth) 290ms both' }}>+{event.points} points added to your account.</p>
       ) : null}
     </main>
   )

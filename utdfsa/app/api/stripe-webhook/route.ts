@@ -199,12 +199,12 @@ export async function POST(req: Request) {
               .single(),
           ])
 
-          let eventInfo: { name: string; event_date: string | null; location: string | null } | null = null
+          let eventInfo: { name: string; event_date: string | null; event_end: string | null; location: string | null } | null = null
           let memberContactEmail: string | null = null
 
           const [eventResult, memberResult] = await Promise.all([
             regRow?.event_id
-              ? supabase.from('events').select('name, event_date, location').eq('id', regRow.event_id).single()
+              ? supabase.from('events').select('name, event_date, event_end, location').eq('id', regRow.event_id).single()
               : Promise.resolve({ data: null }),
             regRow?.member_id
               ? supabase.from('members').select('contact_email').eq('id', regRow.member_id).single()
@@ -251,6 +251,7 @@ export async function POST(req: Request) {
                       attendeeName,
                       eventName: eventInfo!.name,
                       eventDate: eventInfo!.event_date,
+                      eventEnd: eventInfo!.event_end,
                       location: eventInfo!.location,
                       qrCid: 'ticket_qr',
                     }),

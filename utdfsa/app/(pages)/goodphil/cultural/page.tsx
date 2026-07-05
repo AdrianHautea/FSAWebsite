@@ -41,7 +41,7 @@ export default function CulturalPage() {
   )
 
   return (
-    <main className="bg-section-bg text-white overflow-x-hidden">
+    <main className="bg-section-bg text-white overflow-x-clip">
       <GoodphilNavRail />
 
       {/* ── SECTION 1 — HERO ──────────────────────────────────────── */}

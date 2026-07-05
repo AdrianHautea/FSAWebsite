@@ -9,6 +9,7 @@
 
 import Image from 'next/image'
 import { createClient } from '@/utils/supabase/client'
+import AnimatedTitle from '@/components/AnimatedTitle'
 
 // ── auth ──────────────────────────────────────────────────────
 // ============================================================
@@ -95,7 +96,7 @@ export default function LoginPage() {
         className="w-full lg:flex-[0_0_40%] flex items-center justify-center p-6 lg:p-12 min-h-screen"
         style={{ background: 'var(--background)', borderLeft: '1px solid var(--color-border-subtle)' }}
       >
-        <div className="w-full max-w-[340px] flex flex-col">
+        <AnimatedTitle as="div" animation="fadeUp" className="w-full max-w-[340px] flex flex-col">
 
           {/* Mobile-only logo */}
           <div className="lg:hidden flex justify-center mb-6">
@@ -168,7 +169,7 @@ export default function LoginPage() {
             By signing in you agree to UTD FSA&apos;s terms of membership.
           </p>
 
-        </div>
+        </AnimatedTitle>
       </div>
 
       <style>{`

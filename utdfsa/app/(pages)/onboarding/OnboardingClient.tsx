@@ -353,7 +353,7 @@ export default function OnboardingClient({ firstName, isKuyateOpen, initialType,
   // do not reorder steps or change the step transition logic
   if (step === 'pick') {
     return (
-      <main className="bg-brand-bg min-h-screen text-white overflow-x-hidden">
+      <main className="bg-brand-bg min-h-screen text-white overflow-x-clip">
         <div className="relative flex flex-col items-center text-center px-6 py-16 md:py-20 max-w-[1280px] mx-auto">
 
           {/* membership confirmed badge */}
@@ -462,7 +462,7 @@ export default function OnboardingClient({ firstName, isKuyateOpen, initialType,
             <button
               onClick={handleNotInterested}
               disabled={loading}
-              className="relative z-10 mt-9 text-[14px] font-semibold text-[#8e8e8e] hover:text-[#cfcfcf] cursor-pointer inline-flex items-center gap-2 transition-colors duration-200 disabled:opacity-50"
+              className="relative z-10 mt-9 text-[14px] font-semibold text-[#8e8e8e] hover:text-[#cfcfcf] cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-2 transition-colors duration-200 disabled:opacity-50"
             >
               {loading ? 'saving...' : (
                 <>
@@ -609,7 +609,7 @@ export default function OnboardingClient({ firstName, isKuyateOpen, initialType,
 
             <button
               type="submit"
-              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] active:scale-[0.98] disabled:opacity-50 transition-all mt-2"
+              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] active:scale-[0.98] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed transition-all mt-2"
             >
               Continue
             </button>
@@ -617,7 +617,7 @@ export default function OnboardingClient({ firstName, isKuyateOpen, initialType,
             <button
               type="button"
               onClick={() => setStep('pick')}
-              className="w-full text-center text-[#8e8e8e] text-[14px] font-semibold hover:text-[#cfcfcf] transition-colors"
+              className="w-full text-center text-[#8e8e8e] text-[14px] font-semibold hover:text-[#cfcfcf] cursor-pointer transition-colors"
             >
               ← Go Back
             </button>
@@ -1143,7 +1143,7 @@ export default function OnboardingClient({ firstName, isKuyateOpen, initialType,
             <button
               type="submit"
               disabled={loading || !adingPrivacyAck}
-              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] active:scale-[0.98] disabled:opacity-50 transition-all mt-2"
+              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] active:scale-[0.98] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed transition-all mt-2"
             >
               {/* only shows "submitting..." while the API call is in flight — do not remove this condition */}
               {loading ? 'Submitting...' : 'Complete Sign Up'}
@@ -1152,7 +1152,7 @@ export default function OnboardingClient({ firstName, isKuyateOpen, initialType,
             <button
               type="button"
               onClick={() => setStep('profile')}
-              className="w-full text-center text-[#8e8e8e] text-[14px] font-semibold hover:text-[#cfcfcf] transition-colors"
+              className="w-full text-center text-[#8e8e8e] text-[14px] font-semibold hover:text-[#cfcfcf] cursor-pointer transition-colors"
             >
               ← Go Back
             </button>
@@ -1400,7 +1400,7 @@ export default function OnboardingClient({ firstName, isKuyateOpen, initialType,
             <button
               type="submit"
               disabled={loading || !kuyateForm.acknowledges_responsibilities || !kuyatePrivacyAck}
-              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] active:scale-[0.98] disabled:opacity-50 transition-all mt-2"
+              className="w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] active:scale-[0.98] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed transition-all mt-2"
             >
               {/* only shows "submitting..." while the API call is in flight — do not remove this condition */}
               {loading ? 'Submitting...' : 'Complete Sign Up'}
@@ -1409,7 +1409,7 @@ export default function OnboardingClient({ firstName, isKuyateOpen, initialType,
             <button
               type="button"
               onClick={() => setStep('profile')}
-              className="w-full text-center text-[#8e8e8e] text-[14px] font-semibold hover:text-[#cfcfcf] transition-colors"
+              className="w-full text-center text-[#8e8e8e] text-[14px] font-semibold hover:text-[#cfcfcf] cursor-pointer transition-colors"
             >
               ← Go Back
             </button>
@@ -1425,13 +1425,13 @@ export default function OnboardingClient({ firstName, isKuyateOpen, initialType,
     const kindLabel = memberType === 'kuyate' ? 'Kuya / Ate' : 'Ading'
 
     const nextSteps = [
-      { num: '01', title: 'Application reviewed', desc: 'The pamilya committee reads through every response to find your most compatible pamilya.', hasLine: true, active: true },
-      { num: '02', title: 'Placement announced', desc: 'All sorting results will be announced at the 2nd General Meeting. Late applications will have an email sent regarding their pamilya result.', hasLine: true, active: false },
-      { num: '03', title: 'Meet your pamilya', desc: 'Show up to the reveal event, meet your ates, kuyas, and fellow adings!', hasLine: false, active: false },
+      { num: '01', title: 'Application Reviewed', desc: 'The pamilya committee reads through every response to find your most compatible pamilya.', hasLine: true, active: true },
+      { num: '02', title: 'Placement Announced', desc: 'All sorting results will be announced at the 2nd General Meeting. Late applications will have an email sent regarding their pamilya result.', hasLine: true, active: false },
+      { num: '03', title: 'Meet Your Pamilya', desc: 'Show up to the reveal event, meet your ates, kuyas, and fellow adings!', hasLine: false, active: false },
     ]
 
     return (
-      <main className="bg-brand-bg min-h-screen text-white overflow-x-hidden">
+      <main className="bg-brand-bg min-h-screen text-white overflow-x-clip">
         <div className="relative flex flex-col items-center text-center px-6 py-16 md:py-20 max-w-[660px] mx-auto">
 
           {/* radial glow */}
@@ -1509,7 +1509,7 @@ export default function OnboardingClient({ firstName, isKuyateOpen, initialType,
           <div className="relative z-10 flex flex-col sm:flex-row gap-3.5 w-full mt-7">
             <button
               onClick={() => router.push('/member/profile')}
-              className="flex-1 flex items-center justify-center gap-2.5 py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] transition-all"
+              className="flex-1 flex items-center justify-center gap-2.5 py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.02em] hover:brightness-[1.08] cursor-pointer transition-all"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#08130a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
@@ -1518,7 +1518,7 @@ export default function OnboardingClient({ firstName, isKuyateOpen, initialType,
             </button>
             <button
               onClick={() => router.push('/')}
-              className="flex-1 flex items-center justify-center gap-2.5 py-4 border border-white/[0.14] rounded-[14px] bg-[#141414] text-white font-display font-extrabold text-[15px] tracking-[0.02em] hover:border-white/30 hover:bg-[#191919] transition-all"
+              className="flex-1 flex items-center justify-center gap-2.5 py-4 border border-white/[0.14] rounded-[14px] bg-[#141414] text-white font-display font-extrabold text-[15px] tracking-[0.02em] hover:border-white/30 hover:bg-[#191919] cursor-pointer transition-all"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 11l9-8 9 8" /><path d="M5 10v10h14V10" />

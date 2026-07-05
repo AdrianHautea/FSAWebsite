@@ -44,7 +44,7 @@ export async function GET() {
   // bypass rls — fetch all events including inactive/hidden ones for officer view
   const { data: events, error } = await ctx.admin
     .from('events')
-    .select('id, created_at, name, description, event_type, event_date, location, points, price_cents_members, price_cents_nonmembers, eb_price_members, eb_price_nonmembers, eb_deadline, is_active, is_visible, attend_qr_open, attend_qr_expires_at, cover_photo_url, registration_closes_at')
+    .select('id, created_at, name, description, event_type, event_date, event_end, location, points, price_cents_members, price_cents_nonmembers, eb_price_members, eb_price_nonmembers, eb_deadline, is_active, is_visible, attend_qr_open, attend_qr_expires_at, cover_photo_url, registration_closes_at')
     .order('event_date', { ascending: false })
 
   if (error) return NextResponse.json({ error: 'Failed to load events.' }, { status: 500 })
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
   }
 
   const {
-    name, description, event_type, event_date, location, points,
+    name, description, event_type, event_date, event_end, location, points,
     price_dollars_members, price_dollars_nonmembers,
     eb_price_dollars_members, eb_price_dollars_nonmembers,
     eb_deadline, is_active, is_visible, registration_closes_at,
@@ -80,6 +80,7 @@ export async function POST(req: Request) {
       description: description ?? null,
       event_type,
       event_date,
+      event_end: event_end ?? null,
       location: location ?? null,
       points: points ?? null,
       price_cents_members: price_dollars_members,       // already transformed to cents by schema

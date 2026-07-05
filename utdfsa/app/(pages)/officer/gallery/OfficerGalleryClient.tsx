@@ -78,6 +78,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
   // validation or api error shown inside the modal
   const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState(EMPTY_FORM)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   // the selected (and possibly compressed) file to upload as the cover
   const [coverFile, setCoverFile] = useState<File | null>(null)
   // data: url preview for the cover — shown immediately after file selection
@@ -94,19 +95,43 @@ export default function OfficerGalleryClient({ galleries }: Props) {
   const [editError, setEditError] = useState<string | null>(null)
   const [editDeleting, setEditDeleting] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [editFieldErrors, setEditFieldErrors] = useState<Record<string, string>>({})
   const editFileInputRef = useRef<HTMLInputElement>(null)
 
   function closeModal() {
     setModalOpen(false)
     setError(null)
     setForm(EMPTY_FORM)
+    setFieldErrors({})
     setCoverFile(null)
     setCoverPreview(null)
   }
 
   function set(field: keyof typeof EMPTY_FORM) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       setForm(f => ({ ...f, [field]: e.target.value }))
+      setFieldErrors(prev => {
+        if (!prev[field]) return prev
+        const next = { ...prev }
+        delete next[field]
+        return next
+      })
+    }
+  }
+
+  function setEditField<K extends keyof EditForm>(field: K, value: EditForm[K]) {
+    setEditForm(f => ({ ...f, [field]: value }))
+    setEditFieldErrors(prev => {
+      if (!prev[field as string]) return prev
+      const next = { ...prev }
+      delete next[field as string]
+      return next
+    })
+  }
+
+  // red border on fields with a validation error
+  function errCls(errors: Record<string, string>, field: string) {
+    return errors[field] ? ' !border-[#ef6f6f]' : ''
   }
 
   // uses FileReader instead of URL.createObjectURL because the CSP img-src
@@ -136,10 +161,22 @@ export default function OfficerGalleryClient({ galleries }: Props) {
 
   async function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault()
-    if (!coverFile) {
-      setError('Please select a cover photo.')
+
+    const errs: Record<string, string> = {}
+    if (!form.title.trim()) errs.title = 'Archive name is required.'
+    if (!coverFile) errs.cover = 'Cover photo is required.'
+    if (!form.google_photos_url.trim()) {
+      errs.google_photos_url = 'Album link is required.'
+    } else {
+      try { new URL(form.google_photos_url) } catch { errs.google_photos_url = 'Enter a valid URL.' }
+    }
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs)
       return
     }
+    setFieldErrors({})
+    if (!coverFile) return // unreachable — validated above; narrows for TS
+
     setSubmitting(true)
     setError(null)
 
@@ -194,6 +231,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
     setEditCoverFile(null)
     setEditCoverPreview(null)
     setEditError(null)
+    setEditFieldErrors({})
     setEditDeleting(false)
     setEditSubmitting(false)
   }
@@ -203,6 +241,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
     setEditCoverFile(null)
     setEditCoverPreview(null)
     setEditError(null)
+    setEditFieldErrors({})
     setConfirmingDelete(false)
   }
 
@@ -232,6 +271,20 @@ export default function OfficerGalleryClient({ galleries }: Props) {
   async function handleEditSubmit(e: { preventDefault(): void }) {
     e.preventDefault()
     if (!editingGallery) return
+
+    const errs: Record<string, string> = {}
+    if (!editForm.title.trim()) errs.title = 'Archive name is required.'
+    if (!editForm.google_photos_url.trim()) {
+      errs.google_photos_url = 'Album link is required.'
+    } else {
+      try { new URL(editForm.google_photos_url) } catch { errs.google_photos_url = 'Enter a valid URL.' }
+    }
+    if (Object.keys(errs).length > 0) {
+      setEditFieldErrors(errs)
+      return
+    }
+    setEditFieldErrors({})
+
     setEditSubmitting(true)
     setEditError(null)
 
@@ -418,9 +471,10 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   required
                   value={form.title}
                   onChange={set('title')}
-                  className={inputCls}
+                  className={inputCls + errCls(fieldErrors, 'title')}
                   placeholder="e.g. Spring Formal 2025"
                 />
+                {fieldErrors.title && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.title}</p>}
               </div>
 
               <div>
@@ -442,7 +496,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                     ) : (
                       <div
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full aspect-[1/1] border-2 border-dashed border-white/18 rounded-xl bg-[#0d0d0d] flex flex-col items-center justify-center gap-3 text-center cursor-pointer hover:border-[rgba(151,71,255,0.55)] hover:bg-[#101010] transition-colors mb-2"
+                        className={`w-full aspect-[1/1] border-2 border-dashed rounded-xl bg-[#0d0d0d] flex flex-col items-center justify-center gap-3 text-center cursor-pointer hover:border-[rgba(151,71,255,0.55)] hover:bg-[#101010] transition-colors mb-2 ${fieldErrors.cover ? '!border-[#ef6f6f]' : 'border-white/18'}`}
                       >
                         <div className="w-10 h-10 rounded-xl bg-white/4 flex items-center justify-center">
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8c8c8c" strokeWidth={1.7}>
@@ -470,6 +524,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                         Remove photo
                       </button>
                     )}
+                    {fieldErrors.cover && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.cover}</p>}
                   </div>
 
                   {/* reference tile — mirrors the 1:1 thumbnail shown on the archives list */}
@@ -505,9 +560,10 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   required
                   value={form.google_photos_url}
                   onChange={set('google_photos_url')}
-                  className={inputCls}
+                  className={inputCls + errCls(fieldErrors, 'google_photos_url')}
                   placeholder="https://photos.google.com/..."
                 />
+                {fieldErrors.google_photos_url && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.google_photos_url}</p>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -560,7 +616,7 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full sm:w-auto sm:ml-auto min-h-[44px] bg-[#9747FF] hover:bg-[#a85eff] active:scale-[0.98] disabled:opacity-50 text-white rounded-xl px-4 py-2.5 text-sm font-bold border-none cursor-pointer transition-all"
+                  className="w-full sm:w-auto sm:ml-auto min-h-[44px] bg-[#9747FF] hover:bg-[#a85eff] active:scale-[0.98] disabled:opacity-50 text-white rounded-xl px-4 py-2.5 text-sm font-bold border-none cursor-pointer disabled:cursor-not-allowed transition-all"
                 >
                   {/* only shows "Saving…" while the upload+insert API call is in flight — do not remove this condition */}
                   {submitting ? 'Saving…' : 'Create Archive'}
@@ -612,10 +668,11 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   type="text"
                   required
                   value={editForm.title}
-                  onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))}
-                  className={inputCls}
+                  onChange={e => setEditField('title', e.target.value)}
+                  className={inputCls + errCls(editFieldErrors, 'title')}
                   placeholder="e.g. Spring Formal 2025"
                 />
+                {editFieldErrors.title && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{editFieldErrors.title}</p>}
               </div>
 
               {/* Cover Photo */}
@@ -687,10 +744,11 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   type="url"
                   required
                   value={editForm.google_photos_url}
-                  onChange={e => setEditForm(f => ({ ...f, google_photos_url: e.target.value }))}
-                  className={inputCls}
+                  onChange={e => setEditField('google_photos_url', e.target.value)}
+                  className={inputCls + errCls(editFieldErrors, 'google_photos_url')}
                   placeholder="https://photos.google.com/..."
                 />
+                {editFieldErrors.google_photos_url && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{editFieldErrors.google_photos_url}</p>}
                 {editForm.google_photos_url && (
                   <a
                     href={editForm.google_photos_url}

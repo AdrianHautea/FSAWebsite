@@ -59,6 +59,7 @@ export interface Event {
   description: string | null
   event_type: string
   event_date: string
+  event_end: string | null
   location: string | null
   // points awarded to members who attend this event
   points: number | null

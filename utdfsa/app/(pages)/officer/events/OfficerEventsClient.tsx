@@ -96,6 +96,7 @@ interface EventFormData {
   description: string
   event_type: string
   event_date: string
+  event_end: string
   location: string
   points: string
   price_dollars_members: string
@@ -110,7 +111,7 @@ interface EventFormData {
 }
 
 const emptyForm = (): EventFormData => ({
-  name: '', description: '', event_type: 'General Meeting', event_date: '',
+  name: '', description: '', event_type: 'General Meeting', event_date: '', event_end: '',
   location: '', points: '', price_dollars_members: '', price_dollars_nonmembers: '',
   eb_enabled: false, eb_price_dollars_members: '', eb_price_dollars_nonmembers: '',
   eb_deadline: '', is_active: true, is_visible: true,
@@ -123,6 +124,7 @@ function eventToForm(e: Event): EventFormData {
     description: e.description ?? '',
     event_type: e.event_type,
     event_date: toDatetimeLocal(e.event_date),
+    event_end: toDatetimeLocal(e.event_end),
     location: e.location ?? '',
     points: e.points != null ? String(e.points) : '',
     price_dollars_members: toDollars(e.price_cents_members),
@@ -144,6 +146,7 @@ function formToPayload(f: EventFormData) {
     description: f.description || null,
     event_type: f.event_type,
     event_date: f.event_date ? new Date(f.event_date).toISOString() : '',
+    event_end: f.event_end ? new Date(f.event_end).toISOString() : null,
     location: f.location || null,
     points: hasPoints(f.event_type) && f.points ? parseInt(f.points) : null,
     // pricing only applies to ticketed events; free events store 0
@@ -236,9 +239,21 @@ function EventForm({
   const [form, setForm] = useState<EventFormData>(initial)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   function set(field: keyof EventFormData, value: string | boolean) {
     setForm(prev => ({ ...prev, [field]: value }))
+    setFieldErrors(prev => {
+      if (!prev[field]) return prev
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
+
+  // red border on fields with a validation error — matches the field's own required-asterisk red
+  function errCls(field: string) {
+    return fieldErrors[field] ? ' !border-[#ef6f6f]' : ''
   }
 
   // warn before unload when the form has unsaved changes
@@ -259,6 +274,29 @@ function EventForm({
   async function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault()
     setError(null)
+
+    const errs: Record<string, string> = {}
+    if (!form.name.trim()) errs.name = 'Event name is required.'
+    if (!form.event_date) errs.event_date = 'Date and time is required.'
+    if (form.event_end && form.event_date && new Date(form.event_end) < new Date(form.event_date)) {
+      errs.event_end = 'End time must be after start time.'
+    }
+    if (!form.location.trim()) errs.location = 'Location is required.'
+    if (ticketed) {
+      if (!form.price_dollars_members.trim()) errs.price_dollars_members = 'Member price is required.'
+      if (!form.price_dollars_nonmembers.trim()) errs.price_dollars_nonmembers = 'Non-member price is required.'
+    }
+    if (form.eb_enabled) {
+      if (!form.eb_price_dollars_members.trim()) errs.eb_price_dollars_members = 'EB member price is required.'
+      if (!form.eb_price_dollars_nonmembers.trim()) errs.eb_price_dollars_nonmembers = 'EB non-member price is required.'
+      if (!form.eb_deadline) errs.eb_deadline = 'Early bird deadline is required.'
+    }
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs)
+      return
+    }
+    setFieldErrors({})
+
     setSaving(true)
     try {
       await onSubmit(form)
@@ -277,7 +315,8 @@ function EventForm({
         <div className="col-span-2">
           <label className={labelCls}>Event Name <span className="text-[#ef6f6f]">*</span></label>
           <input required value={form.name} onChange={e => set('name', e.target.value)}
-            className={inputCls} placeholder="Spring Fiesta 2025" />
+            className={inputCls + errCls('name')} placeholder="Spring Fiesta 2025" />
+          {fieldErrors.name && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.name}</p>}
         </div>
 
         <div className="col-span-2">
@@ -300,7 +339,16 @@ function EventForm({
           <label className={labelCls}>Date &amp; Time <span className="text-[#ef6f6f]">*</span></label>
           <input required type="datetime-local" value={form.event_date}
             onChange={e => set('event_date', e.target.value)}
-            className={inputCls} style={{ colorScheme: 'dark' }} />
+            className={inputCls + errCls('event_date')} style={{ colorScheme: 'dark' }} />
+          {fieldErrors.event_date && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.event_date}</p>}
+        </div>
+
+        <div className="col-span-2 min-w-0">
+          <label className={labelCls}>End Time <span className="text-[#7e7e7e] normal-case font-medium">(optional)</span></label>
+          <input type="datetime-local" value={form.event_end}
+            onChange={e => set('event_end', e.target.value)}
+            className={inputCls + errCls('event_end')} style={{ colorScheme: 'dark' }} />
+          {fieldErrors.event_end && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.event_end}</p>}
         </div>
 
         {(form.event_type === 'Party' || form.event_type === 'Other') && (
@@ -318,7 +366,8 @@ function EventForm({
         <div className="col-span-2">
           <label className={labelCls}>Location <span className="text-[#ef6f6f]">*</span></label>
           <input required value={form.location} onChange={e => set('location', e.target.value)}
-            className={inputCls} placeholder="Student Union, Room 2.410" />
+            className={inputCls + errCls('location')} placeholder="Student Union, Room 2.410" />
+          {fieldErrors.location && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.location}</p>}
         </div>
 
         <div className="col-span-2">
@@ -345,14 +394,16 @@ function EventForm({
                 <input required type="number" min="0" step="0.01"
                   value={form.price_dollars_members}
                   onChange={e => set('price_dollars_members', e.target.value)}
-                  className={inputCls} placeholder="10.00" />
+                  className={inputCls + errCls('price_dollars_members')} placeholder="10.00" />
+                {fieldErrors.price_dollars_members && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.price_dollars_members}</p>}
               </div>
               <div>
                 <label className={labelCls}>Non-Member Price ($ / ticket) <span className="text-[#ef6f6f]">*</span></label>
                 <input required type="number" min="0" step="0.01"
                   value={form.price_dollars_nonmembers}
                   onChange={e => set('price_dollars_nonmembers', e.target.value)}
-                  className={inputCls} placeholder="15.00" />
+                  className={inputCls + errCls('price_dollars_nonmembers')} placeholder="15.00" />
+                {fieldErrors.price_dollars_nonmembers && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.price_dollars_nonmembers}</p>}
               </div>
             </div>
           </div>
@@ -382,20 +433,23 @@ function EventForm({
                   <input type="number" min="0" step="0.01"
                     value={form.eb_price_dollars_members}
                     onChange={e => set('eb_price_dollars_members', e.target.value)}
-                    className={inputCls} placeholder="8.00" />
+                    className={inputCls + errCls('eb_price_dollars_members')} placeholder="8.00" />
+                  {fieldErrors.eb_price_dollars_members && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.eb_price_dollars_members}</p>}
                 </div>
                 <div>
                   <label className={labelCls}>EB Non-Member Price ($ / ticket)</label>
                   <input type="number" min="0" step="0.01"
                     value={form.eb_price_dollars_nonmembers}
                     onChange={e => set('eb_price_dollars_nonmembers', e.target.value)}
-                    className={inputCls} placeholder="12.00" />
+                    className={inputCls + errCls('eb_price_dollars_nonmembers')} placeholder="12.00" />
+                  {fieldErrors.eb_price_dollars_nonmembers && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.eb_price_dollars_nonmembers}</p>}
                 </div>
                 <div className="col-span-2 min-w-0">
                   <label className={labelCls}>Early Bird Deadline</label>
                   <input type="datetime-local" value={form.eb_deadline}
                     onChange={e => set('eb_deadline', e.target.value)}
-                    className={inputCls} style={{ colorScheme: 'dark' }} />
+                    className={inputCls + errCls('eb_deadline')} style={{ colorScheme: 'dark' }} />
+                  {fieldErrors.eb_deadline && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.eb_deadline}</p>}
                 </div>
 
                 {/* status indicator */}
@@ -465,13 +519,13 @@ function EventForm({
         )}
       </div>
 
+      {beforeButtons}
+
       {error && (
         <p role="alert" className="text-[13px] text-[#ef6f6f] bg-[rgba(239,111,111,0.08)] border border-[rgba(239,111,111,0.25)] rounded-xl px-4 py-3">
           {error}
         </p>
       )}
-
-      {beforeButtons}
 
       <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between pt-5 border-t border-white/7 gap-3">
         <div>{leftButtons}</div>
@@ -570,7 +624,7 @@ function AttendanceQR({ event, onUpdate }: { event: Event; onUpdate: (e: Event) 
         <div className="flex items-center gap-2 flex-wrap">
           <button disabled={saving}
             onClick={() => patch({ attend_qr_open: !isOpen })}
-            className={`text-sm font-bold px-4 py-2 rounded-[10px] border-none cursor-pointer transition-colors disabled:opacity-60 ${
+            className={`text-sm font-bold px-4 py-2 rounded-[10px] border-none cursor-pointer disabled:cursor-not-allowed transition-colors disabled:opacity-60 ${
               isOpen
                 ? 'bg-[rgba(239,111,111,0.16)] text-[#ef6f6f] hover:bg-[rgba(239,111,111,0.24)]'
                 : 'bg-[#9747FF] text-white hover:bg-[#a85eff]'

@@ -111,6 +111,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
     if (d.description !== undefined)              updates.description = d.description
     if (d.event_type !== undefined)               updates.event_type = d.event_type
     if (d.event_date !== undefined)               updates.event_date = d.event_date
+    if (d.event_end !== undefined)                updates.event_end = d.event_end
     if (d.location !== undefined)                 updates.location = d.location
     if (d.points !== undefined)                   updates.points = d.points
     if (d.price_dollars_members !== undefined)    updates.price_cents_members = d.price_dollars_members

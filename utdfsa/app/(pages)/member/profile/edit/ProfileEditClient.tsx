@@ -237,7 +237,7 @@ export default function ProfileEditClient({ member, loginEmail }: Props) {
 
           {/* only renders for ~1.2 s after a successful save, before the router redirect fires — do not remove this condition */}
           {success && (
-            <p role="status" className="font-sans text-sm text-green-400">
+            <p role="status" className="font-sans text-sm text-green-400" style={{ animation: 'fadeUp 0.4s var(--ease-smooth) both' }}>
               Profile updated! Redirecting...
             </p>
           )}

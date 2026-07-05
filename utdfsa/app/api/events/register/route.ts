@@ -10,9 +10,11 @@ import { eventRegisterSchema } from '@/lib/schemas'
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 
-// ponytail: in-memory rate limit — per-instance only; upgrade to Redis/Upstash if multi-region needed
+// ponytail: in-memory rate limit — per-instance backstop only. the real gate is the
+// Vercel Firewall rate-limit rule on this path (global, runs at the edge). kept generous
+// so shared campus-NAT bursts (many attendees, one egress IP) aren't throttled.
 const ipHits = new Map<string, number[]>()
-const RATE_LIMIT = 10
+const RATE_LIMIT = 30
 const RATE_WINDOW_MS = 60_000
 
 function isRateLimited(ip: string): boolean {

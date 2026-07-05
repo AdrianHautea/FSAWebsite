@@ -166,7 +166,10 @@ export default function ArchivesClient({ galleries }: Props) {
       {/* Gallery grid or empty state */}
       <div className="px-6 sm:px-10 lg:px-14 pb-14">
         {filtered.length === 0 ? (
-          <div className="border border-dashed border-white/10 rounded-2xl min-h-[300px] flex flex-col items-center justify-center gap-4 text-center px-10 py-10">
+          <div
+            className="border border-dashed border-white/10 rounded-2xl min-h-[300px] flex flex-col items-center justify-center gap-4 text-center px-10 py-10"
+            style={{ animation: 'archFadeUp24 500ms ease-out both' }}
+          >
             <div className="w-[58px] h-[58px] rounded-2xl bg-white/[0.04] border border-white/[0.09] flex items-center justify-center">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.32)" strokeWidth="1.5">
                 <rect x="3" y="3" width="18" height="18" rx="3" />

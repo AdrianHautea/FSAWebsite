@@ -4,8 +4,12 @@
 // data:  no props — all social links are hardcoded constants
 // notes: mailto links omit target/_blank; external links open in new tab
 
+'use client'
+
+import { useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRevealOnScroll } from '@/lib/useRevealOnScroll'
 
 // ── social links ─────────────────────────────────────────
 const SOCIALS = [
@@ -17,6 +21,9 @@ const SOCIALS = [
 ]
 
 export default function Footer() {
+  const socialsRef = useRef<HTMLDivElement>(null)
+  const socialsVisible = useRevealOnScroll(socialsRef, 0.4)
+
   return (
     <footer className="w-full border-t border-white/10 bg-brand-bg mt-auto">
       <div className="px-6 py-6 flex items-center justify-between gap-8">
@@ -48,7 +55,15 @@ export default function Footer() {
 
         {/* right: social links + slogan */}
         <div className="flex flex-col items-end gap-3">
-          <div className="flex items-center gap-3">
+          <div
+            ref={socialsRef}
+            className="flex items-center gap-3"
+            style={{
+              opacity: socialsVisible ? 1 : 0,
+              transform: socialsVisible ? 'none' : 'translateY(12px)',
+              transition: 'opacity 600ms var(--ease-smooth), transform 600ms var(--ease-smooth)',
+            }}
+          >
             {SOCIALS.map(({ href, label, icon }) => (
               <a
                 key={label}
@@ -57,7 +72,7 @@ export default function Footer() {
                 // mailto links don't need a new tab or noopener rel
                 target={href.startsWith('mailto') ? undefined : '_blank'}
                 rel={href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
-                className="w-11 h-11 flex items-center justify-center rounded-full border border-white/20 text-white/60 hover:border-white/60 hover:text-white transition-colors"
+                className="w-11 h-11 flex items-center justify-center rounded-full border border-white/20 text-white/60 hover:border-white/60 hover:text-white hover:scale-110 active:scale-95 transition-all duration-200"
               >
                 <Image
                   src={icon}
@@ -70,8 +85,7 @@ export default function Footer() {
             ))}
           </div>
           <p className="font-display font-semibold text-[10px] md:text-[9px] text-center md:text-right text-white leading-[1.7] md:leading-relaxed">
-            &ldquo;WHO&rsquo;S GOT THAT GOOD D?&rdquo;<br className="md:hidden" />
-            <span className="hidden md:inline"> </span>
+            &ldquo;WHO&rsquo;S GOT THAT GOOD D?&rdquo;<br />
             &ldquo;WE GOT THAT GOOD D!&rdquo;<br />
             &ldquo;ONE, TWO, THREE! GIMME A U-T-D!&rdquo;
           </p>

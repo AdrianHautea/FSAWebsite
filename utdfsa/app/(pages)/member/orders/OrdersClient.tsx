@@ -7,7 +7,8 @@
 //        the success banner only appears when stripe redirects back with ?success=true
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { useStaggeredReveal } from '@/lib/useRevealOnScroll'
 
 type Ticket = {
   id: string
@@ -103,6 +104,15 @@ export default function OrdersClient({ registrations, eventsData, contactEmail, 
     ? registrations
     : [...registrations].reverse()
 
+  const listRef = useRef<HTMLDivElement>(null)
+  useStaggeredReveal(
+    () => Array.from(listRef.current?.querySelectorAll<HTMLElement>('[data-order-card]') ?? []),
+    (card, cards) => {
+      const i = cards.indexOf(card)
+      card.style.animation = `fadeUp 0.5s var(--ease-smooth) ${i * 70}ms both`
+    },
+  )
+
   return (
     <main className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="font-display text-2xl font-bold text-white mb-1">Order History</h1>
@@ -118,6 +128,7 @@ export default function OrdersClient({ registrations, eventsData, contactEmail, 
             background: 'rgba(117,186,120,0.1)',
             border: '1px solid rgba(117,186,120,0.25)',
             color: '#75ba78',
+            animation: 'fadeUp 0.5s var(--ease-smooth) both',
           }}
         >
           🎉 Registration confirmed! Your QR code ticket is shown below and was sent to {contactEmail}.
@@ -163,7 +174,7 @@ export default function OrdersClient({ registrations, eventsData, contactEmail, 
           </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div ref={listRef} className="flex flex-col gap-3">
           {sortedRegistrations.map(reg => {
             // look up event details from the pre-fetched map by event_id
             const event = reg.event_id ? eventsData[reg.event_id] ?? null : null
@@ -178,6 +189,7 @@ export default function OrdersClient({ registrations, eventsData, contactEmail, 
             return (
               <div
                 key={reg.id}
+                data-order-card
                 className="rounded-2xl overflow-hidden"
                 style={{
                   background: '#1a1a1a',
@@ -246,27 +258,34 @@ export default function OrdersClient({ registrations, eventsData, contactEmail, 
                       </button>
                     </div>
 
-                    {isExpanded && (
-                      <div
-                        style={{
-                          background: '#0f0f0f',
-                          borderTop: '1px solid rgba(255,255,255,0.06)',
-                        }}
-                        className="px-4 py-8 flex flex-col items-center gap-10"
-                      >
-                        {tickets.map(ticket => (
-                          <div key={ticket.id} className="flex flex-col items-center gap-3">
-                            <TicketQRImage code={ticket.qr_code} />
-                            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                              {[ticket.attendee_fname, ticket.attendee_lname].filter(Boolean).join(' ') || 'Attendee'}
-                            </p>
-                            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.28)' }}>
-                              {event?.name ?? ''}
-                            </p>
-                          </div>
-                        ))}
+                    {/* grid-template-rows 0fr→1fr — animates the collapse without touching
+                        height directly, so the panel stays always-mounted (no pop-in) */}
+                    <div
+                      className="grid transition-[grid-template-rows] duration-300 ease-out"
+                      style={{ gridTemplateRows: isExpanded ? '1fr' : '0fr' }}
+                    >
+                      <div className="overflow-hidden">
+                        <div
+                          style={{
+                            background: '#0f0f0f',
+                            borderTop: '1px solid rgba(255,255,255,0.06)',
+                          }}
+                          className="px-4 py-8 flex flex-col items-center gap-10"
+                        >
+                          {tickets.map(ticket => (
+                            <div key={ticket.id} className="flex flex-col items-center gap-3">
+                              <TicketQRImage code={ticket.qr_code} />
+                              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                                {[ticket.attendee_fname, ticket.attendee_lname].filter(Boolean).join(' ') || 'Attendee'}
+                              </p>
+                              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.28)' }}>
+                                {event?.name ?? ''}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    )}
+                    </div>
                   </>
                 )}
 

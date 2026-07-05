@@ -64,11 +64,12 @@ const dollarsToCents = z
 // ── event management ──────────────────────────────────────
 
 // used by POST /api/officer/events — all price fields go through dollarsToCents
-export const createEventSchema = z.object({
+const eventFieldsSchema = z.object({
   name: z.string().min(1).max(200).trim(),
   description: z.string().max(2000).trim().optional().nullable(),
   event_type: z.enum(['General Meeting', 'Risk Management', 'Party', 'GP Event', 'Regular Event', 'Other']),
   event_date: z.string().min(1),          // ISO string from datetime-local
+  event_end: z.string().optional().nullable(),  // ISO string from datetime-local; optional
   location: z.string().min(1, 'Location is required').trim().max(200),
   points: z.number().int().min(0).optional().nullable(),
   // price inputs arrive as dollar floats; stored in db as integer cents
@@ -83,8 +84,22 @@ export const createEventSchema = z.object({
   registration_closes_at: z.string().datetime({ offset: true }).optional().nullable(),
 })
 
+// only fires when both event_date and event_end are present on the payload
+function endAfterStart(d: { event_date?: string; event_end?: string | null }) {
+  if (!d.event_date || !d.event_end) return true
+  return new Date(d.event_end) >= new Date(d.event_date)
+}
+
+export const createEventSchema = eventFieldsSchema.refine(endAfterStart, {
+  message: 'End time must be after start time.',
+  path: ['event_end'],
+})
+
 // all fields optional for PATCH
-export const updateEventSchema = createEventSchema.partial()
+export const updateEventSchema = eventFieldsSchema.partial().refine(endAfterStart, {
+  message: 'End time must be after start time.',
+  path: ['event_end'],
+})
 
 // ── shared preprocessors ──────────────────────────────────
 

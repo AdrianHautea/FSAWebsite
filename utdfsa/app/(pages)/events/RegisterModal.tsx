@@ -162,11 +162,9 @@ export default function RegisterModal({ event, isMember, memberInfo }: Props) {
         }}
         onMouseEnter={e => {
           (e.currentTarget as HTMLButtonElement).style.background = '#8bcf8e'
-          ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '0 14px 34px -12px rgba(117, 186, 120, 0.75)'
         }}
         onMouseLeave={e => {
           (e.currentTarget as HTMLButtonElement).style.background = '#75ba78'
-          ;(e.currentTarget as HTMLButtonElement).style.boxShadow = 'none'
         }}
       >
         Get Tickets

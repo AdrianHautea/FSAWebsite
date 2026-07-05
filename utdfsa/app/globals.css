@@ -8,6 +8,24 @@
    ───────────────────────────────────────────────────────────── */
 @import "tailwindcss";
 
+/* reserves the vertical scrollbar track permanently — without this, Windows'
+   classic (non-overlay) scrollbar toggles on/off whenever a page's content
+   height sits near the viewport threshold, shifting all content sideways by
+   the scrollbar's width each time it appears/disappears mid-scroll.
+   scrollbar-gutter has no effect while overflow stays at its default
+   'visible' (spec requires a non-visible overflow to create a scroll
+   container), so overflow-y must be forced to auto here too */
+html {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+/* every enabled button reads as clickable; disabled buttons keep their
+   default / not-allowed cursor via the :not(:disabled) guard */
+button:not(:disabled) {
+  cursor: pointer;
+}
+
 /* ── design tokens ───────────────────────────────────────────
    three-tier system: primitives → semantic → component
    components use semantic tokens, not primitives directly   */

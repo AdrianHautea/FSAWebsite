@@ -10,6 +10,7 @@ import { createUserClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { getSettings } from '@/lib/settings'
 import Link from 'next/link'
+import ProgressBars from './ProgressBars'
 
 export default async function ProfilePage() {
   // ============================================================
@@ -159,61 +160,12 @@ export default async function ProfilePage() {
           </p>
 
           {/* Goodphil eligibility progress */}
-          <div className="border-t border-white/10 pt-5">
-            <p className="font-display font-black text-xs uppercase tracking-widest text-white/50 mb-4">
-              Goodphil Eligibility
-            </p>
-
-            {/* Points bar */}
-            <div className="mb-5">
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="font-sans text-xs text-white/60">Goodphil Points (6 required)</span>
-                <span className="font-display font-bold text-xs text-white/60">{Math.min(goodphilPoints, 6)} / 6</span>
-              </div>
-              <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-accent-green transition-all"
-                  style={{ width: `${Math.min((goodphilPoints / 6) * 100, 100)}%` }}
-                />
-              </div>
-              {goodphilPoints >= 6 && (
-                <p className="font-sans text-xs text-accent-green mt-1">✓ Points requirement met</p>
-              )}
-            </div>
-
-            {/* Meetings bar */}
-            <div className="mb-4">
-              <div className="flex justify-between items-center mb-1.5 gap-2">
-                <span className="font-sans text-xs text-white/60">Meetings Attended (3 required)</span>
-                <span className="font-display font-bold text-xs text-white/60 shrink-0">{Math.min(goodphilMeetings, 3)} / 3</span>
-              </div>
-              <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all"
-                  style={{
-                    width: `${Math.min((goodphilMeetings / 3) * 100, 100)}%`,
-                    background: goodphilMeetings >= 3 ? '#75ba78' : '#5a96ff',
-                  }}
-                />
-              </div>
-              <p className={`font-sans text-xs mt-1 ${riskMgmtAttended ? 'text-accent-green' : 'text-white/40'}`}>
-                {riskMgmtAttended ? '✓ Risk Management: Attended' : 'Risk Management: Not yet attended'}
-              </p>
-            </div>
-
-            {/* Eligibility status */}
-            <div className="pt-3 border-t border-white/10">
-              {isGoodphilEligible ? (
-                <p className="font-display font-bold text-sm text-accent-green uppercase tracking-wide">
-                  ✓ Goodphil Eligible
-                </p>
-              ) : (
-                <p className="font-sans text-sm text-white/40">
-                  Requirements not yet met
-                </p>
-              )}
-            </div>
-          </div>
+          <ProgressBars
+            goodphilPoints={goodphilPoints}
+            goodphilMeetings={goodphilMeetings}
+            riskMgmtAttended={riskMgmtAttended}
+            isGoodphilEligible={isGoodphilEligible}
+          />
         </section>
 
         {/* Personal info */}

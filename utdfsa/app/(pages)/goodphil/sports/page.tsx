@@ -59,7 +59,7 @@ export default function SportsPage() {
   const leadership2Visible = useRevealOnScroll(leadershipRef2, 0.3)
 
   return (
-    <main className="bg-section-bg text-white overflow-x-hidden">
+    <main className="bg-section-bg text-white overflow-x-clip">
       <GoodphilNavRail />
 
       {/* ── SECTION 1 — HERO ──────────────────────────────────────── */}

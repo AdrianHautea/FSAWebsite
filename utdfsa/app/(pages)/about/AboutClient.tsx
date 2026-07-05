@@ -13,7 +13,7 @@ import SmoothImage from '@/components/SmoothImage'
 import AnimatedTitle from '@/components/AnimatedTitle'
 import BaybayinRule from '@/components/BaybayinRule'
 import QuickNavRail from '@/components/QuickNavRail'
-import { useStaggeredReveal } from '@/lib/useRevealOnScroll'
+import { useRevealOnScroll, useStaggeredReveal } from '@/lib/useRevealOnScroll'
 
 const ABOUT_NAV_ITEMS = [
   { label: 'Officers', href: '#officers' },
@@ -233,6 +233,19 @@ export default function AboutClient() {
     },
   )
 
+  // ── contact + connect sections — scroll reveal (were static; rest of page animates) ──
+  const contactRef = useRef<HTMLDivElement>(null)
+  const contactVisible = useRevealOnScroll(contactRef, 0.3)
+
+  const connectGridRef = useRef<HTMLDivElement>(null)
+  useStaggeredReveal(
+    () => Array.from(connectGridRef.current?.querySelectorAll<HTMLElement>('[data-social-tile]') ?? []),
+    (card, cards) => {
+      const i = cards.indexOf(card)
+      card.style.animation = `fadeUp 0.5s var(--ease-smooth) ${i * 70}ms both`
+    },
+  )
+
   useEffect(() => {
     const title = boardTitleRef.current
     const grid = boardGridRef.current
@@ -291,7 +304,7 @@ export default function AboutClient() {
   }, [])
 
   return (
-    <main className="bg-brand-bg text-white overflow-x-hidden">
+    <main className="bg-brand-bg text-white overflow-x-clip">
       <QuickNavRail mode="sections" ariaLabel="About page sections" items={ABOUT_NAV_ITEMS} />
 
       {/* ── SECTION 1 — WHO WE ARE ──────────────────────────────────── */}
@@ -427,7 +440,15 @@ export default function AboutClient() {
 
       {/* ── SECTION 3 — CONTACT US ──────────────────────────────────── */}
       <section id="contact" className="py-16 px-6 bg-brand-bg scroll-mt-20">
-        <div className="max-w-xl mx-auto text-center">
+        <div
+          ref={contactRef}
+          className="max-w-xl mx-auto text-center"
+          style={{
+            opacity: contactVisible ? 1 : 0,
+            transform: contactVisible ? 'none' : 'translateY(20px)',
+            transition: 'opacity 700ms var(--ease-smooth), transform 700ms var(--ease-smooth)',
+          }}
+        >
           <h2
             className="font-display font-black text-white mb-6"
             style={{ fontSize: 'clamp(16px, 2.2vw, 32px)', letterSpacing: '0.02em' }}
@@ -462,10 +483,11 @@ export default function AboutClient() {
           >
             CONNECT WITH US
           </h2>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div ref={connectGridRef} className="flex flex-wrap justify-center gap-4">
             {SOCIALS.map(({ label, href, icon }) => (
               <a
                 key={label}
+                data-social-tile
                 href={href}
                 target={href === '#' ? undefined : '_blank'}
                 rel={href === '#' ? undefined : 'noopener noreferrer'}

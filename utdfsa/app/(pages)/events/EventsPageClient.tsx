@@ -19,6 +19,7 @@ import RegisterModal from './RegisterModal'
 import Modal from '@/components/Modal'
 import type { Event } from '@/types/database'
 import { getBadge, type EventTypeBadge } from '@/utils/eventTypes'
+import { fmtTimeRange } from '@/lib/format'
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 // converts cents integer to dollar string (e.g. 1500 → "$15.00")
@@ -26,24 +27,18 @@ const fmtCurrency = new Intl.NumberFormat('en-US', { style: 'currency', currency
 function fmt(cents: number) { return fmtCurrency.format(cents / 100) }
 
 // all date/time helpers pin to America/Chicago so displays match Dallas event times
-function fmtCardDate(iso: string) {
+function fmtCardDate(iso: string, endIso?: string | null) {
   const day = new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/Chicago' })
-  const time = new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
-  return `${day} · ${time}`
+  return `${day} · ${fmtTimeRange(iso, endIso)}`
 }
 
-function fmtModalDate(iso: string) {
+function fmtModalDate(iso: string, endIso?: string | null) {
   const day = new Date(iso).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/Chicago' })
-  const time = new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
-  return `${day} · ${time}`
+  return `${day} · ${fmtTimeRange(iso, endIso)}`
 }
 
 function fmtWeekDay(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', { weekday: 'long', timeZone: 'America/Chicago' }).toUpperCase()
-}
-
-function fmtTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
 }
 
 function fmtRegDeadline(iso: string) {
@@ -255,12 +250,18 @@ export default function EventsPageClient({ events, isMember, member, registeredE
   }, [events])
 
   // ── this-week filter ──────────────────────────────────────
+  // compares calendar days (Central time), not exact timestamps — an event
+  // stays "this week" all day, and day 7 counts in full without waiting for
+  // the current clock time to catch up to the event's time-of-day
   const thisWeek = useMemo(() => {
-    const weekEnd = new Date(now)
-    weekEnd.setDate(weekEnd.getDate() + 7)
+    const dateKey = (d: Date) => d.toLocaleDateString('en-CA', { timeZone: 'America/Chicago' })
+    const todayKey = dateKey(now)
+    const weekEndDate = new Date(now)
+    weekEndDate.setDate(weekEndDate.getDate() + 7)
+    const weekEndKey = dateKey(weekEndDate)
     return events.filter(e => {
-      const d = new Date(e.event_date)
-      return d >= now && d <= weekEnd
+      const key = dateKey(new Date(e.event_date))
+      return key >= todayKey && key <= weekEndKey
     })
   }, [events, now])
 
@@ -306,7 +307,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
   }, [showCalendar])
 
   return (
-    <main className="min-h-screen text-white overflow-x-hidden" style={{ background: '#0f0f0f' }}>
+    <main className="min-h-screen text-white overflow-x-clip" style={{ background: '#0f0f0f' }}>
       <div className="max-w-[1280px] mx-auto px-6 sm:px-10 pb-20">
 
         {/* ── page header ──────────────────────────────────────────────────── */}
@@ -336,11 +337,28 @@ export default function EventsPageClient({ events, isMember, member, registeredE
           <div className="mb-8 rounded-2xl overflow-hidden" style={{
             background: 'rgba(117,186,120,0.08)',
             border: '1px solid rgba(117,186,120,0.28)',
+            animation: 'evCardIn 500ms ease-out both',
           }}>
-            <div className="px-5 py-4 text-sm font-medium" style={{ color: '#75ba78' }}>
-              {ticketQRs && ticketQRs.length > 0
-                ? 'You\'re registered! Your QR code tickets are below — screenshot or save each one. Your QR code tickets have also been sent to their respective recipient emails.'
-                : 'You\'re registered! Check your email for your QR code ticket.'}
+            <div className="px-5 py-4 flex items-center gap-3">
+              <span className="relative w-6 h-6 flex-none">
+                <span
+                  className="absolute inset-0 rounded-full"
+                  style={{ border: '1.5px solid #75ba78', animation: 'fsa-ring 1s cubic-bezier(0.16,1,0.3,1) both' }}
+                />
+                <span
+                  className="absolute inset-0 rounded-full flex items-center justify-center"
+                  style={{ background: 'rgba(117,186,120,0.18)', animation: 'fsa-check-pop 500ms cubic-bezier(0.16,1,0.3,1) both' }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#75ba78" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                </span>
+              </span>
+              <div className="text-sm font-medium" style={{ color: '#75ba78' }}>
+                {ticketQRs && ticketQRs.length > 0
+                  ? 'You\'re registered! Your QR code tickets are below — screenshot or save each one. Your QR code tickets have also been sent to their respective recipient emails.'
+                  : 'You\'re registered! Check your email for your QR code ticket.'}
+              </div>
             </div>
 
             {/* qr code grid — only populated for non-member purchases once payment is confirmed */}
@@ -350,7 +368,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                   {ticketQRs.map((t, i) => {
                     const name = [t.attendee_fname, t.attendee_lname].filter(Boolean).join(' ')
                     return (
-                      <div key={i} className="flex flex-col items-center gap-2">
+                      <div key={i} className="flex flex-col items-center gap-2" style={{ animation: `evWeekIn 450ms ease-out ${i * 80}ms both` }}>
                         {/* white padding is part of the qr spec — scanners need quiet zone */}
                         <img
                           src={t.qr_data_url}
@@ -414,7 +432,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                       {event.name}
                     </div>
                     <div className="text-[13px] font-medium" style={{ color: '#7a7a7a' }}>
-                      {fmtTime(event.event_date)}
+                      {fmtTimeRange(event.event_date, event.event_end)}
                     </div>
                   </button>
                 )
@@ -521,7 +539,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                           {event.name}
                         </h3>
                         <div className="text-[13px] font-medium" style={{ color: '#8c8c8c' }}>
-                          {fmtCardDate(event.event_date)}
+                          {fmtCardDate(event.event_date, event.event_end)}
                         </div>
                       </div>
                     </button>
@@ -725,7 +743,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                     <rect x="3" y="4.5" width="18" height="16" rx="2.5" />
                     <path d="M3 9h18M8 2.5v4M16 2.5v4" />
                   </svg>
-                  <span className="text-[15px] font-medium" style={{ color: '#cfcfcf' }}>{fmtModalDate(event.event_date)}</span>
+                  <span className="text-[15px] font-medium" style={{ color: '#cfcfcf' }}>{fmtModalDate(event.event_date, event.event_end)}</span>
                 </div>
 
                 {/* only renders when location is set — do not remove this condition */}
@@ -885,7 +903,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
 
       {/* already registered info modal — only for members with a confirmed paid ticket */}
       {showAlreadyRegistered && (
-        <Modal onClose={() => setShowAlreadyRegistered(false)} size="sm">
+        <Modal onClose={() => setShowAlreadyRegistered(false)} size="sm" scrollable={false}>
           <div
             style={{
               background: '#141414',

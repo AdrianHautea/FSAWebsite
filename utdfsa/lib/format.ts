@@ -20,6 +20,17 @@ export function toSentenceCase(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1)
 }
 
+// ── date/time helpers ─────────────────────────────────────
+
+// formats a start–end time range in Central time; falls back to start-only when no end
+// e.g. fmtTimeRange(start) → "7:00 PM"; fmtTimeRange(start, end) → "7:00 PM – 9:00 PM"
+export function fmtTimeRange(startISO: string, endISO?: string | null): string {
+  const opts: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }
+  const start = new Date(startISO).toLocaleTimeString('en-US', opts)
+  if (!endISO) return start
+  return `${start} – ${new Date(endISO).toLocaleTimeString('en-US', opts)}`
+}
+
 // ── phone formatter ───────────────────────────────────────
 
 // formats a raw phone input to (xxx) xxx-xxxx

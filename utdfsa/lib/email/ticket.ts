@@ -9,6 +9,8 @@
 //        date/time is formatted in america/chicago (ct) — utd is in dallas, tx.
 //        called once per ticket per registration after payment succeeds.
 
+import { fmtTimeRange } from '@/lib/format'
+
 function escHtml(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -22,12 +24,14 @@ export function ticketEmailHtml({
   attendeeName,
   eventName,
   eventDate,
+  eventEnd,
   location,
   qrCid,
 }: {
   attendeeName: string
   eventName: string
   eventDate: string | null
+  eventEnd?: string | null
   location: string | null
   qrCid: string
 }): string {
@@ -46,14 +50,8 @@ export function ticketEmailHtml({
       })
     : null
 
-  // format time separately so it can be appended inline after the date
-  const timeStr = eventDate
-    ? new Date(eventDate).toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZone: 'America/Chicago',
-      })
-    : null
+  // format time separately so it can be appended inline after the date; range when eventEnd is set
+  const timeStr = eventDate ? fmtTimeRange(eventDate, eventEnd) : null
 
   return `<!DOCTYPE html>
 <html lang="en">

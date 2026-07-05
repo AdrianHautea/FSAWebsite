@@ -8,6 +8,7 @@ import Link from 'next/link'
 import AnimatedTitle from '@/components/AnimatedTitle'
 import BaybayinRule from '@/components/BaybayinRule'
 import QuickNavRail from '@/components/QuickNavRail'
+import { useRevealOnScroll, useStaggeredReveal } from '@/lib/useRevealOnScroll'
 
 const PAMILYAS_NAV_ITEMS = [
   { label: 'What Is a Pamilya', href: '#what-is-a-pamilya' },
@@ -261,7 +262,7 @@ function FormCard({
     </>
   )
 
-  const cls = 'group relative aspect-[4/5] rounded-[27px] overflow-hidden block hover:scale-[1.02] hover:brightness-110 transition-all duration-200 cursor-pointer bg-transparent border-0 p-0 w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-blue focus-visible:outline-offset-2'
+  const cls = 'group relative aspect-[4/5] rounded-[27px] overflow-hidden block hover:scale-[1.02] hover:brightness-110 active:scale-[0.98] transition-all duration-200 cursor-pointer bg-transparent border-0 p-0 w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-blue focus-visible:outline-offset-2'
 
   // eligibility caption — surfaces who each form is for at the decision point itself,
   // instead of requiring visitors to scroll back and recall role definitions
@@ -328,6 +329,20 @@ export default function PamilyasClient({
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
+
+  // "Meet the Pamilyas" coming-soon card — scroll reveal
+  const comingSoonRef = useRef<HTMLDivElement>(null)
+  const comingSoonVisible = useRevealOnScroll(comingSoonRef, 0.3)
+
+  // sign-up FormCards — staggered entrance
+  const formGridRef = useRef<HTMLDivElement>(null)
+  useStaggeredReveal(
+    () => Array.from(formGridRef.current?.querySelectorAll<HTMLElement>('[data-formcard]') ?? []),
+    (card, cards) => {
+      const i = cards.indexOf(card)
+      card.style.animation = `fadeUp 0.55s var(--ease-smooth) ${i * 100}ms both`
+    },
+  )
 
   // ── Card prop helpers ────────────────────────────────────────────────────────
 
@@ -414,7 +429,7 @@ export default function PamilyasClient({
   const protection = protectionCardProps()
 
   return (
-    <main className="bg-section-bg text-white overflow-x-hidden">
+    <main className="bg-section-bg text-white overflow-x-clip">
       <QuickNavRail mode="sections" ariaLabel="Pamilyas page sections" items={PAMILYAS_NAV_ITEMS} />
 
       {/* FIX 5: popup modal — renders when popup is not null */}
@@ -592,7 +607,15 @@ export default function PamilyasClient({
         </div>
 
         <div className="bg-section-bg py-16 px-8">
-          <div className="max-w-xl mx-auto">
+          <div
+            ref={comingSoonRef}
+            className="max-w-xl mx-auto"
+            style={{
+              opacity: comingSoonVisible ? 1 : 0,
+              transform: comingSoonVisible ? 'none' : 'translateY(20px)',
+              transition: 'opacity 700ms var(--ease-smooth), transform 700ms var(--ease-smooth)',
+            }}
+          >
             <div className="bg-white rounded-3xl p-8 text-center">
               <p className="font-sans font-semibold text-[#1f1f1f] text-lg leading-relaxed">
                 Pamilyas will be revealed at the 2nd General Meeting. Check back soon!
@@ -618,31 +641,37 @@ export default function PamilyasClient({
             Select the form that best fits the role you&rsquo;ll play in your UTD FSA pamilya experience!
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-[1218px] mx-auto">
+          <div ref={formGridRef} className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-[1218px] mx-auto">
 
-            <FormCard
-              photo="/kuyate-form.png"
-              title="KUYA/ATE FORM"
-              caption="Ready to lead a pamilya? Start here."
-              href={kuyate.href}
-              onClick={kuyate.onClick}
-            />
+            <div data-formcard>
+              <FormCard
+                photo="/kuyate-form.png"
+                title="KUYA/ATE FORM"
+                caption="Ready to lead a pamilya? Start here."
+                href={kuyate.href}
+                onClick={kuyate.onClick}
+              />
+            </div>
 
-            <FormCard
-              photo="/ading-form.png"
-              title="ADING FORM"
-              caption="New to FSA and looking for guidance? Start here."
-              href={ading.href}
-              onClick={ading.onClick}
-            />
+            <div data-formcard>
+              <FormCard
+                photo="/ading-form.png"
+                title="ADING FORM"
+                caption="New to FSA and looking for guidance? Start here."
+                href={ading.href}
+                onClick={ading.onClick}
+              />
+            </div>
 
-            <FormCard
-              photo="/protect-form.png"
-              title="PAMILYA PROTECTION FORM"
-              caption="Reporting a pamilya concern? Click here."
-              href={protection.href}
-              externalHref={protection.externalHref}
-            />
+            <div data-formcard>
+              <FormCard
+                photo="/protect-form.png"
+                title="PAMILYA PROTECTION FORM"
+                caption="Reporting a pamilya concern? Click here."
+                href={protection.href}
+                externalHref={protection.externalHref}
+              />
+            </div>
 
           </div>
         </div>

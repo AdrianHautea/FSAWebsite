@@ -10,6 +10,8 @@
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import QuickNavRail from '@/components/QuickNavRail'
+import AnimatedTitle from '@/components/AnimatedTitle'
+import { useRevealOnScroll, useStaggeredReveal } from '@/lib/useRevealOnScroll'
 
 const MEMBERSHIP_NAV_ITEMS = [
   { label: 'What You Get', href: '#what-you-get' },
@@ -155,6 +157,27 @@ export default function MembershipClient({
     return () => obs.disconnect()
   }, [])
 
+  const benefitsGridRef = useRef<HTMLDivElement>(null)
+  useStaggeredReveal(
+    () => benefitsGridRef.current ? Array.from(benefitsGridRef.current.querySelectorAll<HTMLElement>('[data-benefit-card]')) : [],
+    (card, cards) => {
+      const delay = cards.indexOf(card) * 70
+      card.style.animation = `fadeUp 500ms cubic-bezier(0.16,1,0.3,1) ${delay}ms both`
+    },
+  )
+
+  const stepsGridRef = useRef<HTMLDivElement>(null)
+  useStaggeredReveal(
+    () => stepsGridRef.current ? Array.from(stepsGridRef.current.querySelectorAll<HTMLElement>('[data-step-card]')) : [],
+    (card, cards) => {
+      const delay = cards.indexOf(card) * 120
+      card.style.animation = `fadeUp 550ms cubic-bezier(0.16,1,0.3,1) ${delay}ms both`
+    },
+  )
+
+  const pricingRef = useRef<HTMLDivElement>(null)
+  const pricingVisible = useRevealOnScroll(pricingRef, 0.25)
+
   // ── handlePayment ────────────────────────────────────────────
   // opens the stripe checkout page; on success stripe redirects back with ?success=true
   async function handlePayment() {
@@ -206,7 +229,7 @@ export default function MembershipClient({
   ]
 
   return (
-    <main className="bg-brand-bg min-h-screen text-white overflow-x-hidden">
+    <main className="bg-brand-bg min-h-screen text-white overflow-x-clip">
       <QuickNavRail mode="sections" ariaLabel="Membership page sections" items={MEMBERSHIP_NAV_ITEMS} />
       <div className="max-w-[1280px] mx-auto">
 
@@ -223,23 +246,23 @@ export default function MembershipClient({
 
             {/* left: copy */}
             <div>
-              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-accent-green/10 border border-accent-green/30 mb-7">
+              <AnimatedTitle as="div" animation="fadeUp" className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-accent-green/10 border border-accent-green/30 mb-7">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
                 <span className="font-display font-bold text-[11px] tracking-[0.12em] text-accent-green uppercase">
                   Membership open · {membershipYear}
                 </span>
-              </div>
+              </AnimatedTitle>
 
-              <h1 className="font-display font-black text-[clamp(48px,6.5vw,84px)] leading-[0.92] tracking-[-0.03em] text-white">
+              <AnimatedTitle as="h1" animation="fadeUp" delay={80} className="font-display font-black text-[clamp(48px,6.5vw,84px)] leading-[0.92] tracking-[-0.03em] text-white">
                 BECOME<br />A MEMBER
-              </h1>
+              </AnimatedTitle>
 
-              <p className="max-w-[440px] text-lg leading-[1.65] text-[#9a9a9a] font-medium mt-6">
+              <AnimatedTitle as="p" animation="fadeUp" delay={160} className="max-w-[440px] text-lg leading-[1.65] text-[#9a9a9a] font-medium mt-6">
                 Join UTD FSA and unlock member pricing on every event, your pamilya placement, Goodphil eligibility tracking, and a whole community waiting to welcome you to the family!
-              </p>
+              </AnimatedTitle>
 
               {/* stats — "12 pamilyas" omitted per design spec */}
-              <div className="flex items-center gap-7 mt-9">
+              <AnimatedTitle as="div" animation="fadeUp" delay={240} className="flex items-center gap-7 mt-9">
                 <div>
                   <div className="font-display font-extrabold text-[30px] text-white tracking-[-0.02em]">600+</div>
                   <div className="text-[13px] text-[#7a7a7a] font-semibold tracking-[0.04em] mt-0.5">ACTIVE MEMBERS</div>
@@ -249,11 +272,11 @@ export default function MembershipClient({
                   <div className="font-display font-extrabold text-[30px] text-white tracking-[-0.02em]">20+</div>
                   <div className="text-[13px] text-[#7a7a7a] font-semibold tracking-[0.04em] mt-0.5">EVENTS A YEAR</div>
                 </div>
-              </div>
+              </AnimatedTitle>
             </div>
 
             {/* desktop: 3-photo collage — left tall (2:3), top-right + bottom-right (1:1) */}
-            <div className="hidden md:grid grid-cols-2 grid-rows-[170px_170px] gap-3.5 relative z-10">
+            <AnimatedTitle as="div" animation="fadeIn" delay={200} className="hidden md:grid grid-cols-2 grid-rows-[170px_170px] gap-3.5 relative z-10">
               <div className="row-span-2 relative rounded-[18px] overflow-hidden border border-white/[0.08]">
                 <Image
                   src="/mem1.jpg"
@@ -281,12 +304,12 @@ export default function MembershipClient({
                   sizes="(max-width: 1280px) 20vw, 256px"
                 />
               </div>
-            </div>
+            </AnimatedTitle>
 
           </div>
 
           {/* mobile: single pamilya photo at 3:2 below the copy block */}
-          <div className="md:hidden relative aspect-[3/2] rounded-2xl overflow-hidden border border-white/[0.08] mt-8 z-10">
+          <AnimatedTitle as="div" animation="fadeIn" delay={100} className="md:hidden relative aspect-[3/2] rounded-2xl overflow-hidden border border-white/[0.08] mt-8 z-10">
             <Image
               src="/mem1.jpg"
               alt="FSA pamilya"
@@ -294,7 +317,7 @@ export default function MembershipClient({
               className="object-cover"
               sizes="90vw"
             />
-          </div>
+          </AnimatedTitle>
         </section>
 
         {/* ── BENEFITS + PRICING ──────────────────────────── */}
@@ -303,10 +326,11 @@ export default function MembershipClient({
           {/* benefits panel */}
           <div className="bg-[#101010] border border-white/[0.08] rounded-[20px] p-7 md:p-9">
             <h2 className="font-display font-extrabold text-2xl tracking-[-0.02em] text-white mb-6">What You Get ...</h2>
-            <div className="grid sm:grid-cols-2 gap-3.5">
+            <div ref={benefitsGridRef} className="grid sm:grid-cols-2 gap-3.5">
               {BENEFITS.map(b => (
                 <div
                   key={b.title}
+                  data-benefit-card
                   className="flex gap-3.5 items-start p-4 bg-[#161616] border border-white/[0.07] rounded-[14px] hover:border-accent-green/30 transition-colors"
                 >
                   <div className="shrink-0 w-9 h-9 rounded-[10px] bg-accent-green/10 border border-accent-green/30 flex items-center justify-center text-accent-green">
@@ -323,8 +347,14 @@ export default function MembershipClient({
 
           {/* pricing card */}
           <div
+            ref={pricingRef}
             className="relative bg-gradient-to-br from-[#161616] to-[#101010] border border-accent-green/30 rounded-[20px] p-7 md:p-8 flex flex-col"
-            style={{ boxShadow: '0 30px 70px -40px rgba(147,208,123,0.16)' }}
+            style={{
+              boxShadow: '0 30px 70px -40px rgba(147,208,123,0.16)',
+              opacity: pricingVisible ? 1 : 0,
+              transform: pricingVisible ? 'none' : 'translateY(20px) scale(0.98)',
+              transition: 'opacity 700ms var(--ease-smooth), transform 700ms var(--ease-smooth)',
+            }}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -382,7 +412,7 @@ export default function MembershipClient({
             <button
               onClick={handlePayment}
               disabled={loading}
-              className="mt-auto w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.01em] cursor-pointer hover:brightness-[1.08] active:scale-[0.98] disabled:opacity-50 transition-all duration-200"
+              className="mt-auto w-full py-4 rounded-[14px] bg-accent-green text-[#08130a] font-display font-extrabold text-[15px] tracking-[0.01em] cursor-pointer disabled:cursor-not-allowed hover:brightness-[1.08] active:scale-[0.98] disabled:opacity-50 transition-all duration-200"
             >
               {loading ? 'Redirecting to payment...' : `Pay ${formatPrice(displayPrice)}`}
             </button>
@@ -403,12 +433,12 @@ export default function MembershipClient({
         {/* ── HOW IT WORKS ─────────────────────────────────── */}
         <section id="how-it-works" className="px-6 md:px-14 py-12 scroll-mt-20">
           <div className="flex items-center gap-4 mb-8">
-            <h2 className="font-display font-extrabold text-2xl tracking-[-0.02em] text-white whitespace-nowrap">How it works</h2>
+            <h2 className="font-display font-extrabold text-2xl tracking-[-0.02em] text-white whitespace-nowrap">How It Works</h2>
             <span className="h-px flex-1 bg-white/[0.08]" />
           </div>
-          <div className="grid sm:grid-cols-3 gap-5">
+          <div ref={stepsGridRef} className="grid sm:grid-cols-3 gap-5">
             {steps.map(s => (
-              <div key={s.num} className="bg-[#101010] border border-white/[0.08] rounded-2xl p-6">
+              <div key={s.num} data-step-card className="bg-[#101010] border border-white/[0.08] rounded-2xl p-6">
                 <div className="font-display font-black text-[18px] text-accent-green mb-4">{s.num}</div>
                 <div className="text-[16px] font-bold text-white tracking-[-0.01em] mb-2">{s.title}</div>
                 <div className="text-[14px] leading-[1.6] text-[#8c8c8c] font-medium">{s.desc}</div>
