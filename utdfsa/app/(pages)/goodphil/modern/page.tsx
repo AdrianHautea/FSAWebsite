@@ -206,8 +206,11 @@ export default function ModernPage() {
       </section>
 
       {/* ── SECTION 3 — PAST PERFORMANCES ────────────────────────── */}
+      {/* featured (most recent year) + 2-col secondary row for older years;
+          photos and captions below are placeholders — see TODOs — until
+          officers supply real per-year photos and result/story copy */}
       <section className="bg-[#2d452c] py-16 px-6 md:px-8">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-7xl mx-auto">
 
           <h2
             className="font-display font-black text-white text-center w-full block mb-14"
@@ -221,8 +224,8 @@ export default function ModernPage() {
             PAST PERFORMANCES
           </h2>
 
-          {/* Performance 1 — Goodphil 2026, Austin */}
-          <div className="mb-12" ref={(el) => { perfCardRefs.current[0] = el }}>
+          {/* Featured — Goodphil 2026, Austin (most recent year) */}
+          <div className="mb-14" ref={(el) => { perfCardRefs.current[0] = el }}>
             <p
               className="font-display text-white text-center mb-4"
               style={{ fontSize: 'clamp(14px, 2vw, 30px)', letterSpacing: '1.5px' }}
@@ -230,55 +233,94 @@ export default function ModernPage() {
               <span className="font-black">GOODPHIL 2026 - </span>
               <span className="font-medium">AUSTIN</span>
             </p>
-            <div className="bg-[rgba(255,255,255,0.79)] rounded-xl overflow-hidden p-3">
-              <iframe
-                src="https://www.youtube-nocookie.com/embed/Xj-rTIWYX3U"
-                title="Goodphil 2026 - Austin"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full aspect-video rounded-xl"
-              />
+            <div className="max-w-[60rem] mx-auto">
+              <div className="bg-[rgba(255,255,255,0.79)] rounded-xl overflow-hidden p-3 mb-5">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/Xj-rTIWYX3U"
+                  title="Goodphil 2026 - Austin"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full aspect-video rounded-xl"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Performance 2 — Goodphil 2025, College Station */}
-          <div className="mb-12" ref={(el) => { perfCardRefs.current[1] = el }}>
-            <p
-              className="font-display text-white text-center mb-4"
-              style={{ fontSize: 'clamp(14px, 2vw, 30px)', letterSpacing: '1.5px' }}
-            >
-              <span className="font-black">GOODPHIL 2025 - </span>
-              <span className="font-medium">COLLEGE STATION</span>
-            </p>
-            <div className="bg-[rgba(255,255,255,0.79)] rounded-xl overflow-hidden p-3">
-              <iframe
-                src="https://www.youtube-nocookie.com/embed/ngXiLlF_lYY?start=127"
-                title="Goodphil 2025 - College Station"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full aspect-video rounded-xl"
-              />
+          {/* Secondary — earlier years */}
+          <div className="grid sm:grid-cols-2 gap-8">
+
+            {/* Performance — Goodphil 2025, College Station */}
+            <div ref={(el) => { perfCardRefs.current[1] = el }}>
+              <div className="flex justify-center mb-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.06] border border-white/[0.16] font-display font-bold text-[10px] uppercase tracking-[0.1em] text-white/70">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
+                  3rd Place
+                </span>
+              </div>
+              <p
+                className="font-display text-white text-center mb-3"
+                style={{ fontSize: 'clamp(13px, 1.6vw, 20px)', letterSpacing: '1px' }}
+              >
+                <span className="font-black">GOODPHIL 2025 - </span>
+                <span className="font-medium">COLLEGE STATION</span>
+              </p>
+              <div className="bg-[rgba(255,255,255,0.79)] rounded-xl overflow-hidden p-2.5 mb-4">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/ngXiLlF_lYY?start=127"
+                  title="Goodphil 2025 - College Station"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full aspect-video rounded-xl"
+                />
+              </div>
             </div>
+
+            {/* Performance — Goodphil 2024, Arlington */}
+            <div ref={(el) => { perfCardRefs.current[2] = el }}>
+              {/* invisible placeholder — reserves the same height as the 2025 card's
+                  placement badge so both cards' video/photo/caption stay row-aligned;
+                  swap for a real badge if 2024's placement result is ever supplied */}
+              <div className="flex justify-center mb-2">
+                <span className="invisible inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-transparent font-display font-bold text-[10px] uppercase tracking-[0.1em]">
+                  <span className="w-1.5 h-1.5 rounded-full" />
+                  placeholder
+                </span>
+              </div>
+              <p
+                className="font-display text-white text-center mb-3"
+                style={{ fontSize: 'clamp(13px, 1.6vw, 20px)', letterSpacing: '1px' }}
+              >
+                <span className="font-black">GOODPHIL 2024 - </span>
+                <span className="font-medium">ARLINGTON</span>
+              </p>
+              <div className="bg-[rgba(255,255,255,0.79)] rounded-xl overflow-hidden p-2.5 mb-4">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/OM55XxSDYew"
+                  title="Goodphil 2024 - Arlington"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full aspect-video rounded-xl"
+                />
+              </div>
+            </div>
+
           </div>
 
-          {/* Performance 3 — Goodphil 2024, Arlington */}
-          <div ref={(el) => { perfCardRefs.current[2] = el }}>
-            <p
-              className="font-display text-white text-center mb-4"
-              style={{ fontSize: 'clamp(14px, 2vw, 30px)', letterSpacing: '1.5px' }}
+          {/* Exit CTA — matches the Section 2 Instagram CTA pattern */}
+          <div className="flex justify-center mt-14">
+            <a
+              href="https://www.instagram.com/utdmaharlika"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent-green text-[#0e0e0e] rounded-full font-sans font-bold text-sm transition-all duration-200 hover:brightness-[1.08]"
             >
-              <span className="font-black">GOODPHIL 2024 - </span>
-              <span className="font-medium">ARLINGTON</span>
-            </p>
-            <div className="bg-[rgba(255,255,255,0.79)] rounded-xl overflow-hidden p-3">
-              <iframe
-                src="https://www.youtube-nocookie.com/embed/OM55XxSDYew"
-                title="Goodphil 2024 - Arlington"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full aspect-video rounded-xl"
-              />
-            </div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <circle cx="12" cy="12" r="5" />
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+              </svg>
+              Watch More on Instagram
+            </a>
           </div>
 
         </div>

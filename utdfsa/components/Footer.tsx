@@ -26,7 +26,7 @@ export default function Footer() {
 
   return (
     <footer className="w-full border-t border-white/10 bg-brand-bg mt-auto">
-      <div className="px-6 py-6 flex items-center justify-between gap-8">
+      <div className="px-6 py-6 flex items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr] gap-8">
         {/* logo + tagline */}
         <div className="flex flex-col gap-2">
           <Link href="/" aria-label="UTD FSA home">
