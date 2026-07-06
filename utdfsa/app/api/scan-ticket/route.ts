@@ -110,8 +110,10 @@ export async function POST(req: Request) {
 
   // ── check-in write ────────────────────────────────────────────────────────
 
-  // mark as checked in — records timestamp and officer who scanned for audit trail
-  // mark as checked in
+  // mark as checked in — records timestamp and officer who scanned for audit trail.
+  // check-then-act, not atomic: no .eq('checked_in', false) guard, so two
+  // near-simultaneous scans of the same ticket can both pass the check above
+  // and both write here (duplicate check-in, not a double-charge — low impact)
   await admin
     .from('registration_tickets')
     .update({

@@ -206,9 +206,9 @@ export default function ModernPage() {
       </section>
 
       {/* ── SECTION 3 — PAST PERFORMANCES ────────────────────────── */}
-      {/* featured (most recent year) + 2-col secondary row for older years;
-          photos and captions below are placeholders — see TODOs — until
-          officers supply real per-year photos and result/story copy */}
+      {/* Goodphil group (featured + 2-col secondary row for older years) followed
+          by the Isang Mahal group (2-col row, most-recent-first); each card is
+          video + optional placement badge — containers/behavior match across groups */}
       <section className="bg-[#2d452c] py-16 px-6 md:px-8">
         <div className="max-w-7xl mx-auto">
 
@@ -223,6 +223,18 @@ export default function ModernPage() {
           >
             PAST PERFORMANCES
           </h2>
+
+          {/* Group divider — GOODPHIL */}
+          <div className="flex items-center gap-4 max-w-3xl mx-auto mb-10">
+            <div className="h-px flex-1 bg-white/15" />
+            <span
+              className="font-display font-black text-white/90 uppercase"
+              style={{ fontSize: 'clamp(18px, 2.4vw, 30px)', letterSpacing: '0.14em' }}
+            >
+              Goodphil
+            </span>
+            <div className="h-px flex-1 bg-white/15" />
+          </div>
 
           {/* Featured — Goodphil 2026, Austin (most recent year) */}
           <div className="mb-14" ref={(el) => { perfCardRefs.current[0] = el }}>
@@ -297,6 +309,62 @@ export default function ModernPage() {
                 <iframe
                   src="https://www.youtube-nocookie.com/embed/OM55XxSDYew"
                   title="Goodphil 2024 - Arlington"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full aspect-video rounded-xl"
+                />
+              </div>
+            </div>
+
+          </div>
+
+          {/* Group divider — ISANG MAHAL */}
+          <div className="flex items-center gap-4 max-w-3xl mx-auto mt-16 mb-10">
+            <div className="h-px flex-1 bg-white/15" />
+            <span
+              className="font-display font-black text-white/90 uppercase"
+              style={{ fontSize: 'clamp(18px, 2.4vw, 30px)', letterSpacing: '0.14em' }}
+            >
+              Isang Mahal
+            </span>
+            <div className="h-px flex-1 bg-white/15" />
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-8">
+
+            {/* Performance — Isang Mahal 2024, College Station (no placement) */}
+            <div ref={(el) => { perfCardRefs.current[3] = el }}>
+              <p
+                className="font-display text-white text-center mb-3"
+                style={{ fontSize: 'clamp(13px, 1.6vw, 20px)', letterSpacing: '1px' }}
+              >
+                <span className="font-black">ISANG MAHAL 2024 - </span>
+                <span className="font-medium">COLLEGE STATION</span>
+              </p>
+              <div className="bg-[rgba(255,255,255,0.79)] rounded-xl overflow-hidden p-2.5 mb-4">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/gVq9zsGRIgY"
+                  title="Isang Mahal 2024 - College Station"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full aspect-video rounded-xl"
+                />
+              </div>
+            </div>
+
+            {/* Performance — Isang Mahal 2023, College Station (no placement) */}
+            <div ref={(el) => { perfCardRefs.current[4] = el }}>
+              <p
+                className="font-display text-white text-center mb-3"
+                style={{ fontSize: 'clamp(13px, 1.6vw, 20px)', letterSpacing: '1px' }}
+              >
+                <span className="font-black">ISANG MAHAL 2023 - </span>
+                <span className="font-medium">COLLEGE STATION</span>
+              </p>
+              <div className="bg-[rgba(255,255,255,0.79)] rounded-xl overflow-hidden p-2.5 mb-4">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/0P2wnd3Ncnk"
+                  title="Isang Mahal 2023 - College Station"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="w-full aspect-video rounded-xl"

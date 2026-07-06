@@ -54,7 +54,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // bypass rls — admin client needed to read member role
+  // bypass rls — needed to read role from members table before the caller is
+  // verified as officer/admin; read-only, scoped to the caller's own email
   const admin = createAdminClient()
 
   // fetch the caller's id and role from the members table; used for role check and created_by

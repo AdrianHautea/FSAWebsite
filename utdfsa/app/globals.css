@@ -132,6 +132,18 @@ button:not(:disabled) {
   100% { transform: scale(1.9); opacity: 0; }
 }
 
+/* attendance page — one-shot glow when a progress bar fill hits its requirement */
+@keyframes fsa-bar-glow {
+  0%, 100% { box-shadow: 0 0 0 rgba(117,186,120,0); }
+  50%      { box-shadow: 0 0 10px rgba(117,186,120,0.55); }
+}
+
+/* attendance page — gentle float loop for the empty-state calendar icon */
+@keyframes fsa-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
 /* ── tailwind theme mapping ──────────────────────────────────
    bridges CSS custom properties into tailwind utility classes
    (e.g. bg-brand-bg, text-accent-green, font-display) */

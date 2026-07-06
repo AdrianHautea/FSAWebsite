@@ -4,7 +4,8 @@
 // data:  events (by attend_qr_token), attendance (duplicate guard), members (points)
 // notes: all guard checks must remain in order — token → auth → event validity →
 //        qr open → expiry → member lookup → duplicate → then write;
-//        points are written with user client (RLS permits member to update own row)
+//        attendance + points are written via the record_attendance RPC (admin
+//        client) — client roles are write-restricted, so this is the only path
 // ─────────────────────────────────────────────────────────────
 import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'

@@ -2,7 +2,7 @@
 // goodphil cultural page — utd pamana dance team profile
 //
 // notes: fully static; photos:
-//        cultural-hero.jpg, cultural-logo.svg, carousel-4.jpg (all in /public);
+//        cultural-hero.jpg, cultural-logo.svg, cult-1.jpg, cult-2.jpg, cult-3.jpg (all in /public);
 //        youtube video ids hardcoded in the past-performances
 //        section; cta links to @utdpamana on instagram
 // ──────────────────────────────────────────────────────────
@@ -199,9 +199,9 @@ export default function CulturalPage() {
       </section>
 
       {/* ── SECTION 3 — PAST PERFORMANCES ────────────────────────── */}
-      {/* featured (most recent year) + 2-col secondary row for older years;
-          photos and captions below are placeholders — see TODOs — until
-          officers supply real per-year photos and result/story copy */}
+      {/* Goodphil group (featured + 2-col secondary row for older years) followed
+          by the Isang Mahal group (2-col row, most-recent-first); each card is
+          video + optional placement badge — containers/behavior match across groups */}
       <section className="bg-[#2d452c] py-16 px-6 md:px-8">
         <div className="max-w-7xl mx-auto">
 
@@ -216,6 +216,18 @@ export default function CulturalPage() {
           >
             PAST PERFORMANCES
           </h2>
+
+          {/* Group divider — GOODPHIL */}
+          <div className="flex items-center gap-4 max-w-3xl mx-auto mb-10">
+            <div className="h-px flex-1 bg-white/15" />
+            <span
+              className="font-display font-black text-white/90 uppercase"
+              style={{ fontSize: 'clamp(18px, 2.4vw, 30px)', letterSpacing: '0.14em' }}
+            >
+              Goodphil
+            </span>
+            <div className="h-px flex-1 bg-white/15" />
+          </div>
 
           {/* Featured — Goodphil 2026, Austin (most recent year) */}
           <div className="mb-14" ref={(el) => { perfCardRefs.current[0] = el }}>
@@ -275,6 +287,74 @@ export default function CulturalPage() {
                 <iframe
                   src="https://www.youtube-nocookie.com/embed/j9v1Lt1-xu4"
                   title="Goodphil 2024 - Arlington"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full aspect-video rounded-xl"
+                />
+              </div>
+            </div>
+
+          </div>
+
+          {/* Group divider — ISANG MAHAL */}
+          <div className="flex items-center gap-4 max-w-3xl mx-auto mt-16 mb-10">
+            <div className="h-px flex-1 bg-white/15" />
+            <span
+              className="font-display font-black text-white/90 uppercase"
+              style={{ fontSize: 'clamp(18px, 2.4vw, 30px)', letterSpacing: '0.14em' }}
+            >
+              Isang Mahal
+            </span>
+            <div className="h-px flex-1 bg-white/15" />
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-8">
+
+            {/* Performance — Isang Mahal 2025, College Station */}
+            <div ref={(el) => { perfCardRefs.current[3] = el }}>
+              <div className="flex justify-center mb-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.06] border border-white/[0.16] font-display font-bold text-[10px] uppercase tracking-[0.1em] text-white/70">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
+                  2nd Place
+                </span>
+              </div>
+              <p
+                className="font-display text-white text-center mb-3"
+                style={{ fontSize: 'clamp(13px, 1.6vw, 20px)', letterSpacing: '1px' }}
+              >
+                <span className="font-black">ISANG MAHAL 2025 - </span>
+                <span className="font-medium">COLLEGE STATION</span>
+              </p>
+              <div className="bg-[rgba(255,255,255,0.79)] rounded-xl overflow-hidden p-2.5 mb-4">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/IKyewqDOnBg"
+                  title="Isang Mahal 2025 - College Station"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full aspect-video rounded-xl"
+                />
+              </div>
+            </div>
+
+            {/* Performance — Isang Mahal 2024, College Station */}
+            <div ref={(el) => { perfCardRefs.current[4] = el }}>
+              <div className="flex justify-center mb-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-gold/10 border border-accent-gold/30 font-display font-bold text-[10px] uppercase tracking-[0.1em] text-accent-gold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />
+                  1st Place
+                </span>
+              </div>
+              <p
+                className="font-display text-white text-center mb-3"
+                style={{ fontSize: 'clamp(13px, 1.6vw, 20px)', letterSpacing: '1px' }}
+              >
+                <span className="font-black">ISANG MAHAL 2024 - </span>
+                <span className="font-medium">COLLEGE STATION</span>
+              </p>
+              <div className="bg-[rgba(255,255,255,0.79)] rounded-xl overflow-hidden p-2.5 mb-4">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/Dj88LAg6_O4"
+                  title="Isang Mahal 2024 - College Station"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="w-full aspect-video rounded-xl"

@@ -65,7 +65,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'membership not active' }, { status: 400 })
   }
 
-  // bypass rls — user client cannot update its own members row
+  // bypass rls — safe because member.id was just resolved above via an
+  // rls-respecting query scoped to the authenticated caller's own email
   const admin = createAdminClient()
 
   // update basic profile fields and stamp onboarding complete in one write;

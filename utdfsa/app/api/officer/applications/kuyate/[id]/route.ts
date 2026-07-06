@@ -116,7 +116,9 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 
   // ── status notification email ─────────────────────────────
   // send status notification email when transitioning to a final status,
-  // but only if no email has been sent yet for this application
+  // but only if no email has been sent yet for this application —
+  // check-then-act, not atomic: two concurrent requests can both pass this
+  // check and both send, since status_email_sent_at is only stamped after
   if ((status === 'accepted' || status === 'rejected') && !appRow.status_email_sent_at) {
     try {
       // bypass rls — fetch the applicant's name and contact email to address the notification

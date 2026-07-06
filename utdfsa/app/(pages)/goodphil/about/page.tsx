@@ -4,7 +4,7 @@
 //
 // notes: fully static; all photos served from /public —
 //        hero-1-gp.jpg, hero-2-gp.jpg, what-is-gp.jpg,
-//        spirit-gp.jpg, cultural-gp.jpg, modern-gp.jpg,
+//        spirit-gp.jpg, cultural-gp.jpg, modern-goop.jpg,
 //        sports-gp.jpg
 // ──────────────────────────────────────────────────────────
 
@@ -127,7 +127,7 @@ export default function GoodphilAboutPage() {
       {/* Desktop hero — hidden below lg */}
       <section className="hidden lg:block relative w-full overflow-hidden bg-[#1f1f1f] h-[900px]">
 
-        {/* gp-back.png — background layer, left 58%, no padding */}
+        {/* gp-back.png — background layer, left 62%, no padding */}
         <div className="absolute left-0 top-0 h-full z-0" style={{ width: '62%' }}>
           <BlurInImg
             src="/gp-back.png"

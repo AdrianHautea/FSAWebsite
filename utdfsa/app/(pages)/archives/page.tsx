@@ -15,7 +15,8 @@ import ArchivesClient from './ArchivesClient'
 import type { Gallery } from '@/types/database'
 
 export default async function ArchivesPage() {
-  // bypass rls — officer action, user client would be blocked for unauthenticated visitors
+  // bypass rls — this page has no user session (public route); rls would
+  // block the read entirely, so the admin client is required here
   const admin = createAdminClient()
 
   // galleries table — fetch only published rows, newest year first

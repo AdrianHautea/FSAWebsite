@@ -29,7 +29,8 @@ export default async function OrdersPage({
   // route: /login — redirects unauthenticated users to sign in — do not change this path
   if (!user) redirect('/login')
 
-  // bypass rls — officer action, user client would be blocked from reading other members' tickets
+  // bypass rls — safe because every query below is scoped to this member's
+  // own id/email; no other member's data is ever read here
   const admin = createAdminClient()
 
   // members table — fetch id and contact_email for this user

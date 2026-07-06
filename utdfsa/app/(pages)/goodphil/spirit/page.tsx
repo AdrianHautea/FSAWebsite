@@ -188,8 +188,7 @@ export default function SpiritPage() {
 
       {/* ── SECTION 3 — PAST PERFORMANCES ────────────────────────── */}
       {/* featured (most recent year) + 2-col secondary row for older years;
-          photos and captions below are placeholders — see TODOs — until
-          officers supply real per-year photos and result/story copy */}
+          each card is video + optional placement badge only — no photos/captions */}
       <section className="bg-[#2d452c] py-16 px-6 md:px-8">
         <div className="max-w-7xl mx-auto">
 

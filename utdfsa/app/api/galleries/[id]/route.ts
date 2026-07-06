@@ -3,8 +3,9 @@
 // PATCH  /api/galleries/[id] — update gallery fields (officer/admin only)
 //
 // data:  galleries, members (role check)
-// notes: restricted to officer and admin roles.
-//        cover photo is optional on PATCH — omitting it keeps the existing one.
+// notes: restricted to officer and admin roles. PATCH fully overwrites title,
+//        description, semester, and year on every request — only the cover
+//        photo is optional (omitting it keeps the existing one).
 import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 import { uploadToS3 } from '@/utils/s3'
 import { imageMagicBytesMatch } from '@/utils/validate-image'
@@ -27,6 +28,8 @@ export async function DELETE(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  // bypass rls — needed to read role from members table before the caller is
+  // verified as officer/admin; read-only, scoped to the caller's own email
   const admin = createAdminClient()
 
   const { data: member } = await admin
@@ -64,6 +67,8 @@ export async function PATCH(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  // bypass rls — needed to read role from members table before the caller is
+  // verified as officer/admin; read-only, scoped to the caller's own email
   const admin = createAdminClient()
 
   const { data: member } = await admin

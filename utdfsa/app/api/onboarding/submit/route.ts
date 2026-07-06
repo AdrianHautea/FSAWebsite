@@ -93,7 +93,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'onboarding already completed' }, { status: 400 })
   }
 
-  // bypass rls — user client cannot write to application tables or update role fields
+  // bypass rls — safe because member.id/membership_status were already resolved
+  // above via an rls-respecting query scoped to the authenticated caller
   const admin = createAdminClient()
 
   // ── phase 1: write profile fields ────────────────────────────────────────

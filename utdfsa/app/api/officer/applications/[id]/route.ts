@@ -17,6 +17,8 @@ async function requireOfficer() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
 
+  // bypass rls — needed to read role from members table before the caller is
+  // verified as officer/admin; read-only, scoped to the caller's own email
   const admin = createAdminClient()
   const { data: member } = await admin
     .from('members')
@@ -37,6 +39,8 @@ export async function DELETE(req: Request, { params }: RouteContext) {
   const { searchParams } = new URL(req.url)
   const type = searchParams.get('type')
 
+  // allowlist check — type must resolve to one of the two known tables below,
+  // never interpolated directly into the query
   if (!type || !['ading', 'kuyate'].includes(type)) {
     return NextResponse.json({ error: 'Invalid application type' }, { status: 400 })
   }

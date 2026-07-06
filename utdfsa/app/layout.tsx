@@ -4,7 +4,7 @@
 // data:  members (id, first_name, last_name, avatar_url, role) — looked up by auth email
 // deps:  supabase user client, @vercel/analytics, @vercel/speed-insights
 // notes: member is fetched server-side so Navbar receives data before hydration;
-//        the three google fonts are registered as CSS custom properties via @theme
+//        the four google fonts are registered as CSS custom properties via @theme
 // ─────────────────────────────────────────────────────────────
 import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono, Unbounded, Noto_Sans_Tagalog } from "next/font/google"

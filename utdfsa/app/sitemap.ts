@@ -1,6 +1,8 @@
 // ── sitemap.ts ────────────────────────────────────────────────
 // Next.js metadata-file convention — auto-served at /sitemap.xml
-// route list mirrors public/robots.txt's Allow list; keep the two in sync
+// lists every public route individually (including goodphil subpages);
+// robots.txt only needs to Allow the parent paths, so its list is shorter —
+// the two are not meant to match 1:1
 // ─────────────────────────────────────────────────────────────
 import type { MetadataRoute } from 'next'
 

@@ -62,12 +62,34 @@ export default function AttendanceClient({ member, attendanceRecords, meetingCou
   // goodphil eligibility: 6+ points, 3+ meetings, and risk management attended at least once
   const isEligible = points >= 6 && meetingCount >= 3 && riskMgmtCount > 0
 
+  // count the points total up from 0, synced to the 700ms progress-bar fill duration
+  const [displayPoints, setDisplayPoints] = useState(0)
+  useEffect(() => {
+    if (!mounted) return
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion || points === 0) { setDisplayPoints(points); return }
+
+    const duration = 700
+    const start = performance.now()
+    let frame: number
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1)
+      const eased = 1 - Math.pow(1 - t, 4) // ease-out-quart
+      setDisplayPoints(Math.round(eased * points))
+      if (t < 1) frame = requestAnimationFrame(tick)
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [mounted, points])
+
   return (
     <main className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="font-display text-2xl font-bold text-white mb-1">Attendance History</h1>
-      <p className="text-sm mb-8" style={{ color: 'var(--color-text-dim)' }}>
-        Track your points and Goodphil eligibility.
-      </p>
+      <div style={{ animation: 'fadeUp 450ms cubic-bezier(0.16,1,0.3,1) both' }}>
+        <h1 className="font-display text-2xl font-bold text-white mb-1">Attendance History</h1>
+        <p className="text-sm mb-8" style={{ color: 'var(--color-text-dim)' }}>
+          Track your points and Goodphil eligibility.
+        </p>
+      </div>
 
       {/* ── Points summary card ───────────────────────────────────── */}
       <div
@@ -75,19 +97,23 @@ export default function AttendanceClient({ member, attendanceRecords, meetingCou
         style={{
           background: '#1a1a1a',
           border: '1px solid rgba(255,255,255,0.07)',
+          animation: 'fadeUp 500ms cubic-bezier(0.16,1,0.3,1) 80ms both',
         }}
       >
         {/* Header row: big points number + eligibility badge */}
         <div className="flex items-start justify-between mb-6">
           <div>
-            <p className="font-display text-5xl font-bold text-white leading-none">{points}</p>
+            <p className="font-display text-5xl font-bold text-white leading-none">{displayPoints}</p>
             <p className="text-xs mt-1.5" style={{ color: 'var(--color-text-dim)' }}>Total Points</p>
           </div>
-          <span className={`text-[11px] font-bold tracking-[0.04em] px-2.5 py-0.5 rounded-full mt-1 ${
-            isEligible
-              ? 'bg-[rgba(95,207,143,0.12)] border border-[rgba(95,207,143,0.35)] text-[#5fcf8f]'
-              : 'bg-[rgba(255,255,255,0.06)] border border-white/10 text-[#7a7a7a]'
-          }`}>
+          <span
+            className={`text-[11px] font-bold tracking-[0.04em] px-2.5 py-0.5 rounded-full mt-1 ${
+              isEligible
+                ? 'bg-[rgba(95,207,143,0.12)] border border-[rgba(95,207,143,0.35)] text-[#5fcf8f]'
+                : 'bg-[rgba(255,255,255,0.06)] border border-white/10 text-[#7a7a7a]'
+            }`}
+            style={mounted && isEligible ? { animation: 'fsa-check-pop 500ms cubic-bezier(0.16,1,0.3,1) both' } : undefined}
+          >
             {isEligible ? '✓ Goodphil Eligible' : 'Requirements not yet met'}
           </span>
         </div>
@@ -108,7 +134,10 @@ export default function AttendanceClient({ member, attendanceRecords, meetingCou
           </div>
           <div
             className="h-2 rounded-full overflow-hidden"
-            style={{ background: '#0e0e0e' }}
+            style={{
+              background: '#0e0e0e',
+              animation: mounted && points >= 6 ? 'fsa-bar-glow 700ms cubic-bezier(0.16,1,0.3,1) 700ms 1 both' : undefined,
+            }}
           >
             <div
               className="h-full rounded-full transition-all duration-700"
@@ -136,7 +165,10 @@ export default function AttendanceClient({ member, attendanceRecords, meetingCou
           </div>
           <div
             className="h-2 rounded-full overflow-hidden"
-            style={{ background: '#0e0e0e' }}
+            style={{
+              background: '#0e0e0e',
+              animation: mounted && meetingCount >= 3 ? 'fsa-bar-glow 700ms cubic-bezier(0.16,1,0.3,1) 700ms 1 both' : undefined,
+            }}
           >
             <div
               className="h-full rounded-full transition-all duration-700"
@@ -157,14 +189,14 @@ export default function AttendanceClient({ member, attendanceRecords, meetingCou
       {/* ── Attendance list ───────────────────────────────────────── */}
       <p
         className="text-xs font-semibold uppercase tracking-[0.12em] mb-4"
-        style={{ color: 'var(--color-text-muted)' }}
+        style={{ color: 'var(--color-text-muted)', animation: 'fadeUp 450ms cubic-bezier(0.16,1,0.3,1) 150ms both' }}
       >
         Attendance Log
       </p>
 
       {attendanceRecords.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-2xl mb-3" role="img" aria-label="calendar">📅</p>
+        <div className="text-center py-16" style={{ animation: 'fadeUp 450ms cubic-bezier(0.16,1,0.3,1) 200ms both' }}>
+          <p className="text-2xl mb-3" role="img" aria-label="calendar" style={{ animation: 'fsa-float 3s ease-in-out infinite' }}>📅</p>
           <p className="text-lg font-semibold mb-2" style={{ color: 'var(--color-text-secondary)' }}>
             No attendance records yet
           </p>
@@ -175,20 +207,22 @@ export default function AttendanceClient({ member, attendanceRecords, meetingCou
       ) : (
         <div
           className="rounded-2xl overflow-hidden"
-          style={{ border: '1px solid var(--color-border-subtle)' }}
+          style={{ border: '1px solid var(--color-border-subtle)', animation: 'fadeUp 450ms cubic-bezier(0.16,1,0.3,1) 200ms both' }}
         >
           {attendanceRecords.map((record, idx) => {
             const event = resolveEvent(record.events)
             const dotColor = event ? getEventTypeColor(event.event_type) : '#9a9a9a'
             const isLast = idx === attendanceRecords.length - 1
+            const staggerDelay = Math.min(idx, 10) * 40
 
             return (
               <div
                 key={record.id}
-                className="px-4 py-3.5 flex items-center gap-3"
+                className="px-4 py-3.5 flex items-center gap-3 transition-[filter] duration-150 hover:brightness-125"
                 style={{
                   background: idx % 2 === 0 ? '#1a1a1a' : '#1c1c1c',
                   borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.04)',
+                  animation: `fadeUp 400ms cubic-bezier(0.16,1,0.3,1) ${240 + staggerDelay}ms both`,
                 }}
               >
                 {/* Colored event-type dot */}

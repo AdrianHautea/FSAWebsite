@@ -28,7 +28,9 @@ async function requireOfficer() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
 
-  // bypass rls — admin client needed to read role from members table
+  // bypass rls — needed to read role from members table since the caller
+  // isn't verified as officer/admin yet at this point (that's what this check does);
+  // read-only, scoped to the caller's own email, so no cross-account exposure
   const admin = createAdminClient()
   const { data: member } = await admin
     .from('members')

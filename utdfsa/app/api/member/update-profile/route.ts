@@ -42,7 +42,8 @@ export async function POST(req: Request) {
 
   const { first_name, last_name, phone, year, major, contact_email } = parsed.data
 
-  // bypass rls — admin client needed so the update succeeds regardless of rls policy
+  // bypass rls — safe because the update is scoped to .eq('email', user.email!) below,
+  // which is the authenticated caller's own row
   const admin = createAdminClient()
 
   // update the members table row for this user, matched by their login email

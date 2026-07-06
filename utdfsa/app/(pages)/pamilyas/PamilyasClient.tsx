@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, type PointerEvent } from 'react'
+import { useState, useEffect, useRef, type PointerEvent, type MouseEvent } from 'react'
 import Modal from '@/components/Modal'
 import SmoothImage from '@/components/SmoothImage'
 import { BlurInImg } from '@/components/SmoothImage'
@@ -129,6 +129,33 @@ function PamilyasCarousel() {
   const cardW = isMobile ? 320 : 640
   const cardH = isMobile ? 240 : 480
 
+  // Cards visually overlap (the fan effect), so per-card onClick + native DOM
+  // hit-testing resolves to whichever card is topmost at that point, not the
+  // card whose own rendered center the click is closest to. Resolve intent by
+  // position math instead — find which of the 5 known fan-slot x-offsets the
+  // click is nearest to (mirrors PhotoCarousel's stage-click resolution).
+  const handleStageClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (suppressClick.current) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const clickX = e.clientX - rect.left - rect.width / 2
+    const slotOffsetsPx = positions.map(p => (parseFloat(p.translateX) / 100) * cardW)
+    let nearestSlot = 2
+    let nearestDist = Infinity
+    slotOffsetsPx.forEach((slotX, i) => {
+      const dist = Math.abs(clickX - slotX)
+      if (dist < nearestDist) { nearestDist = dist; nearestSlot = i }
+    })
+    const offsetFromCenter = nearestSlot - 2
+    if (offsetFromCenter === 0) return
+
+    if (isMobile) {
+      offsetFromCenter < 0 ? prev() : next()
+    } else {
+      setCurrent((current + offsetFromCenter + total) % total)
+      resetTimer()
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* stage height accommodates 4:3 active card with breathing room */}
@@ -137,6 +164,7 @@ function PamilyasCarousel() {
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
+        onClick={handleStageClick}
       >
         {PAM_SLIDES.map((slide, slideIdx) => {
           let offset = (slideIdx - current + total) % total
@@ -162,7 +190,7 @@ function PamilyasCarousel() {
                 transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               }}
               className="rounded-2xl overflow-hidden bg-[#2a2a2a] cursor-pointer"
-              onClick={offset < 0 ? () => { if (!suppressClick.current) prev() } : offset > 0 ? () => { if (!suppressClick.current) next() } : undefined}
+              // Click handling lives on the stage container (handleStageClick above) — see comment there.
               onMouseEnter={!isCenter ? () => setHoveredIdx(slideIdx) : undefined}
               onMouseLeave={!isCenter ? () => setHoveredIdx(null) : undefined}
             >
@@ -476,7 +504,7 @@ export default function PamilyasClient({
       {/* Desktop hero */}
       <section className="hidden lg:block relative w-full overflow-hidden bg-[#1f1f1f] h-[870px]">
 
-        {/* pam-hero-bg.jpg — background layer, right 55%, no padding */}
+        {/* pam-hero-bg.jpg — background layer, right 57%, no padding */}
         <div className="absolute right-0 top-0 h-full z-0" style={{ width: '57%' }}>
           <BlurInImg
             src="/pam-hero-bg.png"
