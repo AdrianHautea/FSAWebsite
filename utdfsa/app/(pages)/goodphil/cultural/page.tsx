@@ -38,6 +38,12 @@ export default function CulturalPage() {
   // past-performances video vault — each card animates independently as it individually
   // scrolls into view (mirrors the officer board card pattern in AboutClient.tsx),
   // now with the shared never-blank + reduced-motion guard
+  // recruitment CTA — own scroll trigger since it sits below the Section-2
+  // fold; heading/subtext/button stagger in on the same reveal like the
+  // Instagram CTA pill above it
+  const ctaRef = useRef<HTMLDivElement>(null)
+  const ctaVisible = useRevealOnScroll(ctaRef, 0.3)
+
   const perfCardRefs = useRef<(HTMLDivElement | null)[]>([])
   useStaggeredReveal(
     () => perfCardRefs.current.filter((c): c is HTMLDivElement => c !== null),
@@ -252,6 +258,56 @@ export default function CulturalPage() {
           </div>
         </div>
 
+      </section>
+
+      {/* ── SECTION 2.5 — RECRUITMENT CTA ────────────────────────── */}
+      {/* stepped one tone above section-bg (raised black) so it reads as its
+          own beat before dropping into the green Past Performances block;
+          single focused action, no photos/Baybayin — this section's job is
+          the ask, not the story */}
+      <section className="bg-surface-raised py-16 px-6 md:px-8">
+        <div ref={ctaRef} className="max-w-2xl mx-auto text-center">
+          <h2
+            className="font-display font-black text-white mb-4"
+            style={{
+              fontSize: 'clamp(28px, 3.5vw, 44px)',
+              letterSpacing: '-0.01em',
+              opacity: ctaVisible ? 1 : 0,
+              transform: ctaVisible ? 'translateY(0)' : 'translateY(10px)',
+              transition: 'opacity 700ms var(--ease-smooth), transform 700ms var(--ease-smooth)',
+            }}
+          >
+            Come Celebrate Filipino Culture With Us!
+          </h2>
+          <p
+            className="font-sans leading-relaxed text-white/60 mx-auto mb-8"
+            style={{
+              fontSize: 'clamp(16px, 1.5vw, 19px)',
+              maxWidth: '52ch',
+              opacity: ctaVisible ? 1 : 0,
+              transform: ctaVisible ? 'translateY(0)' : 'translateY(10px)',
+              transition: 'opacity 700ms var(--ease-smooth), transform 700ms var(--ease-smooth)',
+              transitionDelay: ctaVisible ? '140ms' : '0ms',
+            }}
+          >
+            Whether you&apos;re reconnecting with your heritage or discovering it for the first time, Pamana welcomes members who are ready to learn, perform, and celebrate the stories that make our culture unique.
+          </p>
+          <a
+            href="https://forms.gle/X4o8v3Qjq3CnULRf9"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-accent-green text-[#0e0e0e] rounded-full font-sans font-bold text-base transition-all duration-200 hover:brightness-[1.08]"
+            style={{
+              opacity: ctaVisible ? 1 : 0,
+              transform: ctaVisible ? 'translateY(0)' : 'translateY(10px)',
+              transition: 'opacity 700ms var(--ease-smooth), transform 700ms var(--ease-smooth), filter 200ms, background-color 200ms',
+              transitionDelay: ctaVisible ? '280ms' : '0ms',
+            }}
+          >
+            Join Pamana
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+        </div>
       </section>
 
       {/* ── SECTION 3 — PAST PERFORMANCES ────────────────────────── */}

@@ -40,6 +40,12 @@ export default function SpiritPage() {
   // past-performances video vault — each card animates independently as it individually
   // scrolls into view (mirrors the officer board card pattern in AboutClient.tsx),
   // now with the shared never-blank + reduced-motion guard
+  // recruitment CTA — own scroll trigger since it sits below the Section-2
+  // fold; heading/subtext/button stagger in on the same reveal like the
+  // Instagram CTA pill above it
+  const ctaRef = useRef<HTMLDivElement>(null)
+  const ctaVisible = useRevealOnScroll(ctaRef, 0.3)
+
   const perfCardRefs = useRef<(HTMLDivElement | null)[]>([])
   useStaggeredReveal(
     () => perfCardRefs.current.filter((c): c is HTMLDivElement => c !== null),
@@ -151,22 +157,50 @@ export default function SpiritPage() {
             {/* staggered 3-photo collage: one tall portrait on the left, two
                 stacked squares on the right, top-aligned */}
             <div className="flex gap-3 w-full">
-              <div
-                className="relative flex-1 aspect-[3/4] rounded-2xl overflow-hidden"
-                style={{
-                  clipPath: headingVisible ? 'inset(0 0 0% 0)' : 'inset(0 0 100% 0)',
-                  transition: 'clip-path 700ms var(--ease-smooth)',
-                  transitionDelay: headingVisible ? '320ms' : '0ms',
-                }}
-              >
-                <SmoothImage
-                  src="/spi-1.jpg"
-                  alt="UTD FSA Spirit performing at Goodphil"
-                  fill
-                  className="object-cover object-top"
-                  quality={95}
-                  sizes="(max-width: 1024px) 45vw, 220px"
-                />
+              {/* tall portrait — outer wrapper stays unclipped so the logo badge
+                  can overhang the photo's bottom edge; the image itself is
+                  clipped by an inner layer (same pattern as Modern/Cultural) */}
+              <div className="relative flex-1 aspect-[3/4]">
+                <div
+                  className="absolute inset-0 rounded-2xl overflow-hidden"
+                  style={{
+                    clipPath: headingVisible ? 'inset(0 0 0% 0)' : 'inset(0 0 100% 0)',
+                    transition: 'clip-path 700ms var(--ease-smooth)',
+                    transitionDelay: headingVisible ? '320ms' : '0ms',
+                  }}
+                >
+                  <SmoothImage
+                    src="/spi-1.jpg"
+                    alt="UTD FSA Spirit performing at Goodphil"
+                    fill
+                    className="object-cover object-top"
+                    quality={95}
+                    sizes="(max-width: 1024px) 45vw, 220px"
+                  />
+                </div>
+                {/* UTD FSA navbar logo badge — overlaps the photo's bottom-left corner,
+                    cut out from the section background so it reads as a floating
+                    identity stamp; Spirit has no team-specific logo, so it uses the
+                    main FSA mark (Modern/Cultural use their own team logos here).
+                    Stamps in just after the photo above finishes unraveling (320ms
+                    delay + 700ms duration = settles ~1020ms) */}
+                <div
+                  className="absolute -bottom-5 left-4 w-14 h-14 rounded-full overflow-hidden border-4 border-section-bg bg-section-bg"
+                  style={{
+                    opacity: headingVisible ? 1 : 0,
+                    transform: headingVisible ? 'scale(1)' : 'scale(0.6)',
+                    transition: 'opacity 500ms var(--ease-smooth), transform 500ms var(--ease-smooth)',
+                    transitionDelay: headingVisible ? '1120ms' : '0ms',
+                  }}
+                >
+                  <SmoothImage
+                    src="/logo-head.png"
+                    alt="UTD FSA logo"
+                    fill
+                    className="object-cover"
+                    quality={90}
+                  />
+                </div>
               </div>
 
               {/* two stacked squares, top-aligned with the portrait */}
@@ -230,6 +264,61 @@ export default function SpiritPage() {
           </div>
         </div>
 
+      </section>
+
+      {/* ── SECTION 2.5 — RECRUITMENT CTA ────────────────────────── */}
+      {/* stepped one tone above section-bg (raised black) so it reads as its
+          own beat before dropping into the green Past Performances block;
+          single focused action, no photos/Baybayin — this section's job is
+          the ask, not the story. Points to @fsautd (not a signup form) since
+          Spirit auditions aren't open yet — the ask here is "stay in the loop" */}
+      <section className="bg-surface-raised py-16 px-6 md:px-8">
+        <div ref={ctaRef} className="max-w-2xl mx-auto text-center">
+          <h2
+            className="font-display font-black text-white mb-4"
+            style={{
+              fontSize: 'clamp(28px, 3.5vw, 44px)',
+              letterSpacing: '-0.01em',
+              opacity: ctaVisible ? 1 : 0,
+              transform: ctaVisible ? 'translateY(0)' : 'translateY(10px)',
+              transition: 'opacity 700ms var(--ease-smooth), transform 700ms var(--ease-smooth)',
+            }}
+          >
+            Let&apos;s Get Hype!
+          </h2>
+          <p
+            className="font-sans leading-relaxed text-white/60 mx-auto mb-8"
+            style={{
+              fontSize: 'clamp(16px, 1.5vw, 19px)',
+              maxWidth: '58ch',
+              opacity: ctaVisible ? 1 : 0,
+              transform: ctaVisible ? 'translateY(0)' : 'translateY(10px)',
+              transition: 'opacity 700ms var(--ease-smooth), transform 700ms var(--ease-smooth)',
+              transitionDelay: ctaVisible ? '140ms' : '0ms',
+            }}
+          >
+            Whether you love performing, making people laugh, or just bringing the energy, Spirit is one of the most exciting parts of Goodphil. Our next Spirit season kicks off in the spring, so follow us on Instagram and be the first to hear about auditions, updates, and everything leading up to the biggest weekend of the year.
+          </p>
+          <a
+            href="https://instagram.com/fsautd"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-accent-green text-[#0e0e0e] rounded-full font-sans font-bold text-base transition-all duration-200 hover:brightness-[1.08]"
+            style={{
+              opacity: ctaVisible ? 1 : 0,
+              transform: ctaVisible ? 'translateY(0)' : 'translateY(10px)',
+              transition: 'opacity 700ms var(--ease-smooth), transform 700ms var(--ease-smooth), filter 200ms, background-color 200ms',
+              transitionDelay: ctaVisible ? '280ms' : '0ms',
+            }}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+              <circle cx="12" cy="12" r="5" />
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+            </svg>
+            Stay Updated
+          </a>
+        </div>
       </section>
 
       {/* ── SECTION 3 — PAST PERFORMANCES ────────────────────────── */}
