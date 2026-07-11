@@ -18,6 +18,8 @@
 html {
   overflow-y: auto;
   scrollbar-gutter: stable;
+  /* dark native scrollbars (and form controls) site-wide instead of the OS light default */
+  color-scheme: dark;
 }
 
 /* every enabled button reads as clickable; disabled buttons keep their

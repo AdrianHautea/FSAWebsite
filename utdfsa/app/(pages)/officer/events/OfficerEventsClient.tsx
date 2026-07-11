@@ -13,6 +13,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 
 import type { Event } from '@/types/database'
 import Image from 'next/image'
+import Modal from '@/components/Modal'
 import DeleteEventModal from './DeleteEventModal'
 import imageCompression from 'browser-image-compression'
 import { getBadge } from '@/utils/eventTypes'
@@ -996,21 +997,36 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
           )}
         </div>
 
-        {/* create form */}
+        {/* create form modal */}
         {creating && (
-          <div className="bg-[#141414] border border-[rgba(151,71,255,0.28)] rounded-[18px] p-4 sm:p-7 mb-6 shadow-[0_0_0_1px_rgba(151,71,255,0.08),0_24px_60px_-36px_rgba(151,71,255,0.5)]">
-            <div className="flex items-center gap-2.5 mb-6">
-              <span className="w-[7px] h-[7px] rounded-full bg-[#9747FF]" />
-              <h2 className="font-display font-bold text-[17px] text-white tracking-[-0.01em]">Create New Event</h2>
+          <Modal onClose={() => { setCreating(false); setPendingCoverFile(null) }} size="lg" label="Create event">
+            <div className="bg-[#141414] border border-white/10 rounded-[20px] shadow-modal w-full"
+              style={{ animation: 'modalIn 0.18s ease-out' }}>
+              <div className="px-4 sm:px-7 pt-4 sm:pt-7">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-[7px] h-[7px] rounded-full bg-[#9747FF]" />
+                    <h2 className="font-display font-bold text-[17px] text-white tracking-[-0.01em]">Create New Event</h2>
+                  </div>
+                  <button type="button" onClick={() => { setCreating(false); setPendingCoverFile(null) }}
+                    className="w-8 h-8 rounded-full bg-white/6 hover:bg-white/12 flex items-center justify-center text-[#8c8c8c] hover:text-white transition-colors">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
+                      <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div className="px-4 sm:px-7 pb-4 sm:pb-7">
+                <EventForm
+                  initial={emptyForm()}
+                  onSubmit={handleCreate}
+                  onCancel={() => { setCreating(false); setPendingCoverFile(null) }}
+                  submitLabel="Create Event"
+                  coverPhotoSlot={<PendingCoverPhotoUpload onChange={setPendingCoverFile} />}
+                />
+              </div>
             </div>
-            <EventForm
-              initial={emptyForm()}
-              onSubmit={handleCreate}
-              onCancel={() => { setCreating(false); setPendingCoverFile(null) }}
-              submitLabel="Create Event"
-              coverPhotoSlot={<PendingCoverPhotoUpload onChange={setPendingCoverFile} />}
-            />
-          </div>
+          </Modal>
         )}
 
         {/* existing events header */}
@@ -1027,7 +1043,6 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
           <div className="flex flex-col gap-4">
             {events.map(event => {
               const ticketed = isTicketed(event.event_type)
-              const showQR = hasAttendanceQR(event.event_type)
               const isEditing = editingId === event.id
               const badge = getBadge(event.event_type)
 
@@ -1097,38 +1112,62 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
                       </div>
                     </div>
                   </div>
-
-                  {/* inline edit */}
-                  {isEditing && (
-                    <div className="border-t border-white/7 p-5 pt-5">
-                      <EventForm
-                        initial={eventToForm(event)}
-                        onSubmit={handleUpdate(event.id)}
-                        onCancel={() => setEditingId(null)}
-                        submitLabel="Save Changes"
-                        beforeButtons={
-                          <>
-                            <CoverPhotoUpload event={event} onUpdate={upsert} />
-                            {showQR && <AttendanceQR event={event} onUpdate={upsert} />}
-                          </>
-                        }
-                        leftButtons={
-                          <button
-                            type="button"
-                            onClick={() => setDeleteTarget({ id: event.id, name: event.name })}
-                            className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 rounded-[11px] bg-transparent border border-[rgba(239,111,111,0.4)] text-[#ef6f6f] text-sm font-bold cursor-pointer hover:bg-[rgba(239,111,111,0.1)] transition-colors">
-                            Delete Event
-                          </button>
-                        }
-                      />
-                    </div>
-                  )}
                 </div>
               )
             })}
           </div>
         )}
       </div>
+
+      {/* edit form modal — centralized so only one instance exists regardless of which card triggered it */}
+      {(() => {
+        const editingEvent = events.find(e => e.id === editingId)
+        if (!editingEvent) return null
+        const showQR = hasAttendanceQR(editingEvent.event_type)
+        return (
+          <Modal key={editingEvent.id} onClose={() => setEditingId(null)} size="lg" label="Edit event">
+            <div className="bg-[#141414] border border-white/10 rounded-[20px] shadow-modal w-full"
+              style={{ animation: 'modalIn 0.18s ease-out' }}>
+              <div className="px-4 sm:px-7 pt-4 sm:pt-7">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-[7px] h-[7px] rounded-full bg-[#9747FF]" />
+                    <h2 className="font-display font-bold text-[17px] text-white tracking-[-0.01em]">Edit Event</h2>
+                  </div>
+                  <button type="button" onClick={() => setEditingId(null)}
+                    className="w-8 h-8 rounded-full bg-white/6 hover:bg-white/12 flex items-center justify-center text-[#8c8c8c] hover:text-white transition-colors">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
+                      <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div className="px-4 sm:px-7 pb-4 sm:pb-7">
+                <EventForm
+                  initial={eventToForm(editingEvent)}
+                  onSubmit={handleUpdate(editingEvent.id)}
+                  onCancel={() => setEditingId(null)}
+                  submitLabel="Save Changes"
+                  beforeButtons={
+                    <>
+                      <CoverPhotoUpload event={editingEvent} onUpdate={upsert} />
+                      {showQR && <AttendanceQR event={editingEvent} onUpdate={upsert} />}
+                    </>
+                  }
+                  leftButtons={
+                    <button
+                      type="button"
+                      onClick={() => setDeleteTarget({ id: editingEvent.id, name: editingEvent.name })}
+                      className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 rounded-[11px] bg-transparent border border-[rgba(239,111,111,0.4)] text-[#ef6f6f] text-sm font-bold cursor-pointer hover:bg-[rgba(239,111,111,0.1)] transition-colors">
+                      Delete Event
+                    </button>
+                  }
+                />
+              </div>
+            </div>
+          </Modal>
+        )
+      })()}
 
       {deleteTarget && (
         <DeleteEventModal

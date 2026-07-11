@@ -81,6 +81,7 @@ export default function Modal({ onClose, size = 'md', scrollable = true, panelCl
         aria-label={label}
         tabIndex={-1}
         className={`relative w-full ${sizeClass[size]} max-h-[90dvh] ${scrollable ? 'overflow-y-auto' : 'overflow-hidden'} rounded-2xl shadow-2xl outline-none ${panelClassName ?? ''}`}
+        style={{ colorScheme: 'dark' }}
         onClick={(e) => e.stopPropagation()}
       >
         {children}
