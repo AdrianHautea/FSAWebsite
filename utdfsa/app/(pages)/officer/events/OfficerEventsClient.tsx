@@ -547,25 +547,36 @@ function EventForm({
 
 // ── Attendance QR panel ───────────────────────────────────────────────────────
 
+// attend_qr_open is the master switch, but a past expiry closes it too —
+// used to derive display state without waiting on the db self-heal patch
+function qrEffectivelyOpen(open: boolean | null, expiresAt: string | null) {
+  if (!open) return false
+  if (!expiresAt) return true
+  return new Date(expiresAt) > new Date()
+}
+
 function AttendanceQR({ event, onUpdate }: { event: Event; onUpdate: (e: Event) => void }) {
   // data url for the rendered qr code image — generated client-side via qrcode library
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
-  // optimistic local open state — updates immediately on button click, syncs from prop on server response
-  const [isOpen, setIsOpen] = useState(event.attend_qr_open)
+  // optimistic local open state — updates immediately on button click, syncs from prop on server response;
+  // treats a past expiry as closed even if attend_qr_open in the db hasn't caught up yet
+  const [isOpen, setIsOpen] = useState(qrEffectivelyOpen(event.attend_qr_open, event.attend_qr_expires_at))
 
   // keep isOpen in sync if the parent updates the event prop (e.g. after a patch response)
-  useEffect(() => { setIsOpen(event.attend_qr_open) }, [event.attend_qr_open])
-
-  // auto-close the badge locally once the expiry timestamp is reached
-  // calculates ms until expiry and sets a one-shot timeout; clears on unmount or expiry change
   useEffect(() => {
-    if (!event.attend_qr_expires_at) return
+    setIsOpen(qrEffectivelyOpen(event.attend_qr_open, event.attend_qr_expires_at))
+  }, [event.attend_qr_open, event.attend_qr_expires_at])
+
+  // once the expiry timestamp is reached, persist attend_qr_open:false — not just a local
+  // flag flip — so the db stays the source of truth for every viewer, not only this tab
+  useEffect(() => {
+    if (!event.attend_qr_open || !event.attend_qr_expires_at) return
     const ms = new Date(event.attend_qr_expires_at).getTime() - Date.now()
-    if (ms <= 0) { setIsOpen(false); return }
-    const t = setTimeout(() => setIsOpen(false), ms)
+    if (ms <= 0) { patch({ attend_qr_open: false }); return }
+    const t = setTimeout(() => patch({ attend_qr_open: false }), ms)
     return () => clearTimeout(t)
-  }, [event.attend_qr_expires_at])
+  }, [event.attend_qr_expires_at, event.attend_qr_open])
 
   const siteUrl = typeof window !== 'undefined' ? window.location.origin : ''
   const attendUrl = event.attend_qr_token
@@ -594,7 +605,7 @@ function AttendanceQR({ event, onUpdate }: { event: Event; onUpdate: (e: Event) 
       onUpdate(data.event)
     } else {
       // revert on error
-      if ('attend_qr_open' in fields) setIsOpen(event.attend_qr_open)
+      if ('attend_qr_open' in fields) setIsOpen(qrEffectivelyOpen(event.attend_qr_open, event.attend_qr_expires_at))
     }
     setSaving(false)
   }
@@ -679,17 +690,16 @@ function AttendanceQR({ event, onUpdate }: { event: Event; onUpdate: (e: Event) 
 }
 
 // ── cover photo upload ────────────────────────────────────────────────────────
+// stages the file locally — do not upload here. upload happens after the
+// parent form's Save Changes succeeds (see handleUpdate), so Cancel never
+// touches s3 or the db.
 
-function CoverPhotoUpload({ event, onUpdate }: { event: Event; onUpdate: (e: Event) => void }) {
-  const [uploading, setUploading] = useState(false)
-  // preview url — starts as the existing cover, updates after a successful upload
+function CoverPhotoUpload({ event, onChange }: { event: Event; onChange: (file: File | null) => void }) {
+  // preview url — starts as the existing cover, swaps to the staged file's data url once picked
   const [preview, setPreview] = useState<string | null>(event.cover_photo_url ?? null)
   const [uploadError, setUploadError] = useState<string | null>(null)
   // ref used to programmatically trigger the hidden file input
   const fileInputRef = useRef<HTMLInputElement>(null)
-
-  // keep preview in sync if the parent event prop changes (e.g. after a save)
-  useEffect(() => { setPreview(event.cover_photo_url ?? null) }, [event.cover_photo_url])
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -708,10 +718,13 @@ function CoverPhotoUpload({ event, onUpdate }: { event: Event; onUpdate: (e: Eve
       return
     }
 
-    setUploading(true)
+    // show preview immediately from the original file
+    const reader = new FileReader()
+    reader.onload = ev => setPreview(ev.target?.result as string)
+    reader.readAsDataURL(file)
 
-    // compress images over 1 mb to keep uploads fast and storage costs low
-    let fileToUpload: File = file
+    // compress in background, then pass the compressed file up to be uploaded on save
+    let fileToStage: File = file
     if (file.size > 1 * 1024 * 1024) {
       try {
         const compressed = await imageCompression(file, {
@@ -719,25 +732,12 @@ function CoverPhotoUpload({ event, onUpdate }: { event: Event; onUpdate: (e: Eve
           maxWidthOrHeight: 1920,
           useWebWorker: true,
         })
-        fileToUpload = new File([compressed], file.name, { type: file.type })
+        fileToStage = new File([compressed], file.name, { type: file.type })
       } catch (err) {
         console.error('[cover upload] compression failed, using original:', err)
       }
     }
-
-    const body = new FormData()
-    body.append('file', fileToUpload)
-    // api: calls POST /api/officer/events/[id]/cover — uploads and stores the event cover photo — do not change this endpoint or method
-    const res = await fetch(`/api/officer/events/${event.id}/cover`, { method: 'POST', body })
-    const data = await res.json().catch(() => ({}))
-    setUploading(false)
-
-    if (res.ok) {
-      setPreview(data.url)
-      onUpdate({ ...event, cover_photo_url: data.url })
-    } else {
-      setUploadError(data.error ?? 'Upload failed.')
-    }
+    onChange(fileToStage)
   }
 
   return (
@@ -749,11 +749,6 @@ function CoverPhotoUpload({ event, onUpdate }: { event: Event; onUpdate: (e: Eve
           {preview ? (
             <div className="relative w-full aspect-[4/5] rounded-xl overflow-hidden mb-3">
               <Image src={preview} alt="Event cover" fill className="object-cover object-top" sizes="320px" />
-              {uploading && (
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                  <span className="text-sm text-white font-medium">Uploading…</span>
-                </div>
-              )}
             </div>
           ) : (
             <div
@@ -777,11 +772,10 @@ function CoverPhotoUpload({ event, onUpdate }: { event: Event; onUpdate: (e: Eve
 
           <button
             type="button"
-            disabled={uploading}
             onClick={() => fileInputRef.current?.click()}
-            className="text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-white/16 text-[#cfcfcf] hover:border-white/30 hover:text-white disabled:opacity-50 transition-colors"
+            className="text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-white/16 text-[#cfcfcf] hover:border-white/30 hover:text-white transition-colors"
           >
-            {uploading ? 'Uploading…' : preview ? 'Change Cover' : 'Upload Cover'}
+            {preview ? 'Change Cover' : 'Upload Cover'}
           </button>
         </div>
 
@@ -926,6 +920,8 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null)
   // cover file staged during the create flow — uploaded immediately after event row is created
   const [pendingCoverFile, setPendingCoverFile] = useState<File | null>(null)
+  // cover file staged during the edit flow — uploaded only after Save Changes succeeds
+  const [pendingEditCoverFile, setPendingEditCoverFile] = useState<File | null>(null)
 
   function upsert(updated: Event) {
     setEvents(prev => {
@@ -967,9 +963,20 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.error ?? 'Failed to update event.')
-    upsert(data.event)
+    let event = data.event
+    if (pendingEditCoverFile) {
+      const body = new FormData()
+      body.append('file', pendingEditCoverFile)
+      const coverRes = await fetch(`/api/officer/events/${id}/cover`, { method: 'POST', body })
+      if (coverRes.ok) {
+        const coverData = await coverRes.json()
+        event = { ...event, cover_photo_url: coverData.url }
+      }
+      setPendingEditCoverFile(null)
+    }
+    upsert(event)
     setEditingId(null)
-  }, [])
+  }, [pendingEditCoverFile])
 
   return (
     <main className="min-h-screen bg-[#070707] px-4 sm:px-6 md:px-10 py-10">
@@ -1105,7 +1112,7 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
                         </span>
 
                         <button
-                          onClick={() => setEditingId(isEditing ? null : event.id)}
+                          onClick={() => { setEditingId(isEditing ? null : event.id); setPendingEditCoverFile(null) }}
                           className="bg-transparent border-none text-[#5fa8e8] text-[14px] font-bold cursor-pointer hover:text-[#8ec5f5] transition-colors p-2 -m-2 min-h-[44px] flex items-center">
                           {isEditing ? 'Close' : 'Edit'}
                         </button>
@@ -1124,8 +1131,9 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
         const editingEvent = events.find(e => e.id === editingId)
         if (!editingEvent) return null
         const showQR = hasAttendanceQR(editingEvent.event_type)
+        const closeEdit = () => { setEditingId(null); setPendingEditCoverFile(null) }
         return (
-          <Modal key={editingEvent.id} onClose={() => setEditingId(null)} size="lg" label="Edit event">
+          <Modal key={editingEvent.id} onClose={closeEdit} size="lg" label="Edit event">
             <div className="bg-[#141414] border border-white/10 rounded-[20px] shadow-modal w-full"
               style={{ animation: 'modalIn 0.18s ease-out' }}>
               <div className="px-4 sm:px-7 pt-4 sm:pt-7">
@@ -1134,7 +1142,7 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
                     <span className="w-[7px] h-[7px] rounded-full bg-[#9747FF]" />
                     <h2 className="font-display font-bold text-[17px] text-white tracking-[-0.01em]">Edit Event</h2>
                   </div>
-                  <button type="button" onClick={() => setEditingId(null)}
+                  <button type="button" onClick={closeEdit}
                     className="w-8 h-8 rounded-full bg-white/6 hover:bg-white/12 flex items-center justify-center text-[#8c8c8c] hover:text-white transition-colors">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
                       <path d="M18 6L6 18M6 6l12 12"/>
@@ -1146,11 +1154,11 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
                 <EventForm
                   initial={eventToForm(editingEvent)}
                   onSubmit={handleUpdate(editingEvent.id)}
-                  onCancel={() => setEditingId(null)}
+                  onCancel={closeEdit}
                   submitLabel="Save Changes"
                   beforeButtons={
                     <>
-                      <CoverPhotoUpload event={editingEvent} onUpdate={upsert} />
+                      <CoverPhotoUpload event={editingEvent} onChange={setPendingEditCoverFile} />
                       {showQR && <AttendanceQR event={editingEvent} onUpdate={upsert} />}
                     </>
                   }

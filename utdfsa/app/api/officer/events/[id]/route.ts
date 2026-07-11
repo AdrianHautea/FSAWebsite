@@ -60,7 +60,7 @@ export async function DELETE(_req: Request, { params }: RouteContext) {
 
 // ── PATCH /api/officer/events/[id] ───────────────────────────────────────────
 // update any event fields; also handles qr attendance controls:
-//   { attend_qr_open: true }           → open qr for scanning
+//   { attend_qr_open: true }           → open qr for scanning, clearing any stale expiry
 //   { attend_qr_open: false }          → close qr
 //   { attend_qr_expires_at: "..." }    → set auto-expiry
 export async function PATCH(req: Request, { params }: RouteContext) {
@@ -114,7 +114,13 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       return failValidation(qrParsed.error, 'Invalid QR control data.')
     }
     if (qrParsed.data.attend_qr_open !== undefined) updates.attend_qr_open = qrParsed.data.attend_qr_open
-    if (qrParsed.data.attend_qr_expires_at !== undefined) updates.attend_qr_expires_at = qrParsed.data.attend_qr_expires_at
+    if (qrParsed.data.attend_qr_expires_at !== undefined) {
+      updates.attend_qr_expires_at = qrParsed.data.attend_qr_expires_at
+    } else if (qrParsed.data.attend_qr_open === true) {
+      // reopening without a fresh expiry — clear any stale expiry from a prior
+      // session, otherwise /attend keeps rejecting scans against the old timestamp
+      updates.attend_qr_expires_at = null
+    }
   }
 
   if (Object.keys(updates).length === 0) {

@@ -242,7 +242,7 @@ export default function GoodphilAboutPage() {
                 className="absolute top-8 left-8 md:top-16 md:left-16"
                 style={{
                   opacity: headingVisible ? 1 : 0,
-                  transition: 'opacity 1094ms var(--ease-smooth)',
+                  transition: 'opacity 1641ms var(--ease-smooth)',
                 }}
               >
                 WHAT
@@ -251,8 +251,8 @@ export default function GoodphilAboutPage() {
                 className="absolute top-1/2 right-8 md:right-16 -translate-y-1/2"
                 style={{
                   opacity: headingVisible ? 1 : 0,
-                  transition: 'opacity 1094ms var(--ease-smooth)',
-                  transitionDelay: headingVisible ? '281ms' : '0ms',
+                  transition: 'opacity 1641ms var(--ease-smooth)',
+                  transitionDelay: headingVisible ? '422ms' : '0ms',
                 }}
               >
                 IS
@@ -261,8 +261,8 @@ export default function GoodphilAboutPage() {
                 className="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 w-full px-8 text-center"
                 style={{
                   opacity: headingVisible ? 1 : 0,
-                  transition: 'opacity 1094ms var(--ease-smooth)',
-                  transitionDelay: headingVisible ? '563ms' : '0ms',
+                  transition: 'opacity 1641ms var(--ease-smooth)',
+                  transitionDelay: headingVisible ? '845ms' : '0ms',
                 }}
               >
                 GOODPHIL?
