@@ -10,6 +10,7 @@
 
 import { createAdminClient } from '@/utils/supabase/server'
 import { requireUser } from '@/lib/auth'
+import { isMembershipActive } from '@/lib/membership'
 import { adingApplicationSchema, kuyateApplicationSchema, phoneField } from '@/lib/schemas'
 import { formatPhone } from '@/lib/format'
 import { NextResponse } from 'next/server'
@@ -68,7 +69,7 @@ export async function POST(req: Request) {
   // respects rls — fetch the caller's own member row to verify eligibility
   const { data: member } = await supabase
     .from('members')
-    .select('id, membership_status, onboarding_complete')
+    .select('id, membership_status, membership_expires_at, onboarding_complete')
     .eq('email', user.email!)
     .maybeSingle()
 
@@ -77,7 +78,7 @@ export async function POST(req: Request) {
   }
 
   // guard: only active (paid) members can submit an application
-  if (member.membership_status !== 'active') {
+  if (!isMembershipActive(member)) {
     return fail('Membership not active', 400)
   }
 

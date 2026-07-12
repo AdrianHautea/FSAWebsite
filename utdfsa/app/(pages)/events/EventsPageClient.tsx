@@ -55,7 +55,7 @@ function isHybrid(type: string) { return type.toLowerCase() === 'other' }
 function hasAttendanceQR(type: string) { return ['general meeting', 'risk management', 'gp event', 'other'].includes(type.toLowerCase()) }
 function hasPointsForType(type: string) { return ['gp event', 'other'].includes(type.toLowerCase()) }
 
-const EVENTS_PER_PAGE = 12
+const EVENTS_PER_PAGE = 6
 
 // ── section divider ───────────────────────────────────────────────────────────
 const SectionLabel = memo(function SectionLabel({ label }: { label: string }) {

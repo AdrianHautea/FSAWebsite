@@ -9,7 +9,9 @@
 // ─────────────────────────────────────────────────────────────
 import { createAdminClient } from '@/utils/supabase/server'
 import { requireUser } from '@/lib/auth'
+import { isMembershipActive } from '@/lib/membership'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 
 interface Props {
   searchParams: Promise<{ token?: string }>
@@ -49,10 +51,11 @@ export default async function AttendPage({ searchParams }: Props) {
       .select('id, name, event_date, points, is_active, attend_qr_open, attend_qr_expires_at')
       .eq('attend_qr_token', token)
       .maybeSingle(),
-    // members table — need id for the attendance RPC (points are handled server-side)
+    // members table — id for the attendance RPC, plus status + expiry for the
+    // active-membership gate below (points are for paid members only)
     supabase
       .from('members')
-      .select('id')
+      .select('id, membership_status, membership_expires_at')
       .eq('email', user.email!)
       .maybeSingle(),
   ])
@@ -98,6 +101,26 @@ export default async function AttendPage({ searchParams }: Props) {
 
   // member not found — user is authenticated but hasn't completed onboarding; redirect to profile
   if (!member) redirect('/member/profile')
+
+  // membership gate — attendance points are for active (paid, unexpired) members only.
+  // /attend is not under /member so middleware never enforces payment here; without
+  // this check any signed-in account could scan the meeting qr and accumulate points.
+  if (!isMembershipActive(member)) {
+    return (
+      <main className="flex flex-col items-center justify-center min-h-screen gap-4 px-6 text-center" style={{ animation: 'fadeUp 0.5s var(--ease-smooth) both' }}>
+        <h1 className="text-2xl font-bold text-yellow-600">Membership required</h1>
+        <p className="text-gray-500 max-w-md">
+          Attendance points are for active FSA members. Purchase or renew your membership, then scan the code again.
+        </p>
+        <Link
+          href="/membership"
+          className="mt-2 px-6 py-3 rounded-xl bg-accent-green text-black font-semibold"
+        >
+          Get your membership
+        </Link>
+      </main>
+    )
+  }
 
   // record attendance + award points atomically via the service-role RPC.
   // client roles are read-only (migration: harden_client_write_privileges_and_atomic_attendance),

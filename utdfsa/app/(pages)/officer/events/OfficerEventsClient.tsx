@@ -119,6 +119,12 @@ const emptyForm = (): EventFormData => ({
   registration_closes_at: '',
 })
 
+// prefill for the duplicate action — copies everything except the dates, which
+// must be re-picked (event_date is required by the form, so submission forces it)
+function duplicateForm(e: Event): EventFormData {
+  return { ...eventToForm(e), event_date: '', event_end: '', eb_deadline: '', registration_closes_at: '' }
+}
+
 function eventToForm(e: Event): EventFormData {
   return {
     name: e.name,
@@ -514,8 +520,8 @@ function EventForm({
           <PillToggle
             checked={form.is_active}
             onChange={v => set('is_active', v)}
-            label="Event Active"
-            sublabel="Turn off to cancel or fully close this event after it has ended."
+            label="Regsitration Active"
+            sublabel="Turn off to cancel or fully close registration for this event after it has ended."
           />
         )}
       </div>
@@ -914,6 +920,8 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
   const [events, setEvents] = useState<Event[]>(initialEvents)
   // true when the create-event form panel is expanded
   const [creating, setCreating] = useState(false)
+  // prefill for the create form — emptyForm() for "new event", duplicateForm(event) for "duplicate"
+  const [createInitial, setCreateInitial] = useState<EventFormData>(emptyForm())
   // id of the event whose inline edit form is expanded; null means none open
   const [editingId, setEditingId] = useState<string | null>(null)
   // set when the delete button is clicked — opens the DeleteEventModal
@@ -993,7 +1001,7 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
           </div>
           {!creating && (
             <button
-              onClick={() => { setCreating(true); setEditingId(null) }}
+              onClick={() => { setCreateInitial(emptyForm()); setCreating(true); setEditingId(null) }}
               className="sm:flex-shrink-0 w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] border-none rounded-[13px] bg-[#9747FF] hover:bg-[#a85eff] text-white text-sm font-bold cursor-pointer transition-colors"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
@@ -1025,7 +1033,7 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
               </div>
               <div className="px-4 sm:px-7 pb-4 sm:pb-7">
                 <EventForm
-                  initial={emptyForm()}
+                  initial={createInitial}
                   onSubmit={handleCreate}
                   onCancel={() => { setCreating(false); setPendingCoverFile(null) }}
                   submitLabel="Create Event"
@@ -1111,11 +1119,18 @@ export default function OfficerEventsClient({ initialEvents }: { initialEvents: 
                           {event.is_visible ? 'Active' : 'Hidden'}
                         </span>
 
-                        <button
-                          onClick={() => { setEditingId(isEditing ? null : event.id); setPendingEditCoverFile(null) }}
-                          className="bg-transparent border-none text-[#5fa8e8] text-[14px] font-bold cursor-pointer hover:text-[#8ec5f5] transition-colors p-2 -m-2 min-h-[44px] flex items-center">
-                          {isEditing ? 'Close' : 'Edit'}
-                        </button>
+                        <div className="flex items-center gap-4 sm:gap-3">
+                          <button
+                            onClick={() => { setCreateInitial(duplicateForm(event)); setCreating(true); setEditingId(null); setPendingCoverFile(null) }}
+                            className="bg-transparent border-none text-[#8c8c8c] text-[14px] font-bold cursor-pointer hover:text-white transition-colors p-2 -m-2 min-h-[44px] flex items-center">
+                            Duplicate
+                          </button>
+                          <button
+                            onClick={() => { setEditingId(isEditing ? null : event.id); setPendingEditCoverFile(null) }}
+                            className="bg-transparent border-none text-[#5fa8e8] text-[14px] font-bold cursor-pointer hover:text-[#8ec5f5] transition-colors p-2 -m-2 min-h-[44px] flex items-center">
+                            {isEditing ? 'Close' : 'Edit'}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>

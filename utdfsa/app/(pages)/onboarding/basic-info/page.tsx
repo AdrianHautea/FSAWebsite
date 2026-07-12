@@ -7,6 +7,7 @@
 //        user client is used (not admin) so rls applies to the member's own row.
 
 import { requireUser } from '@/lib/auth'
+import { isMembershipActive } from '@/lib/membership'
 import { redirect } from 'next/navigation'
 import { getSettings } from '@/lib/settings'
 import BasicInfoClient from './BasicInfoClient'
@@ -27,14 +28,14 @@ export default async function BasicInfoPage() {
   // supabase: members table — fetch existing profile fields for pre-filling the form
   const { data: member } = await supabase
     .from('members')
-    .select('first_name, last_name, phone, year, major, membership_status')
+    .select('first_name, last_name, phone, year, major, membership_status, membership_expires_at')
     .eq('email', user.email!)
     .maybeSingle()
 
   // auth check: member row missing → account not fully set up, send to login
   if (!member) redirect('/login')
   // membership gate: only active members may access this page
-  if (member.membership_status !== 'active') redirect('/membership')
+  if (!isMembershipActive(member)) redirect('/membership')
 
   // kuyate applications flag + deadline — drives the "door stays open" copy on the
   // confirmation screen shown after this form submits

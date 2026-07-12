@@ -6,6 +6,7 @@
 // notes: caller may be anonymous; member detection is best-effort via auth cookie
 import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 import { stripe } from '@/lib/stripe'
+import { isMembershipActive } from '@/lib/membership'
 import { eventRegisterSchema } from '@/lib/schemas'
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
@@ -60,20 +61,20 @@ export async function POST(req: Request) {
   const supabase = await createUserClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  let member: { id: string; membership_status: string; first_name: string; last_name: string; contact_email: string | null } | null = null
+  let member: { id: string; membership_status: string; membership_expires_at: string | null; first_name: string; last_name: string; contact_email: string | null } | null = null
 
   if (user?.email) {
     // bypass rls — needed to look up the member row regardless of their auth state
     const { data } = await admin
       .from('members')
-      .select('id, membership_status, first_name, last_name, contact_email')
+      .select('id, membership_status, membership_expires_at, first_name, last_name, contact_email')
       .eq('email', user.email)
       .maybeSingle()
     member = data
   }
 
-  // active membership status gates member-specific pricing and restrictions
-  const isMember = member?.membership_status === 'active'
+  // effective active membership (status + expiry) gates member pricing and restrictions
+  const isMember = isMembershipActive(member)
 
   // ── member-specific restrictions ───────────────────────────────────────────
   // fetched once here (unique constraint guarantees at most one row per member+event)

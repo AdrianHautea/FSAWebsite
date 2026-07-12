@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 import { createAdminClient, createUserClient } from '@/utils/supabase/server'
 import { headers } from 'next/headers'
 import { getCachedVisibleEvents } from '@/lib/data/events'
+import { isMembershipActive } from '@/lib/membership'
 import EventsPageClient from './EventsPageClient'
 import QRCode from 'qrcode'
 
@@ -41,6 +42,7 @@ export default async function EventsPage({
   let member: {
     id: string
     membership_status: string
+    membership_expires_at: string | null
     first_name: string
     last_name: string
     email: string
@@ -51,13 +53,13 @@ export default async function EventsPage({
   if (user?.email) {
     const { data } = await admin
       .from('members')
-      .select('id, membership_status, first_name, last_name, email, contact_email')
+      .select('id, membership_status, membership_expires_at, first_name, last_name, email, contact_email')
       .eq('email', user.email)
       .maybeSingle()
     member = data
 
     // only fetch existing registrations for active (paid) members
-    if (member?.membership_status === 'active') {
+    if (member && isMembershipActive(member)) {
       const { data: regs } = await admin
         .from('event_registrations')
         .select('event_id')
@@ -69,7 +71,7 @@ export default async function EventsPage({
     }
   }
 
-  const isMember = member?.membership_status === 'active'
+  const isMember = isMembershipActive(member)
 
   // when a non-member purchase completes, stripe substitutes ?sid=<checkout_session_id> in the success url.
   // the session id is only delivered to the browser that completed checkout, but it can still leak

@@ -16,6 +16,7 @@
 
 import { NextResponse } from 'next/server'
 import { createUserClient, createAdminClient } from '@/utils/supabase/server'
+import { isMembershipActive } from '@/lib/membership'
 
 // ── GET /auth/callback ────────────────────────────────────────────────────────
 
@@ -49,7 +50,7 @@ export async function GET(request: Request) {
   // check if a member row exists already
   const { data: existingMember } = await admin
     .from('members')
-    .select('id, membership_status, onboarding_complete, role')
+    .select('id, membership_status, membership_expires_at, onboarding_complete, role')
     .eq('email', user.email!)
     .maybeSingle()
 
@@ -75,7 +76,7 @@ export async function GET(request: Request) {
         avatar_url: user.user_metadata?.avatar_url ?? null,
         contact_email: user.email!,
       })
-      .select('id, membership_status, onboarding_complete, role')
+      .select('id, membership_status, membership_expires_at, onboarding_complete, role')
       .single()
 
     member = newMember
@@ -93,8 +94,8 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}${isSafeNext ? next : '/member/profile'}`)
   }
 
-  // unpaid — always send to membership page regardless of ?next
-  if (member?.membership_status !== 'active') {
+  // unpaid or expired — always send to membership page regardless of ?next
+  if (!isMembershipActive(member ?? null)) {
     return NextResponse.redirect(`${origin}/membership`)
   }
 

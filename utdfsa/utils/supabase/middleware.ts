@@ -9,6 +9,7 @@
 
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { isMembershipActive } from '@/lib/membership'
 
 // ── route protection lists ────────────────────────────────
 
@@ -92,13 +93,13 @@ export async function updateSession(request: NextRequest, cspInfo?: CspInfo) {
 
   // single member lookup shared by all three checks below —
   // runs whenever we need role or membership_status
-  let memberRow: { role: string; membership_status: string } | null = null
+  let memberRow: { role: string; membership_status: string; membership_expires_at: string | null } | null = null
 
   if (user && (needsMember || needsOfficer || pathname === '/membership')) {
     // respects rls — only returns the row matching the caller's email
     const { data } = await supabase
       .from('members')
-      .select('role, membership_status')
+      .select('role, membership_status, membership_expires_at')
       .eq('email', user.email!)
       .maybeSingle()
     memberRow = data
@@ -106,7 +107,7 @@ export async function updateSession(request: NextRequest, cspInfo?: CspInfo) {
 
   // protects /membership — redirects active members and officers away since they don't need to pay again
   if (pathname === '/membership' && user) {
-    const isActive = memberRow?.membership_status === 'active'
+    const isActive = isMembershipActive(memberRow)
     const isOfficer = memberRow?.role === 'officer' || memberRow?.role === 'admin'
     if (isActive || isOfficer) {
       const url = request.nextUrl.clone()
@@ -115,9 +116,12 @@ export async function updateSession(request: NextRequest, cspInfo?: CspInfo) {
     }
   }
 
-  // protects member routes — redirects unpaid members to /membership so they can complete payment
+  // protects member routes — redirects unpaid members to /membership so they can complete payment.
+  // officers/admins are exempt: the /membership block above bounces them to /member/profile,
+  // so gating them here on payment would create an infinite redirect loop between the two.
   if (needsMember && user) {
-    const isPaid = memberRow?.membership_status === 'active'
+    const isOfficer = memberRow?.role === 'officer' || memberRow?.role === 'admin'
+    const isPaid = isMembershipActive(memberRow) || isOfficer
 
     if (!isPaid) {
       // allow exceptions (onboarding, auth routes) so the payment flow itself isn't blocked

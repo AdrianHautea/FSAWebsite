@@ -25,6 +25,7 @@ import WhoAreWeText from "@/components/WhoAreWeText"
 import ScrollFadeIn from "@/components/ScrollFadeIn"
 import { createAdminClient, createUserClient } from "@/utils/supabase/server"
 import { getCachedVisibleEvents } from "@/lib/data/events"
+import { isMembershipActive } from "@/lib/membership"
 
 export default async function Home() {
   const admin = createAdminClient()
@@ -46,6 +47,7 @@ export default async function Home() {
   let member: {
     id: string
     membership_status: string
+    membership_expires_at: string | null
     first_name: string
     last_name: string
     email: string
@@ -56,12 +58,12 @@ export default async function Home() {
   if (user?.email) {
     const { data } = await admin
       .from('members')
-      .select('id, membership_status, first_name, last_name, email, contact_email')
+      .select('id, membership_status, membership_expires_at, first_name, last_name, email, contact_email')
       .eq('email', user.email)
       .maybeSingle()
     member = data
 
-    if (member?.membership_status === 'active') {
+    if (member && isMembershipActive(member)) {
       const { data: regs } = await admin
         .from('event_registrations')
         .select('event_id')
@@ -73,7 +75,7 @@ export default async function Home() {
     }
   }
 
-  const isMember = member?.membership_status === 'active'
+  const isMember = isMembershipActive(member)
 
   return (
     <main className="bg-brand-bg text-white overflow-x-clip">

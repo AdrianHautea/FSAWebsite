@@ -8,9 +8,12 @@ import { z } from 'zod'
 
 // ── ticket scanning ───────────────────────────────────────
 
-// validates the qr code value from the scanner — must be a uuid
+// validates the qr code value from the scanner — must be a uuid.
+// event_id scopes the scan: the officer picks which event they're working the
+// door for, and tickets for any other event are rejected as WRONG_EVENT.
 export const scanTicketSchema = z.object({
   qr_code: z.string().uuid('Invalid QR code format'),
+  event_id: z.string().uuid('Invalid event id'),
 })
 
 // ── event registration ────────────────────────────────────

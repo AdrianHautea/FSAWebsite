@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 // ── data fetching ─────────────────────────────────────────
 import { createUserClient, createAdminClient } from '@/utils/supabase/server'
 import { getSettings } from '@/lib/settings'
+import { isMembershipActive } from '@/lib/membership'
 import PamilyasClient, { type MemberState } from './PamilyasClient'
 
 export default async function PamilyasPage() {
@@ -42,12 +43,12 @@ export default async function PamilyasPage() {
     // query members table by email to get membership status and type
     const { data: member } = await admin
       .from('members')
-      .select('id, membership_status, onboarding_complete, member_type')
+      .select('id, membership_status, membership_expires_at, onboarding_complete, member_type')
       .eq('email', user.email!)
       .maybeSingle()
 
     if (member) {
-      memberState.isMember = member.membership_status === 'active'
+      memberState.isMember = isMembershipActive(member)
       memberState.memberType = member.member_type ?? null
       memberState.onboardingComplete = member.onboarding_complete ?? false
 

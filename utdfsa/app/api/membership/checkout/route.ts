@@ -8,6 +8,7 @@
 import { requireUser } from '@/lib/auth'
 import { stripe } from '@/lib/stripe'
 import { getSettings } from '@/lib/settings'
+import { isMembershipActive } from '@/lib/membership'
 import { NextResponse } from 'next/server'
 import { fail } from '@/lib/api-response'
 
@@ -28,7 +29,7 @@ export async function POST() {
   // respects rls — user client; verifies membership_status before proceeding
   const { data: member } = await supabase
     .from('members')
-    .select('id, membership_status, email, first_name, last_name')
+    .select('id, membership_status, membership_expires_at, email, first_name, last_name')
     .eq('email', user.email!)
     .maybeSingle()
 
@@ -36,8 +37,10 @@ export async function POST() {
     return fail('Member not found', 404)
   }
 
-  // block duplicate purchases — membership is already active for this account
-  if (member.membership_status === 'active') {
+  // block duplicate purchases — but only while the membership is effectively active;
+  // an expired-by-date member must be able to re-purchase (the webhook re-stamps
+  // status and a fresh expiry, which is what makes expiry self-healing)
+  if (isMembershipActive(member)) {
     return fail('Already a member', 400)
   }
 

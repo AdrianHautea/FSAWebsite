@@ -8,6 +8,7 @@
 
 import { createAdminClient } from '@/utils/supabase/server'
 import { requireUser } from '@/lib/auth'
+import { isMembershipActive } from '@/lib/membership'
 import { NextResponse } from 'next/server'
 import { fail } from '@/lib/api-response'
 
@@ -24,7 +25,7 @@ export async function POST() {
   // respects rls — fetch the caller's own member row to verify status
   const { data: member } = await supabase
     .from('members')
-    .select('id, membership_status')
+    .select('id, membership_status, membership_expires_at')
     .eq('email', user.email!)
     .maybeSingle()
 
@@ -33,7 +34,7 @@ export async function POST() {
   }
 
   // guard: only active (paid) members can proceed through onboarding
-  if (member.membership_status !== 'active') {
+  if (!isMembershipActive(member)) {
     return fail('Membership not active', 400)
   }
 

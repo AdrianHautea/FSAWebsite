@@ -8,6 +8,7 @@
 
 import { createAdminClient } from '@/utils/supabase/server'
 import { requireUser } from '@/lib/auth'
+import { isMembershipActive } from '@/lib/membership'
 import { stripe } from '@/lib/stripe'
 import { redirect } from 'next/navigation'
 import { getSettings } from '@/lib/settings'
@@ -41,7 +42,7 @@ export default async function OnboardingPage({ searchParams }: Props) {
   // supabase: members table — fetch all fields needed for the onboarding gate checks and client props
   const { data: member } = await admin
     .from('members')
-    .select('id, first_name, last_name, phone, year, major, membership_status, onboarding_complete, role, member_type')
+    .select('id, first_name, last_name, phone, year, major, membership_status, membership_expires_at, stripe_checkout_session_id, onboarding_complete, role, member_type')
     .eq('email', user.email!)
     .maybeSingle()
 
@@ -67,10 +68,13 @@ export default async function OnboardingPage({ searchParams }: Props) {
     redirect('/member/profile')
   }
 
+  // effective membership check — status alone is not authoritative, expiry counts too
+  const memberIsActive = isMembershipActive(member)
+
   // stripe race condition patch: membership_status may still be 'pending' if the webhook
   // hasn't fired yet after a successful payment. if a session_id is present, verify directly
   // with stripe so the member isn't incorrectly blocked from onboarding.
-  if (member.membership_status !== 'active' && session_id) {
+  if (!memberIsActive && session_id) {
     let stripeSession = null
 
     try {
@@ -79,7 +83,10 @@ export default async function OnboardingPage({ searchParams }: Props) {
       // invalid or expired session id — fall through to the membership redirect below
     }
 
-    if (stripeSession?.payment_status === 'paid') {
+    // replay guard: if this session id is already recorded on the member row, the
+    // webhook has fulfilled it once — an expired member re-visiting their old success
+    // url must not be able to re-activate without paying again
+    if (stripeSession?.payment_status === 'paid' && stripeSession.id !== member.stripe_checkout_session_id) {
       // payment confirmed by stripe directly; activate membership now.
       // the stripe webhook will also fire and update, but this prevents a blank onboarding screen.
       let membershipExpiry: Date
@@ -112,8 +119,8 @@ export default async function OnboardingPage({ searchParams }: Props) {
       // session_id present but payment not confirmed — send back to membership purchase
       redirect('/membership')
     }
-  } else if (member.membership_status !== 'active' && !session_id) {
-    // membership gate: no active membership and no stripe session — not supposed to be here
+  } else if (!memberIsActive && !session_id) {
+    // membership gate: no effectively active membership and no stripe session — not supposed to be here
     redirect('/membership')
   }
 
