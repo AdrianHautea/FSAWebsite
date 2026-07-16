@@ -107,11 +107,11 @@ const FAQS = [
   },
   {
     q: 'Do I have to be Filipino to join?',
-    a: 'Not at all! UTD FSA is open to everyone. We welcome anyone interested in celebrating Filipino-American culture and community.',
+    a: 'Not at all! UTD FSA is open to everyone. We welcome anyone interested in celebrating Filipino-American culture and community!',
   },
   {
     q: 'What is a Pamilya?',
-    a: 'A pamilya is your FSA family — a small group of members and upperclassmen (kuyas / ates) who hang out, support each other, and compete against other pamilyas throughout the year.',
+    a: 'A pamilya is your FSA family — a small group of members and upperclassmen (kuyas / ates) who hang out, support each other, and share similar interests!',
   },
   {
     q: 'I have an officer code — where do I enter it?',
