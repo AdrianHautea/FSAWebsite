@@ -339,8 +339,14 @@ export async function POST(req: Request) {
 
   // ── free events skip Stripe entirely ───────────────────────────────────────
   if (totalAmount === 0) {
-    // registration already marked paid above; redirect to success page without stripe
-    return NextResponse.json({ url: `${process.env.NEXT_PUBLIC_SITE_URL}/events?success=true` })
+    // registration already marked paid above; redirect to success page without stripe.
+    // members land on /member/orders, guests land on /events — same split as the
+    // paid path below, so the post-registration card is always the same width as
+    // wherever the member would normally view it (order history).
+    const freeSuccessUrl = isMember
+      ? `${process.env.NEXT_PUBLIC_SITE_URL}/member/orders?success=true`
+      : `${process.env.NEXT_PUBLIC_SITE_URL}/events?success=true`
+    return NextResponse.json({ url: freeSuccessUrl })
   }
 
   // ── create Stripe checkout ─────────────────────────────────────────────────
