@@ -103,7 +103,7 @@ export default function LoginPage() {
               style={{ boxShadow: '0 12px 40px -8px rgba(0,0,0,0.7)' }}
             >
               <Image
-                src="/logo-head.svg"
+                src="/logo-head.png"
                 alt="UTD FSA"
                 width={72}
                 height={72}

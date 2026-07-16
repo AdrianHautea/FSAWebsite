@@ -31,7 +31,7 @@ export default function Footer() {
         <div className="flex flex-col gap-2">
           <Link href="/" aria-label="UTD FSA home">
             <Image
-              src="/bare-logo.svg"
+              src="/bare-logo.png"
               alt="UTD FSA"
               width={43}
               height={43}

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: 'Events',
   description: 'See upcoming UTD FSA events and register for general meetings, cultural nights, and socials hosted by the Filipino Student Association at UT Dallas.',
   alternates: { canonical: '/events' },
-  openGraph: { images: [{ url: '/event-photo.jpg', width: 1200, height: 630 }] },
+  openGraph: { images: [{ url: '/og/events.jpg', width: 1200, height: 630 }] },
 }
 
 import { createAdminClient, createUserClient } from '@/utils/supabase/server'

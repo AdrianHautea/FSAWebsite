@@ -33,28 +33,6 @@ export const eventRegisterSchema = z.object({
   hp: z.string().max(0, 'Bot detected').optional(),
 })
 
-// ── member profile update ─────────────────────────────────
-
-// used by PATCH /api/member/profile
-export const updateProfileSchema = z.object({
-  first_name: z.string().min(1).max(50).trim(),
-  last_name: z.string().min(1).max(50).trim(),
-  // phone is optional; accepts formatted or raw input
-  phone: z.string()
-    .regex(/^\+?[\d\s\-\(\)]{7,15}$/, 'Invalid phone number')
-    .optional()
-    .nullable(),
-  year: z.enum(['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate', 'Alumni']).optional().nullable(),
-  major: z.string().max(100).trim().optional().nullable(),
-})
-
-// ── attendance token ──────────────────────────────────────
-
-// validates the short token from the event QR code used to record attendance
-export const attendTokenSchema = z.object({
-  token: z.string().min(1).max(100),
-})
-
 // ── shared transforms ─────────────────────────────────────
 
 // dollarsToCents: takes a dollar float from the form and converts to integer cents for stripe/db

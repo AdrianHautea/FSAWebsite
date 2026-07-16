@@ -16,6 +16,7 @@
    'visible' (spec requires a non-visible overflow to create a scroll
    container), so overflow-y must be forced to auto here too */
 html {
+  overflow-x: hidden;
   overflow-y: auto;
   scrollbar-gutter: stable;
   /* dark native scrollbars (and form controls) site-wide instead of the OS light default */
@@ -33,15 +34,12 @@ button:not(:disabled) {
    components use semantic tokens, not primitives directly   */
 :root {
   /* tier 1: primitive surface scale */
-  --primitive-bg-deep:    #070707;
   --primitive-bg-base:    #0e0e0e;
-  --primitive-bg-card:    #141414;
   --primitive-bg-raised:  #1a1a1a;
   --primitive-bg-section: #1f1f1f;
   --primitive-bg-input:   #262626;
 
   /* tier 1: primitive border opacities */
-  --primitive-border-07: rgba(255,255,255,0.07);
   --primitive-border-08: rgba(255,255,255,0.08);
   --primitive-border-10: rgba(255,255,255,0.10);
   --primitive-border-12: rgba(255,255,255,0.12);
@@ -63,14 +61,11 @@ button:not(:disabled) {
 
   /* tier 2: semantic — surfaces */
   --color-surface:         var(--primitive-bg-base);
-  --color-surface-card:    var(--primitive-bg-card);
   --color-surface-raised:  var(--primitive-bg-raised);
-  --color-surface-section: var(--primitive-bg-section);
 
   /* tier 2: semantic — borders */
   --color-border-subtle:  var(--primitive-border-08);
   --color-border-soft:    var(--primitive-border-12);
-  --color-border-visible: var(--primitive-border-16);
 
   /* tier 2: semantic — accent palette */
   --accent-green: #75ba78;
@@ -81,40 +76,14 @@ button:not(:disabled) {
      none 0 | sm 2px | DEFAULT 4px | md 6px | lg 8px | xl 12px | 2xl 16px | 3xl 24px | full
      use xl for buttons/inputs, 2xl for cards/panels, 3xl for large modals */
 
-  /* tier 2: semantic — fluid display font sizes (clamp: min, preferred, max) */
-  --font-size-hero:    clamp(2.25rem, calc(1rem + 5vw), 6rem);         /* 36→96px */
-  --font-size-heading: clamp(2.3125rem, calc(1.5rem + 2.8vw), 3.375rem); /* 37→54px */
-
   /* tier 2: semantic — elevation shadows (layered ambient + diffuse) */
   --shadow-raised:  0 4px 12px -2px rgba(0,0,0,0.35);
   --shadow-card:    0 12px 32px -8px rgba(0,0,0,0.65);
-  --shadow-overlay: 0 24px 56px -12px rgba(0,0,0,0.75);
   --shadow-modal:   0 32px 72px -16px rgba(0,0,0,0.85);
 
-  /* tier 2: semantic — animation easing curves
-     spring:   overlay/modal entrance (overshoots slightly, settles)
-     smooth:   scroll-triggered entrance animations (ease-out-quad feel)
-     standard: nav/drawer transitions (Material Design standard curve) */
-  --ease-spring:   cubic-bezier(0.22, 1, 0.36, 1);
+  /* tier 2: semantic — animation easing curve
+     smooth: scroll-triggered entrance animations (ease-out-quad feel) */
   --ease-smooth:   cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* tier 3: component — carousel */
-  --carousel-card-w: 75%;
-  --carousel-offset: 10%;
-
-  /* tier 3: component — officer page */
-  --color-officer-bg:     var(--primitive-bg-deep);
-  --color-officer-card:   var(--primitive-bg-card);
-  --color-officer-accent: #9747FF;
-  --color-officer-border: var(--primitive-border-10);
-}
-
-@media (max-width: 767px) {
-  :root {
-    --carousel-card-w: 88%;
-    --carousel-offset: 5%;
-  }
 }
 
 /* native cross-document page transitions (Chrome 111+, Safari 18+, Firefox 133+)
@@ -164,9 +133,7 @@ button:not(:disabled) {
   --color-text-faint:     var(--color-text-faint);
   /* surfaces */
   --color-surface:         var(--color-surface);
-  --color-surface-card:    var(--color-surface-card);
   --color-surface-raised:  var(--color-surface-raised);
-  --color-surface-section: var(--color-surface-section);
   /* accents */
   --color-accent-green: var(--accent-green);
   --color-accent-gold:  var(--accent-gold);
@@ -178,7 +145,6 @@ button:not(:disabled) {
   /* shadows */
   --shadow-raised:  var(--shadow-raised);
   --shadow-card:    var(--shadow-card);
-  --shadow-overlay: var(--shadow-overlay);
   --shadow-modal:   var(--shadow-modal);
   /* animations */
   --animate-marquee: marquee 35s linear infinite;
@@ -192,7 +158,7 @@ button:not(:disabled) {
   to   { transform: translateX(-50%); }
 }
 
-/* hero entrance — translateY(-50%) kept in sync with -translate-y-1/2 on the elements */
+/* hero entrance — opacity-only fade */
 @keyframes heroFadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -241,15 +207,10 @@ button:not(:disabled) {
   animation: spiritGlowPulse 2.4s ease-in-out 1;
 }
 
-html {
-  overflow-x: hidden;
-}
-
 body {
   background: var(--brand-bg);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, sans-serif;
-  scrollbar-gutter: stable;
   text-rendering: optimizeLegibility;
 }
 
@@ -267,8 +228,7 @@ h1, h2, h3, h4 {
   outline: none;
 }
 
-/* modal entrance animations used by Modal component and event detail overlay */
-@keyframes backdropIn { from { opacity: 0; } to { opacity: 1; } }
+/* modal entrance animation used by Modal component and event detail overlay */
 @keyframes modalIn { from { opacity: 0; transform: translateY(14px) scale(0.985); } to { opacity: 1; transform: none; } }
 
 /* ── event card hover ────────────────────────────────────────
@@ -280,10 +240,6 @@ h1, h2, h3, h4 {
   border-color: rgba(255, 255, 255, 0.16);
   box-shadow: var(--shadow-card);
   transform: translateY(-4px);
-}
-
-.week-pill {
-  cursor: pointer;
 }
 
 /* ── FullCalendar dark theme overrides ──────────────────────────────────── */
@@ -339,8 +295,8 @@ h1, h2, h3, h4 {
 /* FIX 6 — FullCalendar uses --fc-border-color for all internal borders including the right edge */
 .fc-dark { --fc-border-color: rgba(255,255,255,0.08); }
 
-/* FIX 7 — remove right-edge white strip: force full-width, collapse borders, hide overflow */
-* { box-sizing: border-box; }
+/* FIX 7 — remove right-edge white strip: force full-width, collapse borders, hide overflow
+   (Tailwind's preflight already sets border-box globally) */
 .fc-dark .fc-scrollgrid { width: 100% !important; border-right: none !important; border-collapse: collapse !important; }
 .fc-dark .fc-scrollgrid table,
 .fc-dark table { width: 100% !important; table-layout: fixed !important; border-collapse: collapse !important; }

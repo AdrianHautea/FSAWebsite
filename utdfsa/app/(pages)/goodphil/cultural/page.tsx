@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Goodphil — Cultural',
   description: 'Meet UTD Pamana, the cultural dance team representing UTD FSA at Goodphil, the annual Filipino cultural competition.',
   alternates: { canonical: '/goodphil/cultural' },
-  openGraph: { images: [{ url: '/cultural-hero.jpg', width: 1200, height: 630 }] },
+  openGraph: { images: [{ url: '/og/goodphil-cultural.jpg', width: 1200, height: 630 }] },
 }
 
 import GoodphilCulturalClient from './GoodphilCulturalClient'

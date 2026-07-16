@@ -12,6 +12,8 @@ import ApplicationsClient from './ApplicationsClient'
 // sort order used to group pending apps at the top so officers see actionable items first
 const STATUS_ORDER: Record<string, number> = { pending: 0, accepted: 1, rejected: 2 }
 
+// note: ApplicationsClient re-sorts client-side for the live tab/search UI, so this
+// server-side order only actually survives into the CSV export path
 function sortByStatusThenDate<T extends { status: string; submitted_at: string }>(rows: T[]): T[] {
   return [...rows].sort((a, b) => {
     const sa = STATUS_ORDER[a.status] ?? 3

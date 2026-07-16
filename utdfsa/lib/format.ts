@@ -14,12 +14,6 @@ export function toTitleCase(value: string): string {
     .join(' ')
 }
 
-// capitalizes only the first letter — "computer science" → "Computer science"
-export function toSentenceCase(value: string): string {
-  if (!value) return value
-  return value.charAt(0).toUpperCase() + value.slice(1)
-}
-
 // ── date/time helpers ─────────────────────────────────────
 
 // formats a start–end time range in Central time; falls back to start-only when no end

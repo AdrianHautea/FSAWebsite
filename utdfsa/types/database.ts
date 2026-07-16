@@ -178,15 +178,6 @@ export interface Setting {
   updated_at: string
 }
 
-// typed shape of what getSettings() returns — use this in components
-export interface AppSettings {
-  membershipPriceCents: number
-  earlyBirdPriceCents: number
-  earlyBirdDeadline: Date
-  membershipYear: string
-  pamilyaRevealActive: boolean
-}
-
 // ── ading application ─────────────────────────────────────
 
 // a submitted ading (new member) application row

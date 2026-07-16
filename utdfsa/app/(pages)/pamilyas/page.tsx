@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: 'Pamilyas',
   description: "Learn about UTD FSA's pamilya program, small mentorship families that connect new members with upperclassmen kuyas and ates for support and friendship.",
   alternates: { canonical: '/pamilyas' },
-  openGraph: { images: [{ url: '/pam-hero.jpg', width: 1200, height: 630 }] },
+  openGraph: { images: [{ url: '/og/pamilyas.jpg', width: 1200, height: 630 }] },
 }
 
 // ── data fetching ─────────────────────────────────────────

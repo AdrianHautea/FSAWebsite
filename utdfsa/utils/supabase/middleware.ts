@@ -20,12 +20,11 @@ const MEMBER_ROUTES = ['/member']
 const OFFICER_ROUTES = ['/officer', '/api/officer']
 
 // unpaid users can still reach these without being bounced to /membership —
-// matters because '/membership' itself matches the '/member' prefix above
+// matters because '/membership' itself matches the '/member' prefix above.
+// (only '/membership' can actually start with '/member' — '/onboarding', '/auth',
+// and '/login' never reach this check, since it only runs under needsMember)
 const ALLOWED_UNPAID_PATHS = [
   '/membership',
-  '/onboarding',
-  '/auth',
-  '/login',
 ]
 
 // ── session refresh + auth guards ─────────────────────────
@@ -75,7 +74,11 @@ export async function updateSession(request: NextRequest, cspInfo?: CspInfo) {
     }
   )
 
-  // always refresh the session — keeps users logged in across requests
+  // always refresh the session — this is the only place that can persist a
+  // refreshed cookie (Server Components can't write cookies, so RootLayout's
+  // own getUser() call relies on middleware having already refreshed it here;
+  // gating this call on guarded-only paths broke that on public pages —
+  // see docs/performance-bloat-audit.md item 4 postmortem)
   const { data: { user } } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
 

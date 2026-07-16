@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: 'Goodphil',
   description: 'Goodphil is UTD FSA\'s annual Filipino cultural competition against UTA, UTSA, UH, TAMU, and UT, featuring cultural, modern, spirit, and sports categories.',
   alternates: { canonical: '/goodphil/about' },
-  openGraph: { images: [{ url: '/hero-1-gp.jpg', width: 1200, height: 630 }] },
+  openGraph: { images: [{ url: '/og/goodphil-about.jpg', width: 1200, height: 630 }] },
 }
 
 import GoodphilAboutClient from './GoodphilAboutClient'

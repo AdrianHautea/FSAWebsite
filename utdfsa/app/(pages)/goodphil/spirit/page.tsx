@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Goodphil — Spirit',
   description: 'Meet UTD FSA\'s spirit squad, bringing school spirit and hype to Goodphil, the annual Filipino cultural competition.',
   alternates: { canonical: '/goodphil/spirit' },
-  openGraph: { images: [{ url: '/spirit-hero.jpg', width: 1200, height: 630 }] },
+  openGraph: { images: [{ url: '/og/goodphil-spirit.jpg', width: 1200, height: 630 }] },
 }
 
 import GoodphilSpiritClient from './GoodphilSpiritClient'

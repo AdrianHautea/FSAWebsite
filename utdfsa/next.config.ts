@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
   // do not remove the googleusercontent.com entry from the CSP — navbar avatar uses it
   images: {
     qualities: [75, 80, 85, 90, 95],
+    // AVIF first (~20-30% smaller than WebP at equal quality), WebP fallback —
+    // this is a photo-heavy site, so format choice matters on every page
+    formats: ['image/avif', 'image/webp'],
+    // build assets only change on redeploy, so cache optimizer output generously
+    minimumCacheTTL: 2678400, // 31 days
     remotePatterns: [
       {
         protocol: 'https',

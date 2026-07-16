@@ -1,4 +1,3 @@
-'use client'
 // ── GoodphilNavRail.tsx ───────────────────────────────────
 // sibling-page quick nav for the Goodphil cluster (about/spirit/cultural/
 // modern/sports). The cluster is hub-and-spoke — only /goodphil/about links

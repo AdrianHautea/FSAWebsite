@@ -1,5 +1,5 @@
 // ── route.ts (auth/logout) ────────────────────────────────────────────────────
-// clears the supabase session and redirects to /login.
+// clears the supabase session; caller (navbar) redirects to / afterward.
 //
 // deps:  supabase (auth.signOut clears the http-only session cookies)
 // notes: any authenticated user can call this. signOut is fire-and-forget —
