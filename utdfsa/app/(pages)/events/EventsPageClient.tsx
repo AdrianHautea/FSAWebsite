@@ -19,7 +19,7 @@ import RegisterModal from './RegisterModal'
 import Modal from '@/components/Modal'
 import type { Event } from '@/types/database'
 import { getBadge, type EventTypeBadge } from '@/utils/eventTypes'
-import { fmtTimeRange } from '@/lib/format'
+import { fmtTimeRange, fmtDateShort } from '@/lib/format'
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 // converts cents integer to dollar string (e.g. 1500 → "$15.00")
@@ -432,7 +432,7 @@ export default function EventsPageClient({ events, isMember, member, registeredE
                       {event.name}
                     </div>
                     <div className="text-[13px] font-medium" style={{ color: '#7a7a7a' }}>
-                      {fmtTimeRange(event.event_date, event.event_end)}
+                      {fmtDateShort(event.event_date)} · {fmtTimeRange(event.event_date, event.event_end)}
                     </div>
                   </button>
                 )

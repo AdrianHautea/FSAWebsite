@@ -14,7 +14,7 @@ import RegisterModal from '@/app/(pages)/events/RegisterModal'
 import type { Event } from '@/types/database'
 import { getBadge } from '@/utils/eventTypes'
 import { useStaggeredReveal } from '@/lib/useRevealOnScroll'
-import { fmtTimeRange } from '@/lib/format'
+import { fmtTimeRange, fmtDateShort } from '@/lib/format'
 
 // ── helpers (shared with EventsPageClient) ─────────────────────────────────
 const fmtCurrency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
@@ -114,7 +114,7 @@ export default function UpcomingEventsSection({ events, isMember, member, regist
                   {event.name}
                 </div>
                 <div className="text-[13px] font-medium" style={{ color: '#7a7a7a' }}>
-                  {fmtTimeRange(event.event_date, event.event_end)}
+                  {fmtDateShort(event.event_date)} · {fmtTimeRange(event.event_date, event.event_end)}
                 </div>
               </button>
             )
