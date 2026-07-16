@@ -326,6 +326,24 @@ input[type="datetime-local"]::-webkit-date-and-time-value {
   margin: 0;
 }
 
+/* iOS/iPadOS Safari zooms the page into any focused field with font-size
+   below 16px. -webkit-touch-callout exists only on iOS/iPadOS WebKit, so
+   this targets exactly the browsers that do the focus-zoom — regardless of
+   whether a trackpad/keyboard makes the pointer report as fine (pointer:coarse
+   misses that case) — and leaves desktop sizing untouched. Deliberately not
+   done via a viewport maximum-scale lock: iOS ignores that for the zoom
+   anyway, and where it does take effect it also disables pinch-zoom.
+   !important is required: every field in the app carries a Tailwind
+   text-size utility (text-sm, text-[15px], ...) which outspecifies this
+   plain element selector and would otherwise win. */
+@supports (-webkit-touch-callout: none) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
 /* event-detail popup modals (homepage + /events) — hide the scrollbar on
    desktop since the panel fits without scrolling there; keep the scrollbar
    and scroll behavior on mobile where content is more likely to overflow */
