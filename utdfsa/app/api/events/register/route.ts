@@ -157,7 +157,10 @@ export async function POST(req: Request) {
           .maybeSingle()).data
 
     if (existingRow) {
-      // update the stale row with the current attempt's ticket info
+      // update the stale row with the current attempt's ticket info.
+      // .neq('payment_status', 'paid') re-verifies the condition atomically at the write,
+      // not just at the read above — closes the race where the row gets paid (e.g. a
+      // concurrent tab's webhook fires) between the SELECT and this UPDATE
       const { data: updated, error: updateError } = await admin
         .from('event_registrations')
         .update({
@@ -169,12 +172,18 @@ export async function POST(req: Request) {
           payment_status: totalAmount === 0 ? 'paid' : 'pending',
         })
         .eq('id', existingRow.id)
+        .neq('payment_status', 'paid')
         .select('id')
-        .single()
+        .maybeSingle()
 
-      if (updateError || !updated) {
+      if (updateError) {
         console.error('Registration update error:', updateError)
         return fail('Failed to update registration.', 500)
+      }
+
+      if (!updated) {
+        // lost the race — the row was paid between the read above and this update
+        return fail('You are already registered for this event.', 409)
       }
 
       registration = updated
@@ -232,7 +241,10 @@ export async function POST(req: Request) {
     }
 
     if (existingGuestRow) {
-      // 'failed' row from a stripe-expired abandoned attempt — safe to reuse in place
+      // 'failed' row from a stripe-expired abandoned attempt — safe to reuse in place.
+      // .eq('payment_status', 'failed') re-verifies the condition atomically at the write,
+      // not just at the read above — closes the race where the row flips to pending/paid
+      // (e.g. a webhook fires) between the SELECT and this UPDATE
       const { data: updated, error: updateError } = await admin
         .from('event_registrations')
         .update({
@@ -244,12 +256,18 @@ export async function POST(req: Request) {
           payment_status: totalAmount === 0 ? 'paid' : 'pending',
         })
         .eq('id', existingGuestRow.id)
+        .eq('payment_status', 'failed')
         .select('id')
-        .single()
+        .maybeSingle()
 
-      if (updateError || !updated) {
+      if (updateError) {
         console.error('Registration update error:', updateError)
         return fail('Failed to update registration.', 500)
+      }
+
+      if (!updated) {
+        // lost the race — the row is no longer 'failed' (e.g. a webhook just fulfilled it)
+        return fail('This email already has a registration for this event.', 409)
       }
 
       registration = updated
