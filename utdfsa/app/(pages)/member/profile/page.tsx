@@ -26,7 +26,7 @@ export default async function ProfilePage() {
   // members table — fetch the full member row for display on the profile page
   const { data: member } = await supabase
     .from('members')
-    .select('*')
+    .select('id, email, first_name, last_name, role, membership_status, membership_expires_at, points, phone, year, major, shirt_size, pamilya, avatar_url, member_type')
     .eq('email', user.email!)
     .maybeSingle()
 
