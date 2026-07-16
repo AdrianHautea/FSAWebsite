@@ -134,6 +134,21 @@ export default function OfficerGalleryClient({ galleries }: Props) {
     return errors[field] ? ' !border-[#ef6f6f]' : ''
   }
 
+  // maps a failValidation() response's details.fieldErrors (zod .flatten()
+  // shape: Record<field, string[]>) onto this form's flat Record<field, string>,
+  // so server-side validation (e.g. the Google Photos host allowlist, title/
+  // description length limits) surfaces under the same fields as client checks
+  function serverFieldErrors(details: unknown): Record<string, string> {
+    const fieldErrors = (details as { fieldErrors?: Record<string, string[]> } | undefined)?.fieldErrors
+    const out: Record<string, string> = {}
+    if (fieldErrors) {
+      for (const [field, msgs] of Object.entries(fieldErrors)) {
+        if (msgs?.length) out[field] = msgs[0]
+      }
+    }
+    return out
+  }
+
   // uses FileReader instead of URL.createObjectURL because the CSP img-src
   // allows data: but not blob: — do not switch back to createObjectURL
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -208,7 +223,13 @@ export default function OfficerGalleryClient({ galleries }: Props) {
     const data = await res.json()
 
     if (!res.ok) {
-      setError(data.error ?? 'Something went wrong')
+      const serverErrs = serverFieldErrors(data.details)
+      if (Object.keys(serverErrs).length > 0) {
+        setFieldErrors(prev => ({ ...prev, ...serverErrs }))
+        setError('Please fix the highlighted field(s) below.')
+      } else {
+        setError(data.error ?? 'Something went wrong')
+      }
       setSubmitting(false)
       return
     }
@@ -316,7 +337,13 @@ export default function OfficerGalleryClient({ galleries }: Props) {
     const data = await res.json()
 
     if (!res.ok) {
-      setEditError(data.error ?? 'Something went wrong')
+      const serverErrs = serverFieldErrors(data.details)
+      if (Object.keys(serverErrs).length > 0) {
+        setEditFieldErrors(prev => ({ ...prev, ...serverErrs }))
+        setEditError('Please fix the highlighted field(s) below.')
+      } else {
+        setEditError(data.error ?? 'Something went wrong')
+      }
       setEditSubmitting(false)
       return
     }
@@ -454,13 +481,6 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   </svg>
                 </button>
               </div>
-
-              {/* only renders when the API or file validation returned an error — do not remove this condition */}
-              {error && (
-                <p className="text-[13px] text-[#ef6f6f] bg-[rgba(239,111,111,0.08)] border border-[rgba(239,111,111,0.25)] rounded-xl px-4 py-3 mb-5">
-                  {error}
-                </p>
-              )}
             </div>
 
             <form onSubmit={handleSubmit} className="px-4 sm:px-7 pb-4 sm:pb-7 flex flex-col gap-5">
@@ -572,13 +592,14 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   <select
                     value={form.semester}
                     onChange={set('semester')}
-                    className={selectCls}
+                    className={selectCls + errCls(fieldErrors, 'semester')}
                   >
                     <option value="">—</option>
                     <option value="Spring">Spring</option>
                     <option value="Summer">Summer</option>
                     <option value="Fall">Fall</option>
                   </select>
+                  {fieldErrors.semester && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.semester}</p>}
                 </div>
                 <div>
                   <label className={labelCls}>Year</label>
@@ -588,9 +609,10 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                     max="2100"
                     value={form.year}
                     onChange={set('year')}
-                    className={inputCls}
+                    className={inputCls + errCls(fieldErrors, 'year')}
                     placeholder="2025"
                   />
+                  {fieldErrors.year && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.year}</p>}
                 </div>
               </div>
 
@@ -600,10 +622,20 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   value={form.description}
                   onChange={set('description')}
                   rows={2}
-                  className={`${inputCls} resize-none`}
+                  className={`${inputCls} resize-none` + errCls(fieldErrors, 'description')}
                   placeholder="Optional description…"
                 />
+                {fieldErrors.description && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{fieldErrors.description}</p>}
               </div>
+
+              {/* only renders when the API or file validation returned an error — do not remove this condition.
+                  positioned here (bottom, next to the submit button) instead of above the form so it's visible
+                  without scrolling back up on a tall form */}
+              {error && (
+                <p role="alert" className="text-[13px] text-[#ef6f6f] bg-[rgba(239,111,111,0.08)] border border-[rgba(239,111,111,0.25)] rounded-xl px-4 py-3">
+                  {error}
+                </p>
+              )}
 
               <div className="flex flex-col-reverse sm:flex-row gap-3 pt-1">
                 <button
@@ -650,13 +682,6 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   </svg>
                 </button>
               </div>
-
-              {/* only renders when the API or file validation returned an error — do not remove this condition */}
-              {editError && (
-                <p className="text-[13px] text-[#ef6f6f] bg-[rgba(239,111,111,0.08)] border border-[rgba(239,111,111,0.25)] rounded-xl px-4 py-3 mb-5">
-                  {editError}
-                </p>
-              )}
             </div>
 
             <form onSubmit={handleEditSubmit} className="px-4 sm:px-7 pb-4 sm:pb-7 flex flex-col gap-5">
@@ -770,14 +795,15 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   <label className={labelCls}>Semester</label>
                   <select
                     value={editForm.semester}
-                    onChange={e => setEditForm(f => ({ ...f, semester: e.target.value }))}
-                    className={selectCls}
+                    onChange={e => setEditField('semester', e.target.value)}
+                    className={selectCls + errCls(editFieldErrors, 'semester')}
                   >
                     <option value="">—</option>
                     <option value="Spring">Spring</option>
                     <option value="Summer">Summer</option>
                     <option value="Fall">Fall</option>
                   </select>
+                  {editFieldErrors.semester && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{editFieldErrors.semester}</p>}
                 </div>
                 <div>
                   <label className={labelCls}>Year</label>
@@ -786,10 +812,11 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                     min="2000"
                     max="2100"
                     value={editForm.year}
-                    onChange={e => setEditForm(f => ({ ...f, year: e.target.value }))}
-                    className={inputCls}
+                    onChange={e => setEditField('year', e.target.value)}
+                    className={inputCls + errCls(editFieldErrors, 'year')}
                     placeholder="2025"
                   />
+                  {editFieldErrors.year && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{editFieldErrors.year}</p>}
                 </div>
               </div>
 
@@ -798,11 +825,12 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                 <label className={labelCls}>Description</label>
                 <textarea
                   value={editForm.description}
-                  onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
+                  onChange={e => setEditField('description', e.target.value)}
                   rows={2}
-                  className={`${inputCls} resize-none`}
+                  className={`${inputCls} resize-none` + errCls(editFieldErrors, 'description')}
                   placeholder="Optional description…"
                 />
+                {editFieldErrors.description && <p role="alert" className="mt-1.5 text-[12px] text-[#ef6f6f]">{editFieldErrors.description}</p>}
               </div>
 
               {/* Published toggle */}
@@ -823,6 +851,15 @@ export default function OfficerGalleryClient({ galleries }: Props) {
                   </div>
                 </label>
               </div>
+
+              {/* only renders when the API or file validation returned an error — do not remove this condition.
+                  positioned here (bottom, next to the submit button) instead of above the form so it's visible
+                  without scrolling back up on a tall form */}
+              {editError && (
+                <p role="alert" className="text-[13px] text-[#ef6f6f] bg-[rgba(239,111,111,0.08)] border border-[rgba(239,111,111,0.25)] rounded-xl px-4 py-3">
+                  {editError}
+                </p>
+              )}
 
               {/* Footer */}
               <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between pt-5 border-t border-white/7 gap-3">
