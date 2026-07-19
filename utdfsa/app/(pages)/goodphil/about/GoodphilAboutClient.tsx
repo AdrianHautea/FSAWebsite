@@ -398,7 +398,7 @@ export default function GoodphilAboutPage() {
             </div>
 
             <p className="font-sans text-[clamp(16px,2vw,29px)] text-white/60 leading-relaxed">
-              Unless specifically specified by the host school, spectating Goodphil <span className="font-bold text-accent-green">is free.</span> Come out and support UTD FSA as we compete across <span className="font-bold text-white">sports, spirit, modern, and cultural events.</span>
+              Unless specifically specified by the host school, spectating Goodphil <span className="font-bold text-accent-green">is free!</span> Come out and support UTD FSA as we compete across <span className="font-bold text-white">sports, spirit, modern, and cultural events!</span>
             </p>
 
           </div>
