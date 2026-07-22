@@ -93,7 +93,12 @@ export default function GoodphilClient({ members }: { members: GoodphilEligibili
       m.automated_requirements_met ? 'YES' : 'NO',
     ])
     const csv = [header, ...rows]
-      .map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(','))
+      .map(row => row.map(cell => {
+        // neutralize formula injection — a cell opened by =/+/-/@ runs as a formula
+        // in Excel/Sheets; prefix with a quote so it's read back as literal text
+        const value = /^[=+\-@]/.test(cell) ? `'${cell}` : cell
+        return `"${value.replace(/"/g, '""')}"`
+      }).join(','))
       .join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)

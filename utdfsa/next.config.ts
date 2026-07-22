@@ -56,6 +56,13 @@ const nextConfig: NextConfig = {
             key: 'Strict-Transport-Security',
             value: 'max-age=63072000; includeSubDomains; preload',
           },
+          // deny every browser feature by default; camera stays same-origin-only
+          // for officer/scan's QR reader (html5-qrcode) — nothing else in the app
+          // calls geolocation/microphone/payment APIs
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(self), microphone=(), geolocation=(), payment=()',
+          },
           // Content-Security-Policy moved to proxy.ts — it now needs a fresh per-request
           // nonce for script-src, which only proxy/middleware can generate
         ],

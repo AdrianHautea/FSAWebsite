@@ -60,7 +60,9 @@ export async function DELETE(_req: Request, { params }: RouteContext) {
 
 // ── PATCH /api/officer/events/[id] ───────────────────────────────────────────
 // update any event fields; also handles qr attendance controls:
-//   { attend_qr_open: true }           → open qr for scanning, clearing any stale expiry
+//   { attend_qr_open: true }           → open qr for scanning, clearing any stale expiry,
+//                                         and rotating attend_qr_token so a screenshot/photo
+//                                         of a prior session's QR stops working
 //   { attend_qr_open: false }          → close qr
 //   { attend_qr_expires_at: "..." }    → set auto-expiry
 export async function PATCH(req: Request, { params }: RouteContext) {
@@ -120,6 +122,12 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       // reopening without a fresh expiry — clear any stale expiry from a prior
       // session, otherwise /attend keeps rejecting scans against the old timestamp
       updates.attend_qr_expires_at = null
+    }
+
+    if (qrParsed.data.attend_qr_open === true) {
+      // rotate the token on every open so an old screenshot/forwarded link from a
+      // prior session can't be reused to log attendance without being physically present
+      updates.attend_qr_token = crypto.randomUUID()
     }
   }
 

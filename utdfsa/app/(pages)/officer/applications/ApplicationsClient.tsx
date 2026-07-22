@@ -598,7 +598,10 @@ function downloadCSV(filename: string, rows: (string | number | null | undefined
   const csv = rows
     .map(row =>
       row.map(cell => {
-        const value = cell == null ? '' : String(cell)
+        const raw = cell == null ? '' : String(cell)
+        // neutralize formula injection — a cell opened by =/+/-/@ runs as a formula
+        // in Excel/Sheets; prefix with a quote so it's read back as literal text
+        const value = /^[=+\-@]/.test(raw) ? `'${raw}` : raw
         return value.includes(',') || value.includes('\n')
           ? `"${value.replace(/"/g, '""')}"`
           : value
